@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
+    username: root
+    password: alcoholic1!
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 785773674777-v891sf1pls1v5uhqrim7f6djad8oel6m.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile,email
+          kakao:
+            client-id: # ?? ?? client-id #
+            client-secret: # ?? ?? client-secret #
+            scope: # ??? ?? #
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            client-name: kakao
+            client-authentication-method: POST
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+logging:
+  level:
+    root: INFO
+    com.example.ayoteralab.main: DEBUG
+  file:
+    path: logs

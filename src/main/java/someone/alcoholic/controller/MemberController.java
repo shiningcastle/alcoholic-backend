@@ -1,7 +1,13 @@
 package someone.alcoholic.controller;
 
-import org.springframework.stereotype.Controller;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.RestController;
+import someone.alcoholic.service.MemberService;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 public class MemberController {
+
+    private final MemberService memberService;
+
 }
