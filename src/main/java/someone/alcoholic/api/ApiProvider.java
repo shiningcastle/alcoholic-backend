@@ -1,4 +1,4 @@
-package someone.alcoholic.util;
+package someone.alcoholic.api;
 
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.exception.CustomRuntimeException;

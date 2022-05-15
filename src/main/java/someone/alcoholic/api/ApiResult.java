@@ -1,4 +1,4 @@
-package someone.alcoholic.util;
+package someone.alcoholic.api;
 
 public class ApiResult<T> {
     private boolean success;
