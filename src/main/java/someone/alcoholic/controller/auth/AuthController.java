@@ -1,21 +1,18 @@
-package someone.alcoholic.controller;
+package someone.alcoholic.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import someone.alcoholic.domain.MemberLoginDto;
-import someone.alcoholic.domain.MemberSignupDto;
-import someone.alcoholic.domain.RefreshToken;
-import someone.alcoholic.repository.RefreshTokenRepository;
+import org.springframework.web.bind.annotation.*;
+import someone.alcoholic.domain.token.RefreshToken;
+import someone.alcoholic.dto.auth.MemberLoginDto;
+import someone.alcoholic.dto.member.MemberSignupDto;
+import someone.alcoholic.repository.token.RefreshTokenRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
-import someone.alcoholic.service.MemberService;
+import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -32,10 +29,9 @@ public class AuthController {
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberService memberService;
 
-
     @PostMapping("/login")
     public void login(@RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
-        String memberId = loginDto.getEmail();
+        String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
         Date now = new Date();
 
