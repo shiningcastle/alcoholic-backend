@@ -1,8 +1,8 @@
-package someone.alcoholic.repository;
+package someone.alcoholic.repository.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import someone.alcoholic.domain.RefreshToken;
+import someone.alcoholic.domain.token.RefreshToken;
 
 import java.util.UUID;
 

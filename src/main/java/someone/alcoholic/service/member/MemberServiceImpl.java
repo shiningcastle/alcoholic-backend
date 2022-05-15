@@ -1,11 +1,11 @@
-package someone.alcoholic.service;
+package someone.alcoholic.service.member;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import someone.alcoholic.domain.Member;
-import someone.alcoholic.dto.MemberLoginDto;
-import someone.alcoholic.dto.MemberSignupDto;
-import someone.alcoholic.repository.MemberRepository;
+import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.dto.auth.MemberLoginDto;
+import someone.alcoholic.dto.member.MemberSignupDto;
+import someone.alcoholic.repository.member.MemberRepository;
 
 @Service
 @RequiredArgsConstructor

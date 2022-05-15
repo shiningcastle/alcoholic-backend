@@ -1,4 +1,4 @@
-package someone.alcoholic.util;
+package someone.alcoholic.api;
 
 public class ApiProvider {
     public static<T> ApiResult<T> success() {

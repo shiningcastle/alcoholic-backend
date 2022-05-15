@@ -52,3 +52,7 @@ logging:
 security:
   basic:
     enabled: false
+
+member:
+  default:
+    image: defaultImagePath
