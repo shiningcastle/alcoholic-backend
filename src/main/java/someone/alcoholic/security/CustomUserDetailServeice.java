@@ -23,6 +23,6 @@ public class CustomUserDetailServeice implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(""));
 
         return new User(member.getEmail(), member.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(member.getRole())));
+                Collections.singletonList(new SimpleGrantedAuthority(member.getRole().getRoleName())));
     }
 }
