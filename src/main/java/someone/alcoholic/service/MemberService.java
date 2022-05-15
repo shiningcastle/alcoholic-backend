@@ -6,5 +6,4 @@ import someone.alcoholic.dto.MemberSignupDto;
 
 public interface MemberService {
     Member signup(MemberSignupDto signupDto);
-    Member login(MemberLoginDto loginDto);
 }
