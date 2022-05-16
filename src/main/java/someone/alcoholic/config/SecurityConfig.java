@@ -1,12 +1,11 @@
 package someone.alcoholic.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,17 +15,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import someone.alcoholic.filter.TokenAuthenticationFilter;
 import someone.alcoholic.security.CustomAuthenticationEntryPoint;
 import someone.alcoholic.security.CustomUserDetailServeice;
-import someone.alcoholic.service.CustomOAuth2UserService;
+import someone.alcoholic.service.oauth.CustomOAuth2UserService;
 
+@Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    // 커스텀한 OAuth2UserService DI.
-    private final CustomOAuth2UserService customOAuth2UserService;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final CustomUserDetailServeice customUserDetailServeice;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     // encoder를 빈으로 등록.
     @Bean
@@ -38,36 +36,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(bCryptPasswordEncoder());
     }
 
-    // WebSecurity에 필터를 거는 게 훨씬 빠름. HttpSecrity에 필터를 걸면, 이미 스프링 시큐리티 내부에 들어온 상태기 때문에
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().mvcMatchers("/members/**","/image/**"); // /image/** 있는 모든 파일들은 시큐리티 적용을 무시한다.
-        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations()); // 정적인 리소스들에 대해서 시큐리티 적용 무시.
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().disable()
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+        http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authorizeRequests()
-                .anyRequest() // 모든 요청에 대해서 허용하라.
-                .permitAll()
-                .and()
-                .logout()
-                .logoutSuccessUrl("/") // 로그아웃에 대해서 성공하면 "/"로 이동
-                .and()
-                .oauth2Login()
-                //.defaultSuccessUrl("/login-success")
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService); // oauth2 로그인에 성공하면, 유저 데이터를 가지고 우리가 생성한 // customOAuth2UserService에서 처리를 하겠다. 그리고 "/login-success"로 이동하라.
-
-        http.formLogin().disable()
+                .formLogin().disable()
                 .httpBasic().disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(customAuthenticationEntryPoint);
-
+                .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .and()
+                .authorizeRequests().antMatchers("/**").permitAll()
+                .and().csrf().disable()
+                .oauth2Login()
+                .defaultSuccessUrl("/")
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService); // oauth2 로그인에 성공하면, 유저 데이터를 가지고 우리가 생성한 // customOAuth2UserService에서 처리를 하겠다. 그리고 "/login-success"로 이동하라.
         http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     }
@@ -77,5 +61,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
 }

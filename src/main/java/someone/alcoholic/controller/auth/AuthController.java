@@ -1,16 +1,16 @@
-package someone.alcoholic.controller;
+package someone.alcoholic.controller.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import someone.alcoholic.dto.MemberLoginDto;
-import someone.alcoholic.dto.MemberSignupDto;
-import someone.alcoholic.service.AuthService;
-import someone.alcoholic.service.MemberService;
-import someone.alcoholic.util.ApiProvider;
-import someone.alcoholic.util.ApiResult;
+import someone.alcoholic.api.ApiProvider;
+import someone.alcoholic.api.ApiResult;
+import someone.alcoholic.dto.auth.MemberLoginDto;
+import someone.alcoholic.dto.member.MemberSignupDto;
+import someone.alcoholic.service.oauth.AuthService;
+import someone.alcoholic.service.member.MemberService;
 
 import javax.servlet.http.HttpServletResponse;
 

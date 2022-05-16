@@ -1,4 +1,4 @@
-package someone.alcoholic.util;
+package someone.alcoholic.api;
 
 import lombok.Getter;
 

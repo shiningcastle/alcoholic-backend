@@ -1,4 +1,4 @@
-package someone.alcoholic.domain;
+package someone.alcoholic.domain.token;
 
 import lombok.AccessLevel;
 import lombok.Getter;

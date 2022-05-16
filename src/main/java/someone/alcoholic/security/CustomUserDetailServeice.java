@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import someone.alcoholic.domain.Member;
-import someone.alcoholic.repository.MemberRepository;
+import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.repository.member.MemberRepository;
 
 import java.util.Collections;
 
@@ -19,10 +19,10 @@ public class CustomUserDetailServeice implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByEmail(username)
+        Member member = memberRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(""));
 
-        return new User(member.getEmail(), member.getPassword(),
+        return new User(member.getId(), member.getPassword(),
                 Collections.singletonList(new SimpleGrantedAuthority(member.getRole().getRoleName())));
     }
 }

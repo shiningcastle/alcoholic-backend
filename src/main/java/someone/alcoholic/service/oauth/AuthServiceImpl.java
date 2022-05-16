@@ -1,4 +1,4 @@
-package someone.alcoholic.service;
+package someone.alcoholic.service.oauth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -7,15 +7,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import someone.alcoholic.domain.Member;
-import someone.alcoholic.domain.RefreshToken;
-import someone.alcoholic.dto.MemberLoginDto;
+import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.domain.token.RefreshToken;
+import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.exception.CustomRuntimeException;
-import someone.alcoholic.repository.MemberRepository;
-import someone.alcoholic.repository.RefreshTokenRepository;
+import someone.alcoholic.repository.member.MemberRepository;
+import someone.alcoholic.repository.token.RefreshTokenRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
+import someone.alcoholic.service.oauth.AuthService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,14 +26,14 @@ import java.util.UUID;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
-        String memberId = loginDto.getEmail();
+        String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
         Date now = new Date();
 
@@ -54,7 +55,7 @@ public class AuthServiceImpl implements AuthService{
 
         setCookie(response, accessToken, refreshToken);
 
-        return memberRepository.findByEmail(memberId)
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
     }
 
