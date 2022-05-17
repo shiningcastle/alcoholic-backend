@@ -1,6 +1,7 @@
 package someone.alcoholic.enums;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 public enum ExceptionEnum {
@@ -10,7 +11,9 @@ public enum ExceptionEnum {
     USER_ALREADY_EXIST("auth-004", "이미 존재하는 id이다."),
     BAD_PROVIDER("auth-005", "잘못된 provider이다."),
     NICKNAME_ALREADY_EXIST("auth-006", "이미 존재하는 nickname이다."),
-    NOT_ALLOWED_ACCESS("auth-007", "접근 권한이 없다.");
+    NOT_ALLOWED_ACCESS("auth-007", "접근 권한이 없다."),
+
+    VALUE_NOT_FOUND("common-001", "값이 비어 있다.");
 
     private String code;
     private String message;

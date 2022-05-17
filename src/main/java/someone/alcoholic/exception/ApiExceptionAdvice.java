@@ -4,8 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import someone.alcoholic.util.ApiProvider;
-import someone.alcoholic.util.ApiResult;
+import someone.alcoholic.api.ApiProvider;
+import someone.alcoholic.api.ApiResult;
 
 @RestControllerAdvice
 public class ApiExceptionAdvice {

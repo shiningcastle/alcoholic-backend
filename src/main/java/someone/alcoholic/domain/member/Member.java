@@ -6,13 +6,13 @@ import someone.alcoholic.enums.Role;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(exclude = {})
 public class Member {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -20,10 +20,10 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String id;
 
-    @Column(length = 45)
+    @Column(length = 100, nullable = false)     // 인코딩 하기 때문에 더 커야됨
     private String password;
 
-    @Column(length = 45, nullable = false)
+    @Column(length = 45, nullable = false, unique = true)
     private String nickname;
 
     @Column(nullable = false)
@@ -54,8 +54,19 @@ public class Member {
         this.email = email;
         this.image = image;
         this.provider = provider;
-        this.role = Role.USER;
-        this.createdDate = new Timestamp(System.currentTimeMillis());
+        this.role = role;
+        // 3개월 뒤로 설정
+    }
+
+    public static Member createLocalMember(String id, String password, String nickname, String email) {
+        Member member = Member.builder()
+                .email(email)
+                .password(password)
+                .nickname(nickname)
+                .image("")
+                .provider(Provider.LOCAL).build();
+        member.passwordUpdatedDate = Timestamp.valueOf(LocalDateTime.now().plusMonths(3));
+        return member;
     }
 
     public Member update(String nickname) {

@@ -1,5 +1,8 @@
 package someone.alcoholic.api;
 
+import lombok.Getter;
+
+@Getter
 public class ApiResult<T> {
     private boolean success;
     private T message;
