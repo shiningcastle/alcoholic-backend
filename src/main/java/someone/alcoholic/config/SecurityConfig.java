@@ -49,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/**").permitAll()
                 .and().csrf().disable()
                 .oauth2Login()
-                .defaultSuccessUrl("/")
+                .successHandler(oAuth2SuccessfulHandler)
+//                .defaultSuccessUrl("/")
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService); // oauth2 로그인에 성공하면, 유저 데이터를 가지고 우리가 생성한 // customOAuth2UserService에서 처리를 하겠다. 그리고 "/login-success"로 이동하라.
         http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
