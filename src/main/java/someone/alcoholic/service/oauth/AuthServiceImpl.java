@@ -49,8 +49,7 @@ public class AuthServiceImpl implements AuthService {
         AuthToken accessToken = tokenProvider.createAccessToken(
                 memberId, role, new Date(now.getTime() + tokenProvider.getAccessTokenMaxAge()));
         UUID refreshTokenId = UUID.randomUUID();
-        AuthToken refreshToken = tokenProvider.createRefreshToken(
-                refreshTokenId, memberId, new Date(now.getTime() + tokenProvider.getRefreshTokenMaxAge()));
+        AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
         refreshTokenRepository.save(new RefreshToken(refreshTokenId, memberId, refreshToken.getToken()));
 
         setCookie(response, accessToken, refreshToken);
@@ -61,8 +60,8 @@ public class AuthServiceImpl implements AuthService {
 
     private void setCookie(HttpServletResponse response, AuthToken accessToken, AuthToken refreshToken) {
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(),
-                tokenProvider.getAccessTokenMaxAge() / 1000);
+                Age.ACCESS_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(),
-                tokenProvider.getRefreshTokenMaxAge() / 1000);
+                Age.REFRESH_COOKIE_MAX_AGE);
     }
 }

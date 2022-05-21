@@ -19,10 +19,10 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, Age maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAge.getTime());
         cookie.setPath("/");
 
         response.addCookie(cookie);

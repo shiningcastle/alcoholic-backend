@@ -79,8 +79,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void setCookie(HttpServletResponse response, AuthToken newAccessToken, AuthToken newRefreshToken) {
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, newAccessToken.getToken(),
-                tokenProvider.getAccessTokenMaxAge() / 1000);
+                Age.ACCESS_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, newRefreshToken.getToken(),
-                tokenProvider.getRefreshTokenMaxAge() / 1000);
+                Age.REFRESH_COOKIE_MAX_AGE);
     }
 }
