@@ -12,6 +12,8 @@ public enum ExceptionEnum {
     BAD_PROVIDER("auth-005", "잘못된 provider이다."),
     NICKNAME_ALREADY_EXIST("auth-006", "이미 존재하는 nickname이다."),
     NOT_ALLOWED_ACCESS("auth-007", "접근 권한이 없다."),
+    TOKEN_NOT_EXIST("auth-008", "토큰이 존재하지 않는다."),
+    TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않는다."),
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다.");
 
