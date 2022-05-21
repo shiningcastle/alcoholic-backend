@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import someone.alcoholic.domain.member.Member;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -27,6 +28,7 @@ public class AuthToken {
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String MEMBER_ID = "member_id";
     public static final String REFRESH_TOKEN_ID = "token_id";
+    public static final String NICKNAME_TOKEN = "nickname_token";
 
     public AuthToken(String token, Key key) {
         this.token = token;
@@ -43,6 +45,10 @@ public class AuthToken {
     public AuthToken(String memberId, String role, Date expiry, Key key) {
         this.key = key;
         this.token = createAccessToken(memberId, role, expiry);
+    }
+    public AuthToken(Member member, Date expiry, Key key) {
+        this.key = key;
+        this.token = createNicknameToken(member, expiry);
     }
 
     private String createAccessToken(String memberId, String role, Date expiry) {
@@ -65,6 +71,19 @@ public class AuthToken {
                 .setSubject(REFRESH_TOKEN)
                 .claim(MEMBER_ID, memberId)
                 .claim(REFRESH_TOKEN_ID, tokenId)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .setExpiration(expiry)
+                .setHeaderParam("typ", "JWT")
+                .compact();
+    }
+
+    private String createNicknameToken(Member member, Date expiry) {
+        return Jwts.builder()
+                .setSubject(NICKNAME_TOKEN)
+                .claim(MEMBER_ID, member.getId())
+                .claim("email", member.getEmail())
+                .claim("image", member.getImage())
+                .claim("provider", member.getProvider())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .setHeaderParam("typ", "JWT")
@@ -117,7 +136,7 @@ public class AuthToken {
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
             log.debug("claims subject := [{}]", tokenClaims.getSubject());
-            User user = new User(tokenClaims.getSubject(), "", authorities);
+            User user = new User(tokenClaims.get(MEMBER_ID, String.class), "", authorities);
             return new UsernamePasswordAuthenticationToken(user, this, authorities);
 
         } else {

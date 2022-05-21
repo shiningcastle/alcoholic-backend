@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.enums.Age;
 
 import java.security.Key;
 import java.util.Date;
@@ -15,10 +17,6 @@ import java.util.UUID;
 @Component
 public class AuthTokenProvider {
     private String secret;
-    @Value("${jwt.access-token-max-age}")
-    private int accessTokenMaxAge;
-    @Value("${jwt.refresh-token-max-age}")
-    private int refreshTokenMaxAge;
     private final Key key;
 
     public AuthTokenProvider(@Value("${jwt.secret}") String secret) {
@@ -30,15 +28,18 @@ public class AuthTokenProvider {
         return new AuthToken(token, key);
     }
 
-    public AuthToken createAccessToken(String memberId, String role, Date expiry) {
-        return new AuthToken(memberId, role, expiry, key);
+    public AuthToken createAccessToken(String memberId, String role) {
+        return new AuthToken(memberId, role, new Date(new Date().getTime() + Age.ACCESS_TOKEN_MAX_AGE.getTime()), key);
     }
 
-    public AuthToken createRefreshToken(String memberId, Date expiry) {
-        return new AuthToken(memberId, expiry, key);
+    public AuthToken createRefreshToken(String memberId) {
+        return new AuthToken(memberId, new Date(new Date().getTime() + Age.REFRESH_TOKEN_MAX_AGE.getTime()), key);
     }
 
-    public AuthToken createRefreshToken(UUID tokenId, String memberId, Date expiry) {
-        return new AuthToken(tokenId, memberId, expiry, key);
+    public AuthToken createRefreshToken(UUID tokenId, String memberId) {
+        return new AuthToken(tokenId, memberId, new Date(new Date().getTime() + Age.REFRESH_TOKEN_MAX_AGE.getTime()), key);
+    }
+    public AuthToken createNicknameToken(Member member) {
+        return new AuthToken(member, new Date(new Date().getTime() + Age.NICKNAME_TOKEN_MAX_AGE.getTime()), key);
     }
 }
