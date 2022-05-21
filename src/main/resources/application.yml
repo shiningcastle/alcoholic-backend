@@ -1,6 +1,4 @@
 jwt:
-  access-token-max-age: 3600000  # 3600000는 milisec 단위. 즉, 3600000이  1시간
-  refresh-token-max-age: 10800000 # 문제는 cookie의 max-age는 초단위임. 즉, 1000을 나누어야함
   secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
 
 spring:

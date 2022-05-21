@@ -1,6 +1,8 @@
 package someone.alcoholic.domain.member;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 
@@ -41,13 +43,15 @@ public class Member {
     private Role role;
 
     @Column(name = "created_date", nullable = false)
+    @CreationTimestamp
     private Timestamp createdDate;
 
     @Column(name = "password_updated_date")
     private Timestamp passwordUpdatedDate;
 
+
     @Builder // oauth 유저 회원가입
-    public Member(String id, String password, String nickname, String email, String image, Provider provider) {
+    public Member(String id, String password, String nickname, String email, String image, Provider provider, Role role) {
         this.id = id;
         this.password = password;
         this.nickname = nickname;
@@ -55,22 +59,24 @@ public class Member {
         this.image = image;
         this.provider = provider;
         this.role = role;
-        // 3개월 뒤로 설정
     }
 
     public static Member createLocalMember(String id, String password, String nickname, String email) {
         Member member = Member.builder()
+                .id(id)
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .image("")
+                .image("DefaultImage")
+                .role(Role.USER)
                 .provider(Provider.LOCAL).build();
+        // 3개월 뒤로 설정
         member.passwordUpdatedDate = Timestamp.valueOf(LocalDateTime.now().plusMonths(3));
         return member;
     }
 
-    public Member update(String nickname) {
-        this.nickname = nickname;
-        return this;
+    public MemberDto convertMemberDto() {
+        return new MemberDto(this.nickname, this.email, this.image, this.role);
     }
+
 }

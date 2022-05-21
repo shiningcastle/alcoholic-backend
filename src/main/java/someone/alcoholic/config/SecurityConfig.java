@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import someone.alcoholic.filter.TokenAuthenticationFilter;
 import someone.alcoholic.security.CustomAuthenticationEntryPoint;
 import someone.alcoholic.security.CustomUserDetailServeice;
+import someone.alcoholic.security.OAuth2SuccessfulHandler;
 import someone.alcoholic.service.oauth.CustomOAuth2UserService;
 
 @Configuration
@@ -25,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomUserDetailServeice customUserDetailServeice;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessfulHandler oAuth2SuccessfulHandler;
 
     // encoder를 빈으로 등록.
     @Bean
@@ -49,7 +51,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/**").permitAll()
                 .and().csrf().disable()
                 .oauth2Login()
-                .defaultSuccessUrl("/")
+                .successHandler(oAuth2SuccessfulHandler)
+//                .defaultSuccessUrl("/")
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService); // oauth2 로그인에 성공하면, 유저 데이터를 가지고 우리가 생성한 // customOAuth2UserService에서 처리를 하겠다. 그리고 "/login-success"로 이동하라.
         http.addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
