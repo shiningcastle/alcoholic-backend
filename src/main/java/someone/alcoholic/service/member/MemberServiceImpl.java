@@ -11,6 +11,7 @@ import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
 import someone.alcoholic.enums.Age;
 import someone.alcoholic.enums.ExceptionEnum;
+import someone.alcoholic.enums.ExpiryTime;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 import someone.alcoholic.exception.CustomRuntimeException;
@@ -33,7 +34,6 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public Member signup(MemberSignupDto signupDto) {
@@ -74,9 +74,9 @@ public class MemberServiceImpl implements MemberService {
         UUID refreshTokenPk = UUID.randomUUID();
         AuthToken accessToken = authTokenProvider.createAccessToken(memberId, member.getRole().toString());
         AuthToken refreshToken = authTokenProvider.createRefreshToken(refreshTokenPk, memberId);
-        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), Age.ACCESS_COOKIE_MAX_AGE);
-        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), Age.REFRESH_COOKIE_MAX_AGE);
-        refreshTokenRepository.save(new RefreshToken(refreshTokenPk, memberId, refreshToken.getToken()));
+        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), ExpiryTime.ACCESS_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), ExpiryTime.REFRESH_COOKIE_MAX_AGE);
+        //refreshTokenRepository.save(new RefreshToken(refreshTokenPk.toString(), memberId, refreshToken.getToken()));
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
         return member;
     }

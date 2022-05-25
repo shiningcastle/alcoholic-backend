@@ -8,13 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.enums.Age;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
-import someone.alcoholic.repository.token.RefreshTokenRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.util.CookieUtil;
@@ -28,7 +26,6 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
@@ -42,8 +39,9 @@ public class AuthServiceImpl implements AuthService {
         String role = getAuthority(authentication);
         AuthToken accessToken = tokenProvider.createAccessToken(memberId, role);
         UUID refreshTokenId = UUID.randomUUID();
+
         AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
-        refreshTokenRepository.save(new RefreshToken(refreshTokenId, memberId, refreshToken.getToken()));
+        //refreshTokenRepository.save(new RefreshToken(refreshTokenId.toString(), memberId, refreshToken.getToken()));
 
         setCookie(response, accessToken, refreshToken);
         return memberRepository.findById(memberId)

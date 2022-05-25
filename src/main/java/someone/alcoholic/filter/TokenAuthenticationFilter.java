@@ -2,12 +2,14 @@ package someone.alcoholic.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import someone.alcoholic.domain.token.RefreshToken;
-import someone.alcoholic.enums.Age;
+import someone.alcoholic.enums.ExpiryTime;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.token.RefreshTokenService;
@@ -72,27 +74,32 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String memberId = refreshToken.getTokenClaims().get(MEMBER_ID, String.class);
         String role = refreshToken.getTokenClaims().get(MEMBER_ROLE, String.class);
 
+//        RefreshTokendb savedRefreshToken = refreshTokenRepository         // token이 없을 때 예외 처리
+//                .findByIdAndMemberId(refreshTokenPK, memberId);
+
+
         RefreshToken savedRefreshToken = refreshTokenService
                 .findByIdAndMemberId(refreshTokenPK, memberId).orElse(null);
         if (savedRefreshToken == null) {
             log.info("refresh token이 db에 저장되어있지 않다.");
             CookieUtil.deleteCookie(request, response, AuthToken.REFRESH_TOKEN);
             CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);
-        } else if (refreshToken.getToken().equals(savedRefreshToken.getRefreshToken())) {
+        } else if (refreshToken.getToken().equals(savedRefreshToken.getValue())) {
             log.info("access, refresh token이 재발급 되었다.");
             AuthToken newAccessToken= tokenProvider.createAccessToken(memberId, role);
             UUID newRefreshTokenPK = UUID.randomUUID();
+
             AuthToken newRefreshToken = tokenProvider.createRefreshToken(newRefreshTokenPK, memberId);
             refreshTokenService.save(
-                    new RefreshToken(newRefreshTokenPK, memberId, newRefreshToken.getToken()));
+                    new RefreshToken(newRefreshTokenPK.toString(), memberId, newRefreshToken.getToken()));
             setCookie(response, newAccessToken, newRefreshToken);
         }
     }
 
     private void setCookie(HttpServletResponse response, AuthToken newAccessToken, AuthToken newRefreshToken) {
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, newAccessToken.getToken(),
-                Age.ACCESS_COOKIE_MAX_AGE);
+                ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, newRefreshToken.getToken(),
-                Age.REFRESH_COOKIE_MAX_AGE);
+                ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
     }
 }

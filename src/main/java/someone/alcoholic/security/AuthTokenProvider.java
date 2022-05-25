@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.enums.Age;
+import someone.alcoholic.enums.ExpiryTime;
 
 import java.security.Key;
 import java.util.Date;
@@ -29,17 +29,17 @@ public class AuthTokenProvider {
     }
 
     public AuthToken createAccessToken(String memberId, String role) {
-        return new AuthToken(memberId, role, new Date(new Date().getTime() + Age.ACCESS_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(memberId, role, new Date(new Date().getTime() + ExpiryTime.ACCESS_TOKEN_MAX_AGE.getTime()), key);
     }
 
     public AuthToken createRefreshToken(String memberId) {
-        return new AuthToken(memberId, new Date(new Date().getTime() + Age.REFRESH_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(memberId, new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_MAX_AGE.getTime()), key);
     }
 
     public AuthToken createRefreshToken(UUID tokenId, String memberId) {
-        return new AuthToken(tokenId, memberId, new Date(new Date().getTime() + Age.REFRESH_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(tokenId, memberId, new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_MAX_AGE.getTime()), key);
     }
     public AuthToken createNicknameToken(Member member) {
-        return new AuthToken(member, new Date(new Date().getTime() + Age.NICKNAME_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(member, new Date(new Date().getTime() + ExpiryTime.NICKNAME_TOKEN_MAX_AGE.getTime()), key);
     }
 }

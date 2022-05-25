@@ -1,6 +1,6 @@
 package someone.alcoholic.util;
 
-import someone.alcoholic.enums.Age;
+import someone.alcoholic.enums.ExpiryTime;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,10 +21,10 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, Age maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, ExpiryTime expiryTime) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge(maxAge.getTime());
+        cookie.setMaxAge(expiryTime.getTime());
         cookie.setPath("/");
 
         response.addCookie(cookie);

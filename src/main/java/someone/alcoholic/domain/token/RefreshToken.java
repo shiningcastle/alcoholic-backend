@@ -1,27 +1,23 @@
 package someone.alcoholic.domain.token;
 
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.UUID;
-
-@Setter
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
+@ToString
 public class RefreshToken {
-    @Id
-    private UUID id;
-    private String memberId;
-    private String refreshToken;
 
-    public RefreshToken(UUID id, String memberId, String refreshToken) {
-        this.id = id;
+    private String value;
+    private String memberId;
+    private String accessToken;
+
+    @Builder
+    public RefreshToken(String value, String memberId, String accessToken) {
+        this.value = value;
         this.memberId = memberId;
-        this.refreshToken = refreshToken;
+        this.accessToken = accessToken;
     }
 }

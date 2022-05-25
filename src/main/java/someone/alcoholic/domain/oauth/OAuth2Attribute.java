@@ -7,8 +7,9 @@ import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.Provider;
-import someone.alcoholic.exception.oauth.OAuthProviderNotFoundException;
+import someone.alcoholic.exception.CustomRuntimeException;
 
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class OAuth2Attribute {
                 attribute = ofKakao(oAuthProvider, attributes);
                 break;
             default:
-                throw new OAuthProviderNotFoundException("지원되지 않는 OAuth Provider 사용");
+                throw new CustomRuntimeException(ExceptionEnum.UNSUPPORTED_OAUTH_PROVIDER);
         }
         return attribute;
     }

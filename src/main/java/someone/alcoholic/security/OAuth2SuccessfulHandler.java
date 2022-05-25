@@ -7,11 +7,10 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.oauth.OAuth2Attribute;
-import someone.alcoholic.enums.Age;
+import someone.alcoholic.enums.ExpiryTime;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.util.CookieUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
     private final OAuth2Attribute oAuth2Attribute;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2Member principal = (OAuth2Member) authentication.getPrincipal();
         String memberId = authentication.getName();
         Member member = memberRepository.findById(memberId).orElse(null);
@@ -46,13 +45,13 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
         Map<String, Object> attributes = principal.getAttributes();
         Member tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toEntity();
         AuthToken nicknameToken = authTokenProvider.createNicknameToken(tmpMember);
-        CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), Age.NICKNAME_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), ExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
     }
 
     private void issueAccessAndRefreshToken(HttpServletResponse response, String memberId, Member member) {
         AuthToken accessToken = authTokenProvider.createAccessToken(memberId, member.getRole().getRoleName());
         AuthToken refreshToken = authTokenProvider.createRefreshToken(UUID.randomUUID(), memberId);
-        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), Age.ACCESS_COOKIE_MAX_AGE);
-        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), Age.REFRESH_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
+        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
     }
 }
