@@ -10,13 +10,17 @@ import lombok.ToString;
 @ToString
 public class RefreshToken {
 
-    private String value;
+    private String tokenValue;
     private String memberId;
     private String accessToken;
 
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     @Builder
-    public RefreshToken(String value, String memberId, String accessToken) {
-        this.value = value;
+    public RefreshToken(String tokenValue, String memberId, String accessToken) {
+        this.tokenValue = tokenValue;
         this.memberId = memberId;
         this.accessToken = accessToken;
     }

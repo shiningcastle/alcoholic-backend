@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.auth.MemberLoginDto;
-import someone.alcoholic.enums.Age;
 import someone.alcoholic.enums.ExceptionEnum;
+import someone.alcoholic.enums.ExpiryTime;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.security.AuthToken;
@@ -56,8 +56,8 @@ public class AuthServiceImpl implements AuthService {
 
     private void setCookie(HttpServletResponse response, AuthToken accessToken, AuthToken refreshToken) {
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(),
-                Age.ACCESS_COOKIE_MAX_AGE);
+                ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(),
-                Age.REFRESH_COOKIE_MAX_AGE);
+                ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
     }
 }
