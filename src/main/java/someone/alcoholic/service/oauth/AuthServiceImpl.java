@@ -5,6 +5,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
@@ -27,6 +28,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
+    private final TokenService tokenService;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
         String memberId = loginDto.getId();
@@ -41,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         UUID refreshTokenId = UUID.randomUUID();
 
         AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
-        //refreshTokenRepository.save(new RefreshToken(refreshTokenId.toString(), memberId, refreshToken.getToken()));
+        tokenService.save(new RefreshToken(refreshTokenId.toString(), memberId, refreshToken.getToken()));
 
         setCookie(response, accessToken, refreshToken);
         return memberRepository.findById(memberId)
