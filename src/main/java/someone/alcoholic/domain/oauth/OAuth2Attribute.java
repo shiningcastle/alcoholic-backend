@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.exception.CustomRuntimeException;
@@ -75,7 +76,7 @@ public class OAuth2Attribute {
                 .build();
     }
 
-    public Member toEntity() {
+    public Member toMember() {
         return Member.builder()
                 .id(attributeKey)
                 .password(null)
@@ -84,6 +85,10 @@ public class OAuth2Attribute {
                 .image(image)
                 .provider(provider)
                 .build();
+    }
+
+    public TmpMember toTmpMember() {
+        return new TmpMember(attributeKey, email, provider);
     }
 
 }
