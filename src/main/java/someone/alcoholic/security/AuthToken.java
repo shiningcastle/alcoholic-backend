@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import someone.alcoholic.domain.member.Member;
 
 import java.security.Key;
 import java.util.Arrays;
@@ -23,7 +22,7 @@ public class AuthToken {
     private final String token;
     private final Key key;
 
-    public static final String AUTHORITIES_KEY = "role";
+    public static final String MEMBER_ROLE = "role";
     public static final String ACCESS_TOKEN = "access_token";
     public static final String REFRESH_TOKEN = "refresh_token";
     public static final String MEMBER_ID = "member_id";
@@ -62,7 +61,7 @@ public class AuthToken {
     private String createAuthToken(String memberId, String subject, String role, Date expiry) {
         return Jwts.builder()
                 .setSubject(subject)
-                .claim(AUTHORITIES_KEY, role)
+                .claim(MEMBER_ROLE, role)
                 .claim(MEMBER_ID, memberId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
@@ -123,7 +122,7 @@ public class AuthToken {
     public Authentication getAuthentication() {
         if(isValid()) {
             Claims tokenClaims = this.getTokenClaims();
-            List<SimpleGrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get(AUTHORITIES_KEY).toString()})
+            List<SimpleGrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims.get(MEMBER_ROLE).toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
             log.debug("claims subject := [{}]", tokenClaims.getSubject());

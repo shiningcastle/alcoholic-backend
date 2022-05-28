@@ -85,8 +85,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void reissue(HttpServletResponse response, UUID uuid, RefreshToken savedRefreshToken, AuthToken refreshToken) {
-        String memberId = refreshToken.getTokenClaims().get(MEMBER_ID, String.class);
-        String role = refreshToken.getTokenClaims().get(MEMBER_ROLE, String.class);
+        String memberId = refreshToken.getTokenClaims().get(AuthToken.MEMBER_ID, String.class);
+        String role = refreshToken.getTokenClaims().get(AuthToken.MEMBER_ROLE, String.class);
         AuthToken newAccessToken = tokenProvider.createAccessToken(memberId, role);
         savedRefreshToken.setAccessToken(newAccessToken.getToken());
         refreshTokenService.save(uuid, savedRefreshToken);
