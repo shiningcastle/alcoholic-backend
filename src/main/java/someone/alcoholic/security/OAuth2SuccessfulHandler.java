@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.domain.oauth.OAuth2Attribute;
-import someone.alcoholic.enums.ExpiryTime;
+import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.util.CookieUtil;
@@ -46,7 +46,7 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
     private void saveTmpMember(HttpServletResponse response, String memberId, OAuth2Member principal) {
         log.info("최초 oAuth2 로그인, nicknameToken 발행");
         AuthToken nicknameToken = authTokenProvider.createNicknameToken(memberId);
-        CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), ExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
+        CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), CookieExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
 
         Map<String, Object> attributes = principal.getAttributes();
         TmpMember tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toTmpMember();
@@ -58,7 +58,7 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
     private void issueAccessAndRefreshToken(HttpServletResponse response, String memberId, Member member) {
         AuthToken accessToken = authTokenProvider.createAccessToken(memberId, member.getRole().getRoleName());
         AuthToken refreshToken = authTokenProvider.createRefreshToken(UUID.randomUUID(), memberId);
-        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
-        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
+        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), CookieExpiryTime.ACCESS_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
     }
 }
