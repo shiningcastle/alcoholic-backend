@@ -14,7 +14,8 @@ public enum ExceptionEnum {
     NOT_ALLOWED_ACCESS("auth-007", "접근 권한이 없다."),
     TOKEN_NOT_EXIST("auth-008", "토큰이 존재하지 않는다."),
     TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않는다."),
-    UNSUPPORTED_OAUTH_PROVIDER("auth-009", "지원되지 않는 OAuth Provider 입니다."),
+    UNSUPPORTED_OAUTH_PROVIDER("auth-010", "지원되지 않는 OAuth Provider 입니다."),
+    TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다.");
 

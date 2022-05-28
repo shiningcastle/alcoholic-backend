@@ -6,9 +6,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.domain.oauth.OAuth2Attribute;
 import someone.alcoholic.enums.ExpiryTime;
 import someone.alcoholic.repository.member.MemberRepository;
+import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
+    private final TmpMemberRepository tmpMemberRepository;
     private final AuthTokenProvider authTokenProvider;
     private final OAuth2Attribute oAuth2Attribute;
 
@@ -35,17 +38,21 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
             issueAccessAndRefreshToken(response, memberId, member);
             response.sendRedirect("/");
         } else {
-            issueNicknameToken(response, principal);
+            saveTmpMember(response, memberId, principal);
             response.sendRedirect("/nickname");
         }
     }
 
-    private void issueNicknameToken(HttpServletResponse response, OAuth2Member principal) {
+    private void saveTmpMember(HttpServletResponse response, String memberId, OAuth2Member principal) {
         log.info("최초 oAuth2 로그인, nicknameToken 발행");
-        Map<String, Object> attributes = principal.getAttributes();
-        Member tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toEntity();
-        AuthToken nicknameToken = authTokenProvider.createNicknameToken(tmpMember);
+        AuthToken nicknameToken = authTokenProvider.createNicknameToken(memberId);
         CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), ExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
+
+        Map<String, Object> attributes = principal.getAttributes();
+        TmpMember tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toTmpMember();
+        log.info("최초 oAuth2 로그인, tmpMember 저장 {}", tmpMember);
+        tmpMemberRepository.save(tmpMember);
+
     }
 
     private void issueAccessAndRefreshToken(HttpServletResponse response, String memberId, Member member) {

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
@@ -15,6 +16,7 @@ import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
+import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.token.RefreshTokenService;
@@ -31,6 +33,7 @@ import java.util.UUID;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+    private final TmpMemberRepository tmpMemberRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
     private final RefreshTokenService refreshTokenService;
@@ -61,21 +64,17 @@ public class MemberServiceImpl implements MemberService {
             throw new CustomRuntimeException(ExceptionEnum.TOKEN_NOT_EXIST);
         }
 
-        String email = tokenClaims.get("email", String.class);
         String memberId = tokenClaims.get(AuthToken.MEMBER_ID, String.class);
-        String image = tokenClaims.get("image", String.class);
-        Provider provider = Provider.valueOf(
-                tokenClaims.get("provider", String.class));
-
-        Member member = Member.builder().id(memberId).email(email)
-                .image(image).password(null).nickname(nickname)
-                .provider(provider).role(Role.USER).build();
+        Member member = tmpMemberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.TMP_USER_NOT_EXIST))
+                .convertToMember(nickname);
+        memberRepository.save(member);
 
         UUID refreshTokenPk = UUID.randomUUID();
         AuthToken accessToken = authTokenProvider.createAccessToken(memberId, member.getRole().toString());
         AuthToken refreshToken = authTokenProvider.createRefreshToken(refreshTokenPk, memberId);
-        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), ExpiryTime.ACCESS_COOKIE_MAX_AGE);
-        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), ExpiryTime.REFRESH_COOKIE_MAX_AGE);
+        CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
+        CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
         refreshTokenService.save(refreshTokenPk, RefreshToken.builder().tokenValue(refreshToken.getToken()).memberId(memberId).accessToken(accessToken.getToken()).build());
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
         return member;
