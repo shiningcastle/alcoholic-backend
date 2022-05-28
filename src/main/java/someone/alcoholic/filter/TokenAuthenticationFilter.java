@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import someone.alcoholic.domain.token.RefreshToken;
-import someone.alcoholic.enums.ExpiryTime;
+import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.token.RefreshTokenService;
@@ -31,9 +31,6 @@ import java.util.UUID;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthTokenProvider tokenProvider;
     private final RefreshTokenService refreshTokenService;
-    private static final String REFRESH_TOKEN_ID = "token_id";
-    private static final String MEMBER_ID = "member_id";
-    private static final String MEMBER_ROLE = "role";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -49,7 +46,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         } else if (accessToken != null && !accessToken.isValid()) {
             if (accessToken.isExpired()) {
                 AuthToken refreshToken = getAuthToken(request, AuthToken.REFRESH_TOKEN);
-                UUID tokenId = refreshToken.getTokenClaims().get(REFRESH_TOKEN_ID, UUID.class);
+                UUID tokenId = refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, UUID.class);
                 RefreshToken savedRefreshToken = refreshTokenService.findById(tokenId);
                 String refreshTokenValue = refreshToken.getToken();
                 String savedRefreshTokenValue = savedRefreshToken.getTokenValue();
@@ -91,7 +88,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         savedRefreshToken.setAccessToken(newAccessToken.getToken());
         refreshTokenService.save(uuid, savedRefreshToken);
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, newAccessToken.getToken(),
-                ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
+                CookieExpiryTime.ACCESS_COOKIE_MAX_AGE);
         log.info("access token is reissued");
     }
 }
