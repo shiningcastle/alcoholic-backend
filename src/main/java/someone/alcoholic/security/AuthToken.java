@@ -30,30 +30,38 @@ public class AuthToken {
     public static final String REFRESH_TOKEN_ID = "token_id";
     public static final String NICKNAME_TOKEN = "nickname_token";
 
+
     public AuthToken(String token, Key key) {
         this.token = token;
         this.key = key;
     }
-    public AuthToken(String memberId, Date expiry, Key key) {
+    public AuthToken(String memberId, String subject, Date expiry, Key key) {
         this.key = key;
-        this.token = createRefreshToken(memberId, expiry);
+        this.token = createAuthToken(memberId, subject, expiry);
     }
-    public AuthToken(UUID tokenId, String memberId, Date expiry, Key key) {
+    public AuthToken(UUID tokenId, String subject, String memberId, Date expiry, Key key) {
         this.key = key;
-        this.token = createRefreshToken(tokenId, memberId, expiry);
+        this.token = createAuthToken(tokenId, subject, memberId, expiry);
     }
-    public AuthToken(String memberId, String role, Date expiry, Key key) {
+    public AuthToken(String memberId, String subject, String role, Date expiry, Key key) {
         this.key = key;
-        this.token = createAccessToken(memberId, role, expiry);
-    }
-    public AuthToken(Member member, Date expiry, Key key) {
-        this.key = key;
-        this.token = createNicknameToken(member, expiry);
+        this.token = createAuthToken(memberId, subject, role, expiry);
     }
 
-    private String createAccessToken(String memberId, String role, Date expiry) {
+
+    public String createAuthToken(String memberId, String subject, Date expiry) {
         return Jwts.builder()
-                .setSubject(ACCESS_TOKEN)
+                .setSubject(subject)
+                .claim(MEMBER_ID, memberId)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .setExpiration(expiry)
+                .setHeaderParam("typ", "JWT")
+                .compact();
+    }
+
+    private String createAuthToken(String memberId, String subject, String role, Date expiry) {
+        return Jwts.builder()
+                .setSubject(subject)
                 .claim(AUTHORITIES_KEY, role)
                 .claim(MEMBER_ID, memberId)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -62,28 +70,11 @@ public class AuthToken {
                 .compact();
     }
 
-    private String createRefreshToken(String memberId, Date expiry) {
-        return createRefreshToken(UUID.randomUUID(), memberId, expiry);
-    }
-
-    private String createRefreshToken(UUID tokenId, String memberId, Date expiry) {
+    private String createAuthToken(UUID tokenId, String subject, String memberId, Date expiry) {
         return Jwts.builder()
-                .setSubject(REFRESH_TOKEN)
+                .setSubject(subject)
                 .claim(MEMBER_ID, memberId)
                 .claim(REFRESH_TOKEN_ID, tokenId)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .setExpiration(expiry)
-                .setHeaderParam("typ", "JWT")
-                .compact();
-    }
-
-    private String createNicknameToken(Member member, Date expiry) {
-        return Jwts.builder()
-                .setSubject(NICKNAME_TOKEN)
-                .claim(MEMBER_ID, member.getId())
-                .claim("email", member.getEmail())
-                .claim("image", member.getImage())
-                .claim("provider", member.getProvider())
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .setHeaderParam("typ", "JWT")

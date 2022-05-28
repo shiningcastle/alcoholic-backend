@@ -29,17 +29,16 @@ public class AuthTokenProvider {
     }
 
     public AuthToken createAccessToken(String memberId, String role) {
-        return new AuthToken(memberId, role, new Date(new Date().getTime() + ExpiryTime.ACCESS_TOKEN_MAX_AGE.getTime()), key);
-    }
-
-    public AuthToken createRefreshToken(String memberId) {
-        return new AuthToken(memberId, new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(memberId, AuthToken.ACCESS_TOKEN, role,
+                new Date(new Date().getTime() + ExpiryTime.ACCESS_TOKEN_EXPIRY_TIME.getTime()), key);
     }
 
     public AuthToken createRefreshToken(UUID tokenId, String memberId) {
-        return new AuthToken(tokenId, memberId, new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_MAX_AGE.getTime()), key);
+        return new AuthToken(tokenId, AuthToken.REFRESH_TOKEN, memberId,
+                new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_EXPIRY_TIME.getTime()), key);
     }
-    public AuthToken createNicknameToken(Member member) {
-        return new AuthToken(member, new Date(new Date().getTime() + ExpiryTime.NICKNAME_TOKEN_MAX_AGE.getTime()), key);
+    public AuthToken createNicknameToken(String memberId) {
+        return new AuthToken(memberId, AuthToken.NICKNAME_TOKEN,
+                new Date(new Date().getTime() + ExpiryTime.NICKNAME_TOKEN_EXPIRY_TIME.getTime()), key);
     }
 }
