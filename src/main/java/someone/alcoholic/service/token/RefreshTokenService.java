@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface RefreshTokenService {
-    RefreshToken save(RefreshToken refreshToken);
-    Optional<RefreshToken> findByIdAndMemberId(UUID id, String memberId);
+    void save(UUID uuid,  RefreshToken refreshToken);
+    RefreshToken findById(UUID uuid);
+    void delete(UUID uuid);
 }
