@@ -38,35 +38,37 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         AuthToken accessToken = getAuthToken(request, AuthToken.ACCESS_TOKEN);
-        String accessTokenValue = accessToken.getToken();
+        String accessTokenValue = (accessToken != null) ? accessToken.getToken() : null;
         String accessIp = IpUtil.getClientIP(request);
-
+        // accessToken 만료시 관련 쿠키는 시간 설정에 의해 삭제되므로 accessToken == null
         if (accessToken != null && accessToken.isValid()) {
-            log.info("{} - accessToken is valid", accessIp);
+            log.info("{} - accessToken is valid : {}", accessIp, accessTokenValue);
             Authentication authentication = accessToken.getAuthentication();
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("authentication : {}", authentication);
         } else if (accessToken != null && !accessToken.isValid()) {
-            if (accessToken.isExpired()) {
-                AuthToken refreshToken = getAuthToken(request, AuthToken.REFRESH_TOKEN);
+            AuthToken refreshToken = getAuthToken(request, AuthToken.REFRESH_TOKEN);
+            if (accessToken.isExpired() && refreshToken != null) {
                 UUID tokenId = refreshToken.getTokenClaims().get(REFRESH_TOKEN_ID, UUID.class);
                 RefreshToken savedRefreshToken = refreshTokenService.findById(tokenId);
                 String refreshTokenValue = refreshToken.getToken();
-                String savedRefreshTokenValue = savedRefreshToken.getTokenValue();
+                String savedRefreshTokenValue = (savedRefreshToken != null) ? savedRefreshToken.getTokenValue() : null;
                 if (refreshTokenValue != null && refreshTokenValue.equals(savedRefreshTokenValue)) {
                     String savedAccessTokenValue = savedRefreshToken.getAccessToken();
                     if (accessTokenValue.equals(savedAccessTokenValue)) {
-                        log.info("{} - accessToken is expired", accessIp);
+                        log.info("{} - accessToken is expired : {}", accessIp, accessTokenValue);
                         reissue(response, tokenId, savedRefreshToken, refreshToken);
                     } else {
                         refreshTokenService.delete(tokenId);
-                        log.info("{} - expires all refreshTokens : {}", accessIp, savedRefreshTokenValue);
+                        log.info("{} - expires all refreshTokens : {}", accessIp, refreshTokenValue);
                     }
                 } else {
-                    log.info("{} - refreshToken is different", accessIp);
+                    log.info("{} - refreshToken is different {} - {}", accessIp, refreshTokenValue, savedRefreshTokenValue);
                 }
+            } else if (!accessToken.isExpired() && refreshToken != null) {
+                log.info("{} - accessToken is inValid : {}", accessIp, accessTokenValue);
             } else {
-                log.info("{} - accessToken is inValid", accessIp);
+                log.info("{} - refreshToken is null : {}", accessIp, refreshToken);
             }
         } else {
             log.info("{} - accessToken is null", accessIp);
