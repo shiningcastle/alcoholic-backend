@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.enums.ExpiryTime;
+import someone.alcoholic.enums.TokenExpiryTime;
 
 import java.security.Key;
 import java.util.Date;
@@ -30,15 +29,15 @@ public class AuthTokenProvider {
 
     public AuthToken createAccessToken(String memberId, String role) {
         return new AuthToken(memberId, AuthToken.ACCESS_TOKEN, role,
-                new Date(new Date().getTime() + ExpiryTime.ACCESS_TOKEN_EXPIRY_TIME.getTime()), key);
+                new Date(new Date().getTime() + TokenExpiryTime.ACCESS_TOKEN_MAX_AGE.getValue()), key);
     }
 
     public AuthToken createRefreshToken(UUID tokenId, String memberId) {
         return new AuthToken(tokenId, AuthToken.REFRESH_TOKEN, memberId,
-                new Date(new Date().getTime() + ExpiryTime.REFRESH_TOKEN_EXPIRY_TIME.getTime()), key);
+                new Date(new Date().getTime() + TokenExpiryTime.REFRESH_TOKEN_MAX_AGE.getValue()), key);
     }
     public AuthToken createNicknameToken(String memberId) {
         return new AuthToken(memberId, AuthToken.NICKNAME_TOKEN,
-                new Date(new Date().getTime() + ExpiryTime.NICKNAME_TOKEN_EXPIRY_TIME.getTime()), key);
+                new Date(new Date().getTime() + TokenExpiryTime.NICKNAME_TOKEN_MAX_AGE.getValue()), key);
     }
 }

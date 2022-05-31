@@ -5,17 +5,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.enums.ExceptionEnum;
-import someone.alcoholic.enums.ExpiryTime;
+import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
+import someone.alcoholic.service.token.RefreshTokenService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,26 +29,30 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final TokenService tokenService;
+    private final RefreshTokenService refreshTokenService;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
         String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(memberId, pw));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        Authentication authentication = getAuthentication(memberId, pw);
         String role = getAuthority(authentication);
+
         AuthToken accessToken = tokenProvider.createAccessToken(memberId, role);
         UUID refreshTokenId = UUID.randomUUID();
-
         AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
-        tokenService.save(new RefreshToken(refreshTokenId.toString(), memberId, refreshToken.getToken()));
-
+        refreshTokenService.save(refreshTokenId,
+                new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+    }
+
+    private Authentication getAuthentication(String memberId, String pw) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(memberId, pw));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
     }
 
     private String getAuthority(Authentication authentication) {
@@ -58,8 +63,8 @@ public class AuthServiceImpl implements AuthService {
 
     private void setCookie(HttpServletResponse response, AuthToken accessToken, AuthToken refreshToken) {
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(),
-                ExpiryTime.ACCESS_COOKIE_EXPIRY_TIME);
+                CookieExpiryTime.ACCESS_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(),
-                ExpiryTime.REFRESH_COOKIE_EXPIRY_TIME);
+                CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
     }
 }

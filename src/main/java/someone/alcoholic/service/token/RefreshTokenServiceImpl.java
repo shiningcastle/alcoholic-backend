@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.domain.token.RefreshToken;
-import someone.alcoholic.enums.ExpiryTime;
+import someone.alcoholic.enums.TokenExpiryTime;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -16,7 +16,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService{
 
     @Override
     public void save(UUID uuid,  RefreshToken refreshToken) {
-        redisTemplate.opsForValue().set(uuid.toString(), refreshToken, Duration.ofHours(ExpiryTime.REFRESH_TOKEN_EXPIRY_HOUR.getTime()));
+        redisTemplate.opsForValue().set(
+                uuid.toString(), refreshToken,
+                Duration.ofHours(TokenExpiryTime.REDIS_REFRESH_TOKEN_MAX_AGE.getValue()));
     }
 
     @Override

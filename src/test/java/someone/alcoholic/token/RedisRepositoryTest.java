@@ -23,7 +23,6 @@ public class RedisRepositoryTest {
 
     @Test
     public void test() {
-
         // given
         String userId1 = "shiningcastle";
         String userId2 = "kwkw1994";
