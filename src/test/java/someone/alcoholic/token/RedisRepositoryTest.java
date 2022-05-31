@@ -30,8 +30,8 @@ public class RedisRepositoryTest {
         String refreshToken2 = "Refresh2";
         String accessToken1 = "Access1";
         String accessToken2 = "Access2";
-        RefreshToken token = RefreshToken.builder().memberId(userId1).value(refreshToken1).accessToken(accessToken1).build();
-        RefreshToken token2 = RefreshToken.builder().memberId(userId2).value(refreshToken2).accessToken(accessToken2).build();
+        RefreshToken token = RefreshToken.builder().memberId(userId1).tokenValue(refreshToken1).accessToken(accessToken1).build();
+        RefreshToken token2 = RefreshToken.builder().memberId(userId2).tokenValue(refreshToken2).accessToken(accessToken2).build();
 
         UUID uuid1 = UUID.randomUUID();
         System.out.println("uuid1 = " + uuid1);
@@ -48,12 +48,12 @@ public class RedisRepositoryTest {
 
         assertThat(savedToken1, is(notNullValue()));
         assertThat(savedToken1.getMemberId(), equalTo(userId1));
-        assertThat(savedToken1.getValue(), equalTo(refreshToken1));
+        assertThat(savedToken1.getTokenValue(), equalTo(refreshToken1));
         assertThat(savedToken1.getAccessToken(), equalTo(accessToken1));
 
         assertThat(savedToken2, is(notNullValue()));
         assertThat(savedToken2.getMemberId(), equalTo(userId2));
-        assertThat(savedToken2.getValue(), equalTo(refreshToken2));
+        assertThat(savedToken2.getTokenValue(), equalTo(refreshToken2));
         assertThat(savedToken2.getAccessToken(), equalTo(accessToken2));
     }
 
