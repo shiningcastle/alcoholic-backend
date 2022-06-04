@@ -76,4 +76,10 @@ public class MemberServiceImpl implements MemberService {
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
         return member;
     }
+
+    @Override
+    public Member findMemberById(String memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+    }
 }

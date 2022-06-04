@@ -2,6 +2,7 @@ package someone.alcoholic.domain.member;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import someone.alcoholic.domain.Board.Board;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
@@ -9,11 +10,12 @@ import someone.alcoholic.enums.Role;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(exclude = {})
+//@ToString(exclude = {})
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,6 +50,9 @@ public class Member {
 
     @Column(name = "password_updated_date")
     private Timestamp passwordUpdatedDate;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Board> boards;
 
 
     @Builder // oauth 유저 회원가입
