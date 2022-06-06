@@ -1,5 +1,7 @@
 package someone.alcoholic.domain.member;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
@@ -9,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TmpMember {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

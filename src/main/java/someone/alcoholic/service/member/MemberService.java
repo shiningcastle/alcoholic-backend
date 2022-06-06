@@ -10,4 +10,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface MemberService {
     Member signup(MemberSignupDto signupDto);
     Member oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response);
+    Member findMemberById(String memberId);
 }
