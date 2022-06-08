@@ -1,11 +1,10 @@
 package someone.alcoholic.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -30,7 +29,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        if(authException instanceof BadProviderException) {
+
+        if(authException instanceof InsufficientAuthenticationException) {
+            error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS));
+        }else if(authException instanceof BadProviderException) {
             error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.BAD_PROVIDER));
         } else if (authException instanceof BadCredentialsException) {
             error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.BAD_PASSWORD));
