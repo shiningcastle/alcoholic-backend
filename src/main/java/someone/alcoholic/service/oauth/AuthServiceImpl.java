@@ -19,7 +19,10 @@ import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.token.RefreshTokenService;
 import someone.alcoholic.util.CookieUtil;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -66,5 +69,18 @@ public class AuthServiceImpl implements AuthService {
                 CookieExpiryTime.ACCESS_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(),
                 CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+        Optional<Cookie> refreshTokenCookie = CookieUtil.getCookie(request, AuthToken.REFRESH_TOKEN);
+        if (refreshTokenCookie.isPresent()) {
+            String refreshTokenStr = refreshTokenCookie.get().getValue();
+            AuthToken refreshToken = tokenProvider.convertAuthToken(refreshTokenStr);
+            UUID tokenId = UUID.fromString(refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, String.class));
+            refreshTokenService.delete(tokenId);
+        }
+
+        CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);
+        CookieUtil.deleteCookie(request, response, AuthToken.REFRESH_TOKEN);
     }
 }

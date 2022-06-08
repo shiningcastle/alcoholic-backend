@@ -3,7 +3,7 @@ package someone.alcoholic.controller.board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
@@ -30,21 +30,23 @@ public class BoardController {
         return ApiProvider.success(boards);
     }
 
-    @GetMapping("/board/{boardId}")
+    @GetMapping("/board/{boardSeq}")
     public ApiResult<BoardDto> getBoard(@PathVariable int boardSeq) {
         BoardDto boardDto = boardService.getBoard(boardSeq).convertToDto();
         return ApiProvider.success(boardDto);
     }
 
+    @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ApiResult<Board> addBoard(@RequestBody BoardInputDto boardInputDto, @AuthenticationPrincipal Principal principal) {
+    public ApiResult<Board> addBoard(@RequestBody BoardInputDto boardInputDto, Principal principal) {
         Board board =  boardService.addBoard(principal.getName(), boardInputDto);
         return ApiProvider.success(board);
     }
 
-    @DeleteMapping("/board/{boardId}")
-    public ApiResult<Board> deleteBoard(@AuthenticationPrincipal Principal principal, @PathVariable int boardId) {
-        boardService.deleteBoard(boardId, principal.getName());
+    @Secured("ROLE_USER")
+    @DeleteMapping("/board/{boardSeq}")
+    public ApiResult<Board> deleteBoard(Principal principal, @PathVariable int boardSeq) {
+        boardService.deleteBoard(boardSeq, principal.getName());
         return ApiProvider.success();
     }
 }

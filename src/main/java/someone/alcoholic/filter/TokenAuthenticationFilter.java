@@ -46,7 +46,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         } else if (accessToken != null && !accessToken.isValid()) {
             AuthToken refreshToken = getAuthToken(request, AuthToken.REFRESH_TOKEN);
             if (accessToken.isExpired() && refreshToken != null) {
-                UUID tokenId = refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, UUID.class);
+                UUID tokenId = UUID.fromString(refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, String.class));
                 RefreshToken savedRefreshToken = refreshTokenService.findById(tokenId);
                 String refreshTokenValue = refreshToken.getToken();
                 String savedRefreshTokenValue = (savedRefreshToken != null) ? savedRefreshToken.getTokenValue() : null;
