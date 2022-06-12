@@ -44,6 +44,13 @@ public class BoardController {
     }
 
     @Secured("ROLE_USER")
+    @PutMapping("/board/{boardSeq}")
+    public ApiResult<Board> modifyBoard(@PathVariable int boardSeq, @RequestBody BoardInputDto boardInputDto, Principal principal) {
+        Board board = boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto);
+        return ApiProvider.success(board);
+    }
+
+    @Secured("ROLE_USER")
     @DeleteMapping("/board/{boardSeq}")
     public ApiResult<Board> deleteBoard(Principal principal, @PathVariable int boardSeq) {
         boardService.deleteBoard(boardSeq, principal.getName());
