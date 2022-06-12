@@ -16,6 +16,9 @@ import someone.alcoholic.repository.board.BoardRepository;
 import someone.alcoholic.service.category.BoardCategoryService;
 import someone.alcoholic.service.member.MemberService;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -44,6 +47,20 @@ public class BoardServiceImpl implements BoardService{
 
         Board board = Board.convertInputDtoToBoard(boardInputDto, member, boardCategory);
         return boardRepository.save(board);
+    }
+
+    @Override
+    public Board modifyBoard(String memberId, int boardSeq, BoardInputDto boardInputDto) {
+        Board board = getBoard(boardSeq);
+        if (board.getMember().getId().equals(memberId)) {
+            throw new CustomRuntimeException(ExceptionEnum.USER_AND_WRITER_NOT_EQUAL);
+        }
+        BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardInputDto.getCategory());
+        board.setBoardCategory(boardCategory);
+        board.setContent(boardInputDto.getContent());
+        board.setTitle(boardInputDto.getTitle());
+        board.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
+        return board;
     }
 
     @Override
