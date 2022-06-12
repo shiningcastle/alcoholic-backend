@@ -24,7 +24,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String id;
 
-    @Column(length = 100, nullable = false)     // 인코딩 하기 때문에 더 커야됨
+    @Column(length = 100)     // 인코딩 하기 때문에 더 커야됨
     private String password;
 
     @Column(length = 45, nullable = false, unique = true)
