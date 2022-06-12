@@ -4,10 +4,9 @@ jwt:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/alcoholic-db?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/alcoholic_db?serverTimezone=Asia/Seoul
     username: root
     password: alcoholic1!
-
   redis:
     port: 6379
     host: 127.0.0.1
@@ -21,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
