@@ -21,7 +21,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -49,6 +49,22 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAXM3ICDO2CMT43JFD
+      secret-key: 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
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: alcoholics3
 
 logging:
   level:
@@ -64,4 +80,4 @@ security:
 
 member:
   default:
-    image: defaultImagePath
+    image: default_user.jpeg

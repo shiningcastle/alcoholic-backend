@@ -19,7 +19,9 @@ public enum ExceptionEnum {
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),
-    PAGE_NOT_FOUND("common-003", "없는 페이지이다.");
+    PAGE_NOT_FOUND("common-003", "없는 페이지이다."),
+
+    FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다.");
 
     private String code;
     private String message;
