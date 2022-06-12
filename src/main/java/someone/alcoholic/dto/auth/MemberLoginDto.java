@@ -15,4 +15,9 @@ public class MemberLoginDto {
     @NotBlank(message = "password - 빈칸 또는 공백을 허용하지 않습니다.")
     private String password;
 
+    public MemberLoginDto(String id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+
 }

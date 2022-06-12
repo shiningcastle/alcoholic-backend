@@ -10,5 +10,6 @@ public interface BoardService {
     Page<BoardDto> getBoards(String boardCategoryName, Pageable pageable);
     Board getBoard(int boardSeq);
     Board addBoard(String memberId, BoardInputDto boardInputDto);
+    Board modifyBoard(String memberId, int boardSeq, BoardInputDto boardInputDto);
     void deleteBoard(int boardSeq, String memberId);
 }
