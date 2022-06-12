@@ -4,7 +4,7 @@ jwt:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/alcoholic-db?serverTimezone=Asia/Seoul
     username: root
     password: alcoholic1!
 
@@ -21,7 +21,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
