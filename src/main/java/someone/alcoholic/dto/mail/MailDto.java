@@ -12,7 +12,7 @@ public class MailDto {
     @Email
     private String email;
 
-    @NotBlank(message = "난수의 내용이 없습니다.")
+    @NotBlank(message = "인증번호가 없습니다.")
     private String number;
 
 }
