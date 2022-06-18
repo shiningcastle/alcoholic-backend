@@ -17,14 +17,21 @@ public enum ExceptionEnum {
     UNSUPPORTED_OAUTH_PROVIDER("auth-010", "지원되지 않는 OAuth Provider 입니다."),
     TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
 
+    EMAIL_SEND_FAIL("email-001", "인증 Email 전송 실패."),
+    EMAIL_ALREADY_EXIST("email-002", "이미 등록된 Email 입니다."),
+    EMAIL_CHECK_UNKNOWN("email-003", "인증 요청한 Email 주소가 아닙니다."),
+    EMAIL_CHECK_DISCORD("email-004", "Email 인증번호가 일치하지 않습니다."),
+
     VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),
     PAGE_NOT_FOUND("common-003", "없는 페이지이다."),
 
-    FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다.");
+    FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다."),
 
-    private String code;
-    private String message;
+    SERVER_ERROR("server-001", "서버 에러 발생");
+
+    private final String code;
+    private final String message;
 
     ExceptionEnum(String code, String message) {
         this.code = code;

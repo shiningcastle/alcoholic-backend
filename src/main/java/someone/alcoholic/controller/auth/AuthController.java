@@ -1,32 +1,35 @@
 package someone.alcoholic.controller.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.dto.MailDto;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
+import someone.alcoholic.service.mail.MailService;
 import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.service.oauth.AuthService;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.constraints.Email;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class AuthController {
+
     private final AuthService authService;
     private final MemberService memberService;
-
+    private final MailService mailService;
 
     @PostMapping("/login")
     public ApiResult<MemberDto> login(@RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
@@ -37,12 +40,22 @@ public class AuthController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public ApiResult<MemberDto> logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public ApiResult<?> logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         if(session != null) {
             session.invalidate();
         }
         authService.logout(request, response);
         return ApiProvider.success();
+    }
+
+    @GetMapping("/email-send")
+    public ResponseEntity<?> sendAuthEmail(@RequestParam @Email String email) throws MessagingException {
+        return mailService.sendAuthEmail(email);
+    }
+
+    @PostMapping("/email-check")
+    public ResponseEntity<?> checkAuthEmail(@RequestBody MailDto mailDto) {
+        return mailService.checkAuthEmail(mailDto);
     }
 
     @PostMapping("/signup")

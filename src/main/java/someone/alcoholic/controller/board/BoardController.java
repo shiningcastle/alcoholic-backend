@@ -45,7 +45,7 @@ public class BoardController {
 
     @Secured("ROLE_USER")
     @DeleteMapping("/board/{boardSeq}")
-    public ApiResult<Board> deleteBoard(Principal principal, @PathVariable int boardSeq) {
+    public ApiResult<?> deleteBoard(Principal principal, @PathVariable int boardSeq) {
         boardService.deleteBoard(boardSeq, principal.getName());
         return ApiProvider.success();
     }

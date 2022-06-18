@@ -1,24 +1,27 @@
 package someone.alcoholic.api;
 
 import someone.alcoholic.enums.ExceptionEnum;
-import someone.alcoholic.exception.CustomRuntimeException;
+import someone.alcoholic.enums.MessageEnum;
 
 public class ApiProvider {
-    public static<T> ApiResult<T> success() {
+
+    public static ApiResult<?> success() {
         return new ApiResult<>(true, null, null);
     }
 
-    public static<T> ApiResult<T> success(T message) {
-        return new ApiResult<>(true, message, null);
+    public static<T> ApiResult<T> success(T data) {
+        return new ApiResult<>(true, data, null);
     }
 
-    public static<T> ApiResult<T> error(String errorCode, String errorMessage) {
-        return new ApiResult<>(false, null,
-                new ApiError(errorCode, errorMessage));
+    public static<T> ApiResult<?> success(T data, MessageEnum message) {
+        return new ApiResult<>(true, data, message.getMessage());
     }
 
-    public static<T> ApiResult<T> error(CustomRuntimeException exception) {
-        ExceptionEnum exceptionEnum = exception.getExceptionEnum();
-        return error(exceptionEnum.getCode(), exceptionEnum.getMessage());
+    public static ApiResult<?> fail() {
+        return new ApiResult<>(false, null, null);
+    }
+
+    public static ApiResult<?> fail(ExceptionEnum message) {
+        return new ApiResult<>(false, null, message.getMessage());
     }
 }

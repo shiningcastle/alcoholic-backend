@@ -31,13 +31,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
         if(authException instanceof InsufficientAuthenticationException) {
-            error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS));
+            error = ApiProvider.fail(ExceptionEnum.NOT_ALLOWED_ACCESS);
         }else if(authException instanceof BadProviderException) {
-            error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.BAD_PROVIDER));
+            error = ApiProvider.fail(ExceptionEnum.BAD_PROVIDER);
         } else if (authException instanceof BadCredentialsException) {
-            error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.BAD_PASSWORD));
+            error = ApiProvider.fail(ExceptionEnum.BAD_PASSWORD);
         } else {
-            error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+            error = ApiProvider.fail(ExceptionEnum.USER_NOT_EXIST);
         }
         ObjectMapper om = new ObjectMapper();
         response.getWriter().write(om.writeValueAsString(error));

@@ -20,7 +20,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         //response에 넣기
-        ApiResult<?> error = ApiProvider.error(new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS));
+        ApiResult<?> error = ApiProvider.fail(ExceptionEnum.NOT_ALLOWED_ACCESS);
         ObjectMapper om = new ObjectMapper();
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
