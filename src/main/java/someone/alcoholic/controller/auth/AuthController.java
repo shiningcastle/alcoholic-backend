@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.dto.MailDto;
+import someone.alcoholic.dto.mail.MailDto;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.dto.member.MemberSignupDto;

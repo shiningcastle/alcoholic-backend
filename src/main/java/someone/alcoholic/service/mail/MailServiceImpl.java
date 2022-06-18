@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
-import someone.alcoholic.dto.MailDto;
+import someone.alcoholic.dto.mail.MailDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.exception.CustomRuntimeException;

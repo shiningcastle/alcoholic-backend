@@ -1,4 +1,4 @@
-package someone.alcoholic.dto;
+package someone.alcoholic.dto.mail;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
