@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 
 @AllArgsConstructor
 @Getter
-public class AuthMailDto {
+public class MailDto {
 
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "이메일 형식에 맞지 않습니다.")

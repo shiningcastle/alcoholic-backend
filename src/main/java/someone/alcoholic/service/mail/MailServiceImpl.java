@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
-import someone.alcoholic.domain.mail.AuthMail;
-import someone.alcoholic.dto.mail.AuthMailDto;
+import someone.alcoholic.domain.mail.Mail;
+import someone.alcoholic.dto.mail.MailDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.exception.CustomRuntimeException;
-import someone.alcoholic.repository.mail.AuthMailRepository;
+import someone.alcoholic.repository.mail.MailRepository;
 import someone.alcoholic.repository.member.MemberRepository;
 
 import javax.mail.Message;
@@ -32,7 +32,7 @@ public class MailServiceImpl implements MailService {
     private static final Duration NUMBER_DURATION = Duration.ofMinutes(5); // 인증번호 체크 제한시간 5분
     private final RedisTemplate<String, Object> redisTemplate;
     private final MemberRepository memberRepository;
-    private final AuthMailRepository authMailRepository;
+    private final MailRepository mailRepository;
     private final JavaMailSender mailSender;
 
     public ResponseEntity<?> sendAuthEmail(String email, MailType type) throws MessagingException {
@@ -46,7 +46,7 @@ public class MailServiceImpl implements MailService {
         return new ResponseEntity<>(ApiProvider.success(null, MessageEnum.EMAIL_SEND_SUCCESS), HttpStatus.OK);
     }
 
-    public ResponseEntity<?> checkAuthEmail(AuthMailDto mailDto, MailType type) {
+    public ResponseEntity<?> checkAuthEmail(MailDto mailDto, MailType type) {
         String email = mailDto.getEmail();
         log.info("이메일 인증절차 시작 : {}", email);
         String savedNumber = redisGetNumber(email, type);
@@ -61,14 +61,14 @@ public class MailServiceImpl implements MailService {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         String typeName = type.getType();
         log.info("{} 이메일 인증 기록 DB 저장 시작 : {} - {}", typeName, email, now);
-        Optional<AuthMail> authMailOpt = authMailRepository.findByEmailAndType(email, type);
+        Optional<Mail> authMailOpt = mailRepository.findByEmailAndType(email, type);
         if (authMailOpt.isPresent()) {
-            AuthMail authMail = authMailOpt.get();
-            authMail.setLastDate(now); // update auth_mail
-            log.info("{} 이메일 인증 요청 성공 : {} (before : {}, now : {})", typeName, email, authMail.getLastDate(), now);
+            Mail mail = authMailOpt.get();
+            mail.setLastDate(now); // update auth_mail
+            log.info("{} 이메일 인증 요청 성공 : {} (before : {}, now : {})", typeName, email, mail.getLastDate(), now);
         } else {
-            AuthMail authMail = AuthMail.builder().email(email).type(type).lastDate(now).build();
-            authMailRepository.save(authMail);
+            Mail mail = Mail.builder().email(email).type(type).lastDate(now).build();
+            mailRepository.save(mail);
             log.info("{} 이메일 인증 요청 성공 - 최초 요청 : {} (now : {})", typeName, email, now);
         }
         redisTemplate.delete(type.getPrefix() + email); // redis 인증번호 기록삭제

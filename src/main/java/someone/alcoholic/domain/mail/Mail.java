@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 @Getter
 @Entity(name = "auth_mail")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AuthMail {
+public class Mail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class AuthMail {
     private Timestamp lastDate;
 
     @Builder
-    public AuthMail(Long seq, String email, MailType type, Timestamp lastDate) {
+    public Mail(Long seq, String email, MailType type, Timestamp lastDate) {
         this.seq = seq;
         this.email = email;
         this.type = type;
