@@ -1,6 +1,7 @@
 package someone.alcoholic.service.oauth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -48,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
                 new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
     }
 
     private Authentication getAuthentication(String memberId, String pw) {
@@ -60,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
 
     private String getAuthority(Authentication authentication) {
         return authentication.getAuthorities().stream().findAny()
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.VALUE_NOT_FOUND))
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.VALUE_NOT_FOUND))
                 .getAuthority();
     }
 

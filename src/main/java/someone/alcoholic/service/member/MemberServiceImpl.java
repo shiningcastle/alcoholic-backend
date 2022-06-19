@@ -2,6 +2,7 @@ package someone.alcoholic.service.member;
 
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,25 +46,25 @@ public class MemberServiceImpl implements MemberService {
 
     private void checkSameIdOrNickname(MemberSignupDto signupDto) {
         memberRepository.findById(signupDto.getId())
-                .ifPresent((mem) -> { throw new CustomRuntimeException(ExceptionEnum.USER_ALREADY_EXIST);});
+                .ifPresent((mem) -> { throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_ALREADY_EXIST);});
         memberRepository.findByNickname(signupDto.getNickname())
-                .ifPresent((mem) -> { throw new CustomRuntimeException(ExceptionEnum.NICKNAME_ALREADY_EXIST);});
+                .ifPresent((mem) -> { throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.NICKNAME_ALREADY_EXIST);});
     }
 
     @Override
     public Member oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response) {
         String nickname = signupDto.getNickname();
         Cookie cookie = CookieUtil.getCookie(request, AuthToken.NICKNAME_TOKEN)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.TOKEN_NOT_EXIST));
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.TOKEN_NOT_EXIST));
         AuthToken nicknameToken = authTokenProvider.convertAuthToken(cookie.getValue());
         Claims tokenClaims = nicknameToken.getTokenClaims();
         if(tokenClaims == null) {
-            throw new CustomRuntimeException(ExceptionEnum.TOKEN_NOT_EXIST);
+            throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.TOKEN_NOT_EXIST);
         }
 
         String memberId = tokenClaims.get(AuthToken.MEMBER_ID, String.class);
         Member member = tmpMemberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.TMP_USER_NOT_EXIST))
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.TMP_USER_NOT_EXIST))
                 .convertToMember(nickname);
         memberRepository.save(member);
 
@@ -80,6 +81,6 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member findMemberById(String memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
     }
 }

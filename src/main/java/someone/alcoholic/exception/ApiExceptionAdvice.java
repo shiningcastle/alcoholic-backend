@@ -15,22 +15,22 @@ import javax.mail.MessagingException;
 public class ApiExceptionAdvice {
 
     @ExceptionHandler({CustomRuntimeException.class})
-    public ResponseEntity<ApiResult<ExceptionEnum>> customExceptionHandler(CustomRuntimeException ex) {
-        ExceptionEnum exception = ex.getExceptionEnum();
+    public ResponseEntity<ApiResult<?>> customExceptionHandler(CustomRuntimeException e) {
+        ExceptionEnum exception = e.getException();
         log.error("ERROR {} : {}" , exception.getCode(), exception.getMessage());
-        ex.printStackTrace();
-        return new ResponseEntity<>(new ApiResult<>(false, null, exception), HttpStatus.BAD_REQUEST);
+        e.printStackTrace();
+        return new ResponseEntity<>(new ApiResult<>(false, null, exception.getMessage()), e.getStatus());
     }
 
     @ExceptionHandler({MessagingException.class})
-    public ResponseEntity<ApiResult> messagingExceptionHandler(MessagingException e) {
+    public ResponseEntity<ApiResult<?>> messagingExceptionHandler(MessagingException e) {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
-        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.EMAIL_SEND_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.EMAIL_SEND_FAIL.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<ApiResult> exceptionHandler(Exception e) {
+    public ResponseEntity<ApiResult<?>> exceptionHandler(Exception e) {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.SERVER_ERROR.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);

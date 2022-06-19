@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.member.TmpMember;
@@ -49,7 +50,7 @@ public class OAuth2Attribute {
                 attribute = ofKakao(oAuthProvider, attributes);
                 break;
             default:
-                throw new CustomRuntimeException(ExceptionEnum.UNSUPPORTED_OAUTH_PROVIDER);
+                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.UNSUPPORTED_OAUTH_PROVIDER);
         }
         return attribute;
     }

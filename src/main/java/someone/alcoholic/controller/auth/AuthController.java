@@ -7,11 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.dto.mail.MailDto;
+import someone.alcoholic.dto.mail.AuthMailDto;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
+import someone.alcoholic.enums.MailType;
 import someone.alcoholic.service.mail.MailService;
 import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.service.oauth.AuthService;
@@ -48,14 +49,14 @@ public class AuthController {
         return ApiProvider.success();
     }
 
-    @GetMapping("/email-send")
-    public ResponseEntity<?> sendAuthEmail(@RequestParam @Email String email) throws MessagingException {
-        return mailService.sendAuthEmail(email);
+    @GetMapping("/email-send/{type}")
+    public ResponseEntity<?> sendAuthEmail(@RequestParam @Email String email, @PathVariable String type) throws MessagingException {
+        return mailService.sendAuthEmail(email, MailType.valueOf(type.toUpperCase()));
     }
 
-    @PostMapping("/email-check")
-    public ResponseEntity<?> checkAuthEmail(@RequestBody MailDto mailDto) {
-        return mailService.checkAuthEmail(mailDto);
+    @PostMapping("/email-check/{type}")
+    public ResponseEntity<?> checkAuthEmail(@RequestBody AuthMailDto authMailDto, @PathVariable String type) {
+        return mailService.checkAuthEmail(authMailDto, MailType.valueOf(type.toUpperCase()));
     }
 
     @PostMapping("/signup")
