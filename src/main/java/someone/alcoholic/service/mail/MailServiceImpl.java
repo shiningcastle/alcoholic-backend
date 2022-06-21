@@ -36,8 +36,8 @@ public class MailServiceImpl implements MailService {
     private int minutes;
     @Value("${mail.link}")
     private String mailLink;
-    @Value("${mail.success-url}")
-    private String successUrl;
+//    @Value("${mail.success-url}")
+//    private String successUrl;
     @Value("${mail.response}")
     private String mailResponse;
     private final MemberRepository memberRepository;
@@ -81,7 +81,8 @@ public class MailServiceImpl implements MailService {
         PrintWriter out = null;
         try {
             out = response.getWriter();
-            out.println(String.format(mailResponse, successUrl));
+//            out.println(String.format(mailResponse, successUrl));
+            out.println(mailResponse);
             out.flush();
         } catch (IOException e) {
             log.info("이메일 인증성공 Response 메세지 생성 실패");
