@@ -81,14 +81,14 @@ public class MailServiceImpl implements MailService {
             out = response.getWriter();
             out.println(mailResponse);
             out.flush();
+            log.info("이메일 인증성공 Response 메세지 생성 완료");
         } catch (IOException e) {
-            log.info("이메일 인증성공 Response 메세지 생성 실패");
+            log.info("이메일 인증 Response 메세지 생성 실패");
             e.printStackTrace();
         } finally {
             if (out != null)
                 out.close();
         }
-        log.info("이메일 인증성공 Response 메세지 생성 완료");
     }
 
     // 이메일 인증 기록 저장
