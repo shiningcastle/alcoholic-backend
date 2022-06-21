@@ -54,6 +54,7 @@ public class MailServiceImpl implements MailService {
         return new ResponseEntity<>(ApiProvider.success(null, MessageEnum.EMAIL_SEND_SUCCESS), HttpStatus.OK);
     }
 
+    // 이메일 인증 성공 Response 생성
     public ResponseEntity<?> checkAuthEmail(MailType type, String email, int number, HttpServletResponse response) {
         log.info("이메일 인증절차 시작 : {}", email);
         Timestamp now = new Timestamp(System.currentTimeMillis());
