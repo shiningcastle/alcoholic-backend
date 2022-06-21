@@ -18,11 +18,13 @@ public enum ExceptionEnum {
     TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
 
     EMAIL_SEND_FAIL("email-001", "인증 이메일 전송 실패."),
-    EMAIL_NOT_FOUND("email-002", "인증 이메일 w."),
+    EMAIL_NOT_CERTIFIED("email-002", "해당 이메일은 인증되지 않은 이메일입니다."),
     EMAIL_ALREADY_EXIST("email-003", "이미 회원가입이 완료된 이메일 입니다."),
     EMAIL_ALREADY_REQUEST("email-004", "만료기간 내 해당 이메일로 이미 인증 요청되었습니다."),
     EMAIL_CHECK_UNKNOWN("email-005", "인증 요청한 이메일 주소가 아닙니다."),
     EMAIL_CHECK_DISCORD("email-006", "이메일 인증번호가 일치하지 않습니다."),
+
+    REDIS_NOT_EXIST("redis-001", "해당 키의 값이 존재하지 않습니다."),
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),

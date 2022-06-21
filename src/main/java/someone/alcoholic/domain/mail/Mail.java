@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Getter
-@Entity(name = "auth_mail")
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Mail {
 
@@ -26,19 +26,15 @@ public class Mail {
     @Enumerated(EnumType.STRING)
     private MailType type;
 
-    @Column(name = "last_date", nullable = false)
+    @Column(nullable = false)
     @CreationTimestamp
-    private Timestamp lastDate;
+    private Timestamp date;
 
     @Builder
-    public Mail(Long seq, String email, MailType type, Timestamp lastDate) {
+    public Mail(Long seq, String email, MailType type, Timestamp date) {
         this.seq = seq;
         this.email = email;
         this.type = type;
-        this.lastDate = lastDate;
-    }
-
-    public void setLastDate(Timestamp lastDate) {
-        this.lastDate = lastDate;
+        this.date = date;
     }
 }
