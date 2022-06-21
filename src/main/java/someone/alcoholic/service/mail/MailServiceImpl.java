@@ -36,8 +36,6 @@ public class MailServiceImpl implements MailService {
     private int minutes;
     @Value("${mail.link}")
     private String mailLink;
-//    @Value("${mail.success-url}")
-//    private String successUrl;
     @Value("${mail.response}")
     private String mailResponse;
     private final MemberRepository memberRepository;
@@ -69,7 +67,7 @@ public class MailServiceImpl implements MailService {
     }
 
     // 인증된 이메일인지 DB 조회
-    public Optional<Mail> findCertifiedMail(MailType type, String email) {
+    public Optional<Mail> findByEmailAndType(MailType type, String email) {
         log.info("MAIL 테이블 조회 : {} - {}", type, email);
         return mailRepository.findByEmailAndType(email, type);
     }
@@ -81,7 +79,6 @@ public class MailServiceImpl implements MailService {
         PrintWriter out = null;
         try {
             out = response.getWriter();
-//            out.println(String.format(mailResponse, successUrl));
             out.println(mailResponse);
             out.flush();
         } catch (IOException e) {

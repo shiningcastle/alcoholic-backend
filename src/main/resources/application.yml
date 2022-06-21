@@ -104,4 +104,3 @@ mail:
   link: <h2><a href='http://localhost:8080/api/mail/check/%s?email=%s&number=%d'>인증하기</a></h2>
 #    link: <h2><a href='http://alcoholic.tk/api/mail/check/%s?email=%s&number=%d'>인증하기</a></h2>
   response: <script>alert('이메일 인증 성공.\nAlcoholic 페이지로 돌아가 남은 절차를 진행해주세요.'); window.close();</script>
-  #success-url: https://www.naver.com
