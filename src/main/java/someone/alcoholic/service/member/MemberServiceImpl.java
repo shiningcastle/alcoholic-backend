@@ -17,6 +17,7 @@ import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
+import someone.alcoholic.service.mail.MailService;
 import someone.alcoholic.service.token.RefreshTokenService;
 import someone.alcoholic.util.CookieUtil;
 
@@ -35,10 +36,12 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final MailService mailService;
 
     @Override
     public Member signup(MemberSignupDto signupDto) {
         checkSameIdOrNickname(signupDto);
+        mailService.checkEmailCertified(signupDto.getEmail());
         return memberRepository.save(Member.createLocalMember(
                 signupDto.getId(), passwordEncoder.encode(signupDto.getPassword()),
                 signupDto.getNickname(), signupDto.getEmail()));

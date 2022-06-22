@@ -19,8 +19,8 @@ import someone.alcoholic.service.member.MemberService;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class BoardController {
     private final BoardService boardService;
     private final MemberService memberService;

@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import someone.alcoholic.dto.mail.MailDto;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.service.mail.MailService;
 
@@ -13,16 +14,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.Email;
 
 @Controller
-@RequestMapping("/api/mail")
 @RequiredArgsConstructor
+@RequestMapping("/api/mail")
 public class MailController {
 
     private final MailService mailService;
 
     @ResponseBody
     @GetMapping("/send/{type}")
-    public ResponseEntity<?> sendAuthEmail(@PathVariable String type, @RequestParam @Email(message = "이메일은 필수 입력 값입니다.") String email) throws MessagingException {
-        return mailService.sendAuthEmail(MailType.valueOf(type.toUpperCase()), email);
+    public ResponseEntity<?> sendAuthEmail(@PathVariable String type, @RequestBody MailDto mailDto) throws MessagingException {
+        return mailService.sendAuthEmail(MailType.valueOf(type.toUpperCase()), mailDto);
     }
 
     @GetMapping("/check/{type}")

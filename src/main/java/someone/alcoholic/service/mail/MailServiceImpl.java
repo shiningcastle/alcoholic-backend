@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.mail.Mail;
+import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.dto.mail.MailDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.MessageEnum;
@@ -44,9 +46,11 @@ public class MailServiceImpl implements MailService {
     private final MailRepository mailRepository;
     private final JavaMailSender mailSender;
 
-    public ResponseEntity<ApiResult> sendAuthEmail(MailType type, String email) throws MessagingException {
+    public ResponseEntity<ApiResult> sendAuthEmail(MailType type, MailDto mailDto) throws MessagingException {
+        String email = mailDto.getEmail();
+        String id = mailDto.getId();
         log.info("{} 이메일 전송요청 시작 : {}", type, email);
-        checkSameEmail(email);
+        memberCheckByType(type, email, id);
         int number = getRandomNumber(email);
         redisRepository.set(type.getPrefix() + email, number, Duration.ofMinutes(minutes));
         MimeMessage message = getMimeMessage(type, email, number);
@@ -67,10 +71,41 @@ public class MailServiceImpl implements MailService {
         makeAuthResponse(response);
     }
 
-    // 인증된 이메일인지 DB 조회
-    public Optional<Mail> findByEmailAndType(MailType type, String email) {
-        log.info("MAIL 테이블 조회 : {} - {}", type, email);
-        return mailRepository.findByEmailAndType(email, type);
+    public void checkEmailCertified(String email) {
+        log.info("인증된 이메일 여부 조회 - {}", email);
+        if (!mailRepository.existsByEmail(email)) {
+            log.info("미인증 이메일, Mail 테이블 미존재 - {}", email);
+            throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
+        }
+    }
+
+    // 회원가입, 아이디 찾기, 비밀번호 찾기 별 체크
+    private void memberCheckByType(MailType type, String email, String id) {
+        log.info("{} 이메일 인증 MEMBER 테이블 체크 시작 - email : {}, id : {}", type, email, id);
+        // PW 찾기 : Member 테이블 id, email 존재해야 함
+        Optional<Member> memberOpt;
+        if (type == MailType.PASSWORD) {
+            memberOpt = memberRepository.findByIdAndEmail(id, email);
+            if (!memberOpt.isPresent()) {
+                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ID_NOT_EXIST);
+            }
+        } else {
+            memberOpt = memberRepository.findByEmail(email);
+            // 회원가입 : Member 테이블 email 없어야 함
+            if (type == MailType.SIGNUP) {
+                if (memberOpt.isPresent()) {
+                    log.info("{} 이메일 인증 Member 테이블 이메일 존재로 실패 - email : {}, id : {}", type, email, id);
+                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_EXIST);
+                }
+            // ID 찾기 : Member 테이블 email 있어야 함
+            } else if (type == MailType.ID) {
+                if (!memberOpt.isPresent()) {
+                    log.info("{} 이메일 인증 Member 테이블 이메일 미존재로 실패 - email : {}, id : {}", type, email, id);
+                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_NOT_EXIST);
+                }
+            }
+        }
+        log.info("{} 이메일 인증 MEMBER 테이블 체크 통과 - email : {}, id : {}", type, email, id);
     }
 
     private void makeAuthResponse(HttpServletResponse response) {
