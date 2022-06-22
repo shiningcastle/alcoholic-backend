@@ -8,5 +8,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface MailService {
     ResponseEntity<?> sendAuthEmail(MailType type, String email) throws MessagingException;
-    ResponseEntity<?> checkAuthEmail(MailType type, String email, int number, HttpServletResponse response);
+    void checkAuthEmail(MailType type, String email, int number, HttpServletResponse response);
 }

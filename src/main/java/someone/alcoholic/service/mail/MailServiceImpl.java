@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
+import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.mail.Mail;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
@@ -43,7 +44,7 @@ public class MailServiceImpl implements MailService {
     private final MailRepository mailRepository;
     private final JavaMailSender mailSender;
 
-    public ResponseEntity<?> sendAuthEmail(MailType type, String email) throws MessagingException {
+    public ResponseEntity<ApiResult> sendAuthEmail(MailType type, String email) throws MessagingException {
         log.info("{} 이메일 전송요청 시작 : {}", type, email);
         checkSameEmail(email);
         int number = getRandomNumber(email);
@@ -51,11 +52,11 @@ public class MailServiceImpl implements MailService {
         MimeMessage message = getMimeMessage(type, email, number);
         mailSender.send(message);
         log.info("{} 이메일 전송요청 성공 : {}", type, email);
-        return new ResponseEntity<>(ApiProvider.success(null, MessageEnum.EMAIL_SEND_SUCCESS), HttpStatus.OK);
+        return ApiProvider.success(MessageEnum.EMAIL_SEND_SUCCESS);
     }
 
     // 이메일 인증 성공 Response 생성
-    public ResponseEntity<?> checkAuthEmail(MailType type, String email, int number, HttpServletResponse response) {
+    public void checkAuthEmail(MailType type, String email, int number, HttpServletResponse response) {
         log.info("이메일 인증절차 시작 : {}", email);
         Timestamp now = new Timestamp(System.currentTimeMillis());
         int savedNumber = redisGetNumber(email, type);
@@ -64,7 +65,6 @@ public class MailServiceImpl implements MailService {
         redisRepository.delete(type.getPrefix() + email);
         log.info("이메일 인증절차 완료 : {}", email);
         makeAuthResponse(response);
-        return new ResponseEntity<>(ApiProvider.success(null, MessageEnum.EMAIL_AUTH_SUCCESS), HttpStatus.OK);
     }
 
     // 인증된 이메일인지 DB 조회

@@ -1,8 +1,10 @@
 package someone.alcoholic.security;
 
+import com.amazonaws.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import someone.alcoholic.api.ApiProvider;
@@ -20,7 +22,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         //response에 넣기
-        ApiResult<?> error = ApiProvider.fail(ExceptionEnum.NOT_ALLOWED_ACCESS);
+        ResponseEntity<ApiResult> error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.NOT_ALLOWED_ACCESS);
         ObjectMapper om = new ObjectMapper();
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

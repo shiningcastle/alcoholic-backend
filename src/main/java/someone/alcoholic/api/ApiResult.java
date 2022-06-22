@@ -6,9 +6,9 @@ import lombok.Getter;
 public class ApiResult<T> {
     private boolean success;
     private T data;
-    private T message;
+    private String message;
 
-    public ApiResult(boolean success, T data, T message) {
+    public ApiResult(boolean success, T data, String message) {
         this.success = success;
         this.data = data;
         this.message = message;
