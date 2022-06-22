@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
@@ -19,6 +20,7 @@ import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.mail.MailRepository;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.repository.redis.RedisRepository;
+import someone.alcoholic.util.DateUtil;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.time.Duration;
+import java.util.Calendar;
 import java.util.Optional;
 
 @Slf4j
@@ -37,6 +40,8 @@ public class MailServiceImpl implements MailService {
 
     @Value("${mail.minutes}")
     private int minutes;
+    @Value("${mail.hours}")
+    private int hours;
     @Value("${mail.link}")
     private String mailLink;
     @Value("${mail.response}")
@@ -71,11 +76,27 @@ public class MailServiceImpl implements MailService {
         makeAuthResponse(response);
     }
 
-    public void checkEmailCertified(String email) {
-        log.info("인증된 이메일 여부 조회 - {}", email);
-        if (!mailRepository.existsByEmail(email)) {
-            log.info("미인증 이메일, Mail 테이블 미존재 - {}", email);
-            throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
+    public void checkEmailCertified(MailType mailType, String email) {
+        log.info("{} 인증된 이메일 여부 조회 - {}", mailType, email);
+        if (mailType == MailType.SIGNUP) {
+            if (!mailRepository.existsByEmail(email)) {
+                log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", mailType, email);
+                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
+            }
+        } else {
+            Optional<Mail> mailOpt = mailRepository.findTop1ByTypeAndEmailOrderByDate(mailType, email);
+            if (!mailOpt.isPresent()) {
+                log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", mailType, email);
+                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
+            }
+            // 인증메일 기록 하루 내인지 체크
+            Mail mail = mailOpt.get();
+            Timestamp mailDatePlushOne = DateUtil.getDateAfterTime(mail.getDate(), Calendar.HOUR, hours);
+            Timestamp now = new Timestamp(System.currentTimeMillis());
+            if (!now.before(mailDatePlushOne)) {
+                log.info("{} 시간 내 {} 이메일 인증요청 기록 없음 - {}", hours, mailType, email);
+                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_TIME);
+            }
         }
     }
 

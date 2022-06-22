@@ -11,5 +11,5 @@ import javax.servlet.http.HttpServletResponse;
 public interface MailService {
     ResponseEntity<ApiResult> sendAuthEmail(MailType type, MailDto mailDto) throws MessagingException;
     void checkAuthEmail(MailType type, String email, int number, HttpServletResponse response);
-    void checkEmailCertified(String email);
+    void checkEmailCertified(MailType mailType, String email);
 }

@@ -6,12 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import someone.alcoholic.domain.mail.Mail;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.CookieExpiryTime;
+import someone.alcoholic.enums.MailType;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.repository.member.TmpMemberRepository;
@@ -24,6 +26,8 @@ import someone.alcoholic.util.CookieUtil;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.Option;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -41,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Member signup(MemberSignupDto signupDto) {
         checkSameIdOrNickname(signupDto);
-        mailService.checkEmailCertified(signupDto.getEmail());
+        mailService.checkEmailCertified(MailType.SIGNUP, signupDto.getEmail());
         return memberRepository.save(Member.createLocalMember(
                 signupDto.getId(), passwordEncoder.encode(signupDto.getPassword()),
                 signupDto.getNickname(), signupDto.getEmail()));
@@ -85,5 +89,13 @@ public class MemberServiceImpl implements MemberService {
     public Member findMemberById(String memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
+    }
+
+    public String findId(String email) {
+        mailService.checkEmailCertified(MailType.ID, email);
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
+        String id = member.getId();
+        return id.substring(0, id.length() - 3) + "***";
     }
 }

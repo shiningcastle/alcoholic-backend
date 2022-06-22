@@ -26,6 +26,7 @@ public enum ExceptionEnum {
     EMAIL_ID_NOT_EXIST("email-007", "해당 이메일과 아이디로 가입된 회원이 존재하지 않습니다."),
     EMAIL_EXIST("email-008", "해당 이메일로 가입된 회원이 존재합니다."),
     EMAIL_NOT_EXIST("email-009", "해당 이메일로 가입된 회원이 존재하지 않습니다."),
+    EMAIL_CHECK_TIME("eamil-010", "해당 이메일로 인증된 요청을 기간이 만료되었습니다."),
 
     REDIS_NOT_EXIST("redis-001", "해당 키의 값이 존재하지 않습니다."),
 
