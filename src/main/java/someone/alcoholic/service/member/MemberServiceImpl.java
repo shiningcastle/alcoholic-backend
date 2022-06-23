@@ -91,7 +91,7 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
     }
 
-    public String findId(String email) {
+    public String findMemberId(String email) {
         mailService.checkEmailCertified(MailType.ID, email);
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));

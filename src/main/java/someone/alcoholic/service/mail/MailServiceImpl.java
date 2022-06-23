@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.mail.Mail;
-import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.dto.mail.MailDto;
+import someone.alcoholic.enums.BoolEnum;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.MessageEnum;
@@ -51,83 +49,77 @@ public class MailServiceImpl implements MailService {
     private final MailRepository mailRepository;
     private final JavaMailSender mailSender;
 
-    public ResponseEntity<ApiResult> sendAuthEmail(MailType type, MailDto mailDto) throws MessagingException {
-        String email = mailDto.getEmail();
-        String id = mailDto.getId();
+    public ResponseEntity<ApiResult> sendEmail(MailType type, String email) throws MessagingException {
         log.info("{} 이메일 전송요청 시작 : {}", type, email);
-        memberCheckByType(type, email, id);
         int number = getRandomNumber(email);
         redisRepository.set(type.getPrefix() + email, number, Duration.ofMinutes(minutes));
         MimeMessage message = getMimeMessage(type, email, number);
         mailSender.send(message);
+        saveMail(type, email, number, new Timestamp(System.currentTimeMillis()));
         log.info("{} 이메일 전송요청 성공 : {}", type, email);
         return ApiProvider.success(MessageEnum.EMAIL_SEND_SUCCESS);
     }
 
     // 이메일 인증 성공 Response 생성
-    public void checkAuthEmail(MailType type, String email, int number, HttpServletResponse response) {
-        log.info("이메일 인증절차 시작 : {}", email);
-        Timestamp now = new Timestamp(System.currentTimeMillis());
+    public void authEmail(MailType type, String email, int number, HttpServletResponse response) {
+        log.info("{} 이메일 인증절차 시작 : {}", type, email);
         int savedNumber = redisGetNumber(email, type);
         checkSavedNumber(email, number, savedNumber);
-        saveMail(type, email, now);
+        updateMail(type, email, number, new Timestamp(System.currentTimeMillis()));
         redisRepository.delete(type.getPrefix() + email);
-        log.info("이메일 인증절차 완료 : {}", email);
+        log.info("{} 이메일 인증절차 완료 : {}", type, email);
         makeAuthResponse(response);
     }
 
-    public void checkEmailCertified(MailType mailType, String email) {
-        log.info("{} 인증된 이메일 여부 조회 - {}", mailType, email);
-        if (mailType == MailType.SIGNUP) {
-            if (!mailRepository.existsByEmail(email)) {
-                log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", mailType, email);
-                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
-            }
-        } else {
-            Optional<Mail> mailOpt = mailRepository.findTop1ByTypeAndEmailOrderByDate(mailType, email);
-            if (!mailOpt.isPresent()) {
-                log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", mailType, email);
-                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
-            }
-            // 인증메일 기록 하루 내인지 체크
-            Mail mail = mailOpt.get();
-            Timestamp mailDatePlushOne = DateUtil.getDateAfterTime(mail.getDate(), Calendar.HOUR, hours);
-            Timestamp now = new Timestamp(System.currentTimeMillis());
-            if (!now.before(mailDatePlushOne)) {
-                log.info("{} 시간 내 {} 이메일 인증요청 기록 없음 - {}", hours, mailType, email);
-                throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_TIME);
-            }
+    // 인증된 이메일인지 조회
+    public ResponseEntity<ApiResult> checkEmailCertified(MailType type, String email) {
+        log.info("{} 인증된 이메일 여부 조회 시작 - {}", type, email);
+        // 해당 이메일의 가장 최근 인증 기록 조회
+        Optional<Mail> mailOpt = mailRepository.findTop1ByEmailAndTypeAndCompletionOrderByAuthDateDesc(email, type, BoolEnum.Y);
+        if (!mailOpt.isPresent()) {
+            log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", type, email);
+            throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
         }
+        // 인증메일 기록 2시간 내인지 체크
+        Mail mail = mailOpt.get();
+        Timestamp mailDatePlushOne = DateUtil.getDateAfterTime(mail.getAuthDate(), Calendar.HOUR, hours);
+        Timestamp now = new Timestamp(System.currentTimeMillis());
+        if (!now.before(mailDatePlushOne)) {
+            log.info("{} 시간 내 {} 이메일 인증요청 기록 없음 - {}", hours, type, email);
+            throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_TIME);
+        }
+        log.info("{} 인증된 이메일 여부 조회 완료 - {}", type, email);
+        return ApiProvider.success(MessageEnum.EMAIL_CHECK_SUCCESS);
     }
 
     // 회원가입, 아이디 찾기, 비밀번호 찾기 별 체크
-    private void memberCheckByType(MailType type, String email, String id) {
-        log.info("{} 이메일 인증 MEMBER 테이블 체크 시작 - email : {}, id : {}", type, email, id);
-        // PW 찾기 : Member 테이블 id, email 존재해야 함
-        Optional<Member> memberOpt;
-        if (type == MailType.PASSWORD) {
-            memberOpt = memberRepository.findByIdAndEmail(id, email);
-            if (!memberOpt.isPresent()) {
-                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ID_NOT_EXIST);
-            }
-        } else {
-            memberOpt = memberRepository.findByEmail(email);
-            // 회원가입 : Member 테이블 email 없어야 함
-            if (type == MailType.SIGNUP) {
-                if (memberOpt.isPresent()) {
-                    log.info("{} 이메일 인증 Member 테이블 이메일 존재로 실패 - email : {}, id : {}", type, email, id);
-                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_EXIST);
-                }
-            // ID 찾기 : Member 테이블 email 있어야 함
-            } else if (type == MailType.ID) {
-                if (!memberOpt.isPresent()) {
-                    log.info("{} 이메일 인증 Member 테이블 이메일 미존재로 실패 - email : {}, id : {}", type, email, id);
-                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_NOT_EXIST);
-                }
-            }
-        }
-        log.info("{} 이메일 인증 MEMBER 테이블 체크 통과 - email : {}, id : {}", type, email, id);
-    }
+//    private void memberCheckByType(MailType type, String email, String id) {
+//        log.info("{} 이메일 인증 MEMBER 테이블 체크 시작 - email : {}, id : {}", type, email, id);
+//        // PW 찾기 : Member 테이블 id, email 존재해야 함
+//        Optional<Member> memberOpt;
+//        if (type == MailType.PASSWORD) {
+//            memberOpt = memberRepository.findByIdAndEmail(id, email);
+//            if (!memberOpt.isPresent()) {
+//                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ID_NOT_EXIST);
+//            }
+//        } else {
+//            memberOpt = memberRepository.findByEmail(email);
+//            // 회원가입 : Member 테이블 email 없어야 함
+//            if (type == MailType.SIGNUP) {
+//                if (memberOpt.isPresent()) {
+//                    log.info("{} 이메일 인증 Member 테이블 이메일 존재로 실패 - email : {}, id : {}", type, email, id);
+//                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_EXIST);
+//                }
+//            // ID 찾기 : Member 테이블 email 있어야 함
+//            } else if (type == MailType.ID) {
+//                if (!memberOpt.isPresent()) {
+//                    log.info("{} 이메일 인증 Member 테이블 이메일 미존재로 실패 - email : {}, id : {}", type, email, id);
+//                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_NOT_EXIST);
+//                }
+//            }
+//        }
+//        log.info("{} 이메일 인증 MEMBER 테이블 체크 통과 - email : {}, id : {}", type, email, id);
+//    }
 
     private void makeAuthResponse(HttpServletResponse response) {
         log.info("이메일 인증성공 Response 메세지 생성 시작");
@@ -149,11 +141,22 @@ public class MailServiceImpl implements MailService {
     }
 
     // 이메일 인증 기록 저장
-    private void saveMail(MailType type, String email, Timestamp now) {
-        log.info("{} 이메일 인증 요청 DB 저장 시작 : {} - {}", type, email, now);
-        Mail mail = Mail.builder().email(email).type(type).date(now).build();
+    private void saveMail(MailType type, String email, int number, Timestamp time) {
+        log.info("{} 이메일 인증 요청 DB 저장 시작 : {} - {}", type, email, time);
+        Mail mail = Mail.builder().email(email).type(type).number(number).sendDate(time).completion(BoolEnum.N).build();
         mailRepository.save(mail);
-        log.info("{} 이메일 인증 요청 DB 저장 완료 : {} (date : {})", type, email, now);
+        log.info("{} 이메일 인증 요청 DB 저장 완료 : {} (date : {})", type, email, time);
+    }
+
+    // 이메일 인증 완료 시간 Update
+    private void updateMail(MailType type, String email, int number, Timestamp time) {
+        log.info("{} 이메일 인증 요청 DB 갱신 시작 : {} - {}", type, email, time);
+        Mail mail = mailRepository.findByEmailAndTypeAndNumberAndCompletion(email, type, number, BoolEnum.N)
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.PAGE_NOT_FOUND));
+        mail.setAuthDate(time);
+        mail.setCompletion(BoolEnum.Y);
+        mailRepository.save(mail);
+        log.info("{} 이메일 인증 요청 DB 갱신 완료 : {} (date : {})", type, email, time);
     }
 
     // redis에서 인증번호 조회
@@ -177,16 +180,6 @@ public class MailServiceImpl implements MailService {
             throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_CHECK_DISCORD);
         }
         log.info("이메일 인증시도 성공 - 인증번호 일치 : {} (input : {}, saved : {})", email, number, savedNumber);
-    }
-
-    // 이메일 중복 체크
-    private void checkSameEmail(String email) {
-        memberRepository.findByEmail(email)
-                .ifPresent((mem) -> {
-                    log.info("이메일 중복체크 탈락 : {}", email);
-                    throw new CustomRuntimeException(HttpStatus.CONFLICT, ExceptionEnum.EMAIL_ALREADY_EXIST);
-                });
-        log.info("이메일 중복체크 통과 : {}", email);
     }
 
     // 이메일 메세지 설정

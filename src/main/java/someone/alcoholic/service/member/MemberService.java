@@ -11,5 +11,5 @@ public interface MemberService {
     Member signup(MemberSignupDto signupDto);
     Member oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response);
     Member findMemberById(String memberId);
-    String findId(String email);
+    String findMemberId(String email);
 }
