@@ -82,9 +82,9 @@ public class MailServiceImpl implements MailService {
         }
         // 인증메일 기록 2시간 내인지 체크
         Mail mail = mailOpt.get();
-        Timestamp mailDatePlushOne = DateUtil.getDateAfterTime(mail.getAuthDate(), Calendar.HOUR, hours);
+        Timestamp mailDatePlusHours = DateUtil.getDateAfterTime(mail.getAuthDate(), Calendar.HOUR, hours);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (!now.before(mailDatePlushOne)) {
+        if (!now.before(mailDatePlusHours)) {
             log.info("{} 시간 내 {} 이메일 인증요청 기록 없음 - {}", hours, type, email);
             throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_TIME);
         }
@@ -153,8 +153,8 @@ public class MailServiceImpl implements MailService {
         log.info("{} 이메일 인증 요청 DB 갱신 시작 : {} - {}", type, email, time);
         Mail mail = mailRepository.findByEmailAndTypeAndNumberAndCompletion(email, type, number, BoolEnum.N)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.PAGE_NOT_FOUND));
-        mail.setAuthDate(time);
-        mail.setCompletion(BoolEnum.Y);
+        mail.recordAuthDate(time);
+        mail.changeCompletion(BoolEnum.Y);
         mailRepository.save(mail);
         log.info("{} 이메일 인증 요청 DB 갱신 완료 : {} (date : {})", type, email, time);
     }

@@ -29,6 +29,13 @@ public class ApiExceptionAdvice {
         return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.EMAIL_SEND_FAIL.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler({IllegalStateException.class})
+    public ResponseEntity<ApiResult<?>> illegalArgumentExceptionHandler(IllegalStateException e) {
+        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        e.printStackTrace();
+        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.ILLEGAL_ARGUMENT.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiResult<?>> exceptionHandler(Exception e) {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());

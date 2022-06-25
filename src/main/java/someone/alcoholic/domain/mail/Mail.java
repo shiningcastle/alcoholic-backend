@@ -51,11 +51,11 @@ public class Mail {
         this.completion = completion;
     }
 
-    public void setAuthDate(Timestamp authDate) {
+    public void recordAuthDate(Timestamp authDate) {
         this.authDate = authDate;
     }
 
-    public void setCompletion(BoolEnum completion) {
+    public void changeCompletion(BoolEnum completion) {
         this.completion = completion;
     }
 }
