@@ -36,4 +36,10 @@ public class ReplyController {
         ReplyDto replyDto = replyService.modifyReply(replyInputDto, principal.getName(), replySeq);
         return ApiProvider.success(replyDto);
     }
+
+    @DeleteMapping("reply/{replySeq}")
+    public ApiResult<?> deleteReply(@PathVariable long replySeq) {
+        replyService.deleteReply(replySeq);
+        return ApiProvider.success();
+    }
 }
