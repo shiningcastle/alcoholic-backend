@@ -6,14 +6,14 @@ import java.sql.Timestamp;
 
 @Getter
 public class ReplyDto {
-    private int seq;
-    private int replyParent;
+    private Long seq;
+    private Long replyParent;
     private String content;
     private Boolean isRoot;
     private Timestamp createdDate;
     private Timestamp updatedDate;
 
-    public ReplyDto(int seq, int replyParent, String content, Boolean isRoot, Timestamp createdDate, Timestamp updatedDate) {
+    public ReplyDto(Long seq, Long replyParent, String content, Boolean isRoot, Timestamp createdDate, Timestamp updatedDate) {
         this.seq = seq;
         this.replyParent = replyParent;
         this.content = content;

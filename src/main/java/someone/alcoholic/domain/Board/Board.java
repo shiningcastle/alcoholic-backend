@@ -22,7 +22,7 @@ import java.util.List;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int seq;
+    private Long seq;
 
     @Column(nullable = false)
     private String title;

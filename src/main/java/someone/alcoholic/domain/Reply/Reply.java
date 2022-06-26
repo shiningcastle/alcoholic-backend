@@ -19,8 +19,8 @@ import java.sql.Timestamp;
 public class Reply {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int seq;
-    private int replyParent;
+    private Long seq;
+    private Long replyParent;
     private String content;
     private Boolean isRoot;
 
@@ -38,7 +38,7 @@ public class Reply {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
-    public Reply(boolean isRoot, int replyParent, String content) {
+    public Reply(boolean isRoot, long replyParent, String content) {
         this.isRoot = isRoot;
         this.replyParent = replyParent;
         this.content = content;
