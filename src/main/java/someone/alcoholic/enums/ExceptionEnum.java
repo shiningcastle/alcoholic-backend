@@ -16,11 +16,12 @@ public enum ExceptionEnum {
     TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않는다."),
     UNSUPPORTED_OAUTH_PROVIDER("auth-010", "지원되지 않는 OAuth Provider 입니다."),
     TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
-    USER_AND_WRITER_NOT_EQUAL("auth-011", "임시 회원 id가 없음"),
+    USER_AND_WRITER_NOT_EQUAL("auth-011", "작성자와 유저가 다릅니다."),
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),
-    PAGE_NOT_FOUND("common-003", "없는 페이지이다.");
+    PAGE_NOT_FOUND("common-003", "없는 페이지이다."),
+    REPLY_NOT_FOUND("common-003", "없는 댓글이다.");
 
     private String code;
     private String message;
