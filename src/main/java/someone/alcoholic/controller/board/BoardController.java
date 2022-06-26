@@ -32,15 +32,15 @@ public class BoardController {
 
     @GetMapping("/board/{boardSeq}")
     public ApiResult<BoardDto> getBoard(@PathVariable int boardSeq) {
-        BoardDto boardDto = boardService.getBoard(boardSeq).convertToDto();
+        BoardDto boardDto = boardService.findBoardBySeq(boardSeq).convertToDto();
         return ApiProvider.success(boardDto);
     }
 
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ApiResult<Board> addBoard(@RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ApiResult<BoardDto> addBoard(@RequestBody BoardInputDto boardInputDto, Principal principal) {
         Board board =  boardService.addBoard(principal.getName(), boardInputDto);
-        return ApiProvider.success(board);
+        return ApiProvider.success(board.convertToDto());
     }
 
     @Secured("ROLE_USER")

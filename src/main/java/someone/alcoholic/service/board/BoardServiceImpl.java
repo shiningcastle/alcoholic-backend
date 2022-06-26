@@ -35,7 +35,7 @@ public class BoardServiceImpl implements BoardService{
     }
 
     @Override
-    public Board getBoard(int boardSeq) {
+    public Board findBoardBySeq(int boardSeq) {
         return boardRepository.findById(boardSeq)
                 .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.PAGE_NOT_FOUND));
     }
@@ -51,7 +51,7 @@ public class BoardServiceImpl implements BoardService{
 
     @Override
     public Board modifyBoard(String memberId, int boardSeq, BoardInputDto boardInputDto) {
-        Board board = getBoard(boardSeq);
+        Board board = this.findBoardBySeq(boardSeq);
         if (board.getMember().getId().equals(memberId)) {
             throw new CustomRuntimeException(ExceptionEnum.USER_AND_WRITER_NOT_EQUAL);
         }
@@ -66,9 +66,10 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public void deleteBoard(int boardSeq, String memberId) {
         Member member = memberService.findMemberById(memberId);
-        Board board = getBoard(boardSeq);
+        Board board = this.findBoardBySeq(boardSeq);
         if (member.equals(board.getMember())) {
             boardRepository.delete(board);
+            return;
         }
         throw new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS);
     }
