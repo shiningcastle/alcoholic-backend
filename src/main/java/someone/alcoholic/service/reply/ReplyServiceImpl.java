@@ -10,9 +10,14 @@ import someone.alcoholic.domain.Reply.Reply;
 import someone.alcoholic.dto.ReplyDto;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.ReplyInputDto;
-import someone.alcoholic.repository.ReplyRepository;
+import someone.alcoholic.enums.ExceptionEnum;
+import someone.alcoholic.exception.CustomRuntimeException;
+import someone.alcoholic.repository.reply.ReplyRepository;
 import someone.alcoholic.service.board.BoardService;
 import someone.alcoholic.service.member.MemberService;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,11 @@ public class ReplyServiceImpl implements ReplyService {
     private final ReplyRepository replyRepository;
     private final BoardService boardService;
     private final MemberService memberService;
+
+    public Reply findReplyBySeq(long replySeq) {
+        return replyRepository.findById(replySeq)
+                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.REPLY_NOT_FOUND));
+    }
 
     @Override
     public Page<ReplyDto> getReplies(Pageable pageable, long boardSeq) {
@@ -39,6 +49,24 @@ public class ReplyServiceImpl implements ReplyService {
                 Reply.convertInputDtoToReply(replyInputDto, board, member));
         savedReply.setReplyParent();
         return savedReply.convertReplyToDto();
+    }
 
+    @Override
+    @Transactional
+    public ReplyDto modifyReply(ReplyInputDto replyInputDto, String memberId, long relySeq) {
+        Reply reply = findReplyBySeq(relySeq);
+
+        if (reply.getMember().getId().equals(memberId)) {
+            throw new CustomRuntimeException(ExceptionEnum.USER_AND_WRITER_NOT_EQUAL);
+        }
+        reply.setContent(replyInputDto.getContent());
+        reply.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
+        return reply.convertReplyToDto();
+    }
+
+    @Override
+    public void deleteReply(long replySeq) {
+        Reply reply = findReplyBySeq(replySeq);
+        replyRepository.delete(reply);
     }
 }
