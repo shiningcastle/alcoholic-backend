@@ -10,6 +10,7 @@ import someone.alcoholic.dto.ReplyDto;
 import someone.alcoholic.dto.ReplyInputDto;
 import someone.alcoholic.service.reply.ReplyService;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -19,14 +20,20 @@ public class ReplyController {
     private final ReplyService replyService;
 
     @GetMapping("board/{boardSeq}/repllies")
-    public ApiResult<Page<ReplyDto>> getReplies(@PathVariable int boardSeq, Pageable pageable) {
+    public ApiResult<Page<ReplyDto>> getReplies(@PathVariable long boardSeq, Pageable pageable) {
         Page<ReplyDto> replies = replyService.getReplies(pageable, boardSeq);
         return ApiProvider.success(replies);
     }
 
     @PostMapping("board/{boardSeq}/reply")
-    public ApiResult<ReplyDto> addReply(@PathVariable int boardSeq, @RequestBody ReplyInputDto replyInputDto, Principal principal) {
+    public ApiResult<ReplyDto> addReply(@PathVariable long boardSeq, @Valid @RequestBody ReplyInputDto replyInputDto, Principal principal) {
         ReplyDto replyDto = replyService.addReply(replyInputDto, boardSeq, principal.getName());
+        return ApiProvider.success(replyDto);
+    }
+
+    @PutMapping("reply/{replySeq}")
+    public ApiResult<ReplyDto> modifyReply(@PathVariable long replySeq, @Valid @RequestBody ReplyInputDto replyInputDto, Principal principal) {
+        ReplyDto replyDto = replyService.modifyReply(replyInputDto, principal.getName(), replySeq);
         return ApiProvider.success(replyDto);
     }
 }

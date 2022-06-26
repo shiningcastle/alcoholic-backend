@@ -5,6 +5,6 @@ import someone.alcoholic.domain.member.TmpMember;
 
 import java.util.Optional;
 
-public interface TmpMemberRepository extends JpaRepository<TmpMember, Integer>{
+public interface TmpMemberRepository extends JpaRepository<TmpMember, Long>{
     Optional<TmpMember> findById(String id);
 }

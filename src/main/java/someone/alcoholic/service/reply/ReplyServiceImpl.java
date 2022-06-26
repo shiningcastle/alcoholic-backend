@@ -23,7 +23,7 @@ public class ReplyServiceImpl implements ReplyService {
     private final MemberService memberService;
 
     @Override
-    public Page<ReplyDto> getReplies(Pageable pageable, int boardSeq) {
+    public Page<ReplyDto> getReplies(Pageable pageable, long boardSeq) {
         Board board = boardService.findBoardBySeq(boardSeq);
         Page<Reply> replies = replyRepository.findAllByBoardOrderByReplyParent(pageable, board);
         return replies.map(Reply::convertReplyToDto);
@@ -32,7 +32,7 @@ public class ReplyServiceImpl implements ReplyService {
 
     @Override
     @Transactional
-    public ReplyDto addReply(ReplyInputDto replyInputDto, int boardSeq, String memberId) {
+    public ReplyDto addReply(ReplyInputDto replyInputDto, long boardSeq, String memberId) {
         Board board = boardService.findBoardBySeq(boardSeq);
         Member member = memberService.findMemberById(memberId);
         Reply savedReply = replyRepository.save(
