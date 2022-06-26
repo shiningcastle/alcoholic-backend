@@ -18,7 +18,7 @@ import someone.alcoholic.service.oauth.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
@@ -29,7 +29,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ApiResult<MemberDto> login(@RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
+    public ApiResult<MemberDto> login(@Valid @RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
         Member member = authService.login(response, loginDto);
         MemberDto memberDto = member.convertMemberDto();
         return ApiProvider.success(memberDto);
@@ -37,22 +37,19 @@ public class AuthController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public ApiResult<MemberDto> logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
-        if(session != null) {
-            session.invalidate();
-        }
+    public ApiResult<MemberDto> logout(HttpServletRequest request, HttpServletResponse response) {
         authService.logout(request, response);
         return ApiProvider.success();
     }
 
     @PostMapping("/signup")
-    public ApiResult<?> signup(@RequestBody MemberSignupDto signupDto) {
+    public ApiResult<?> signup(@Valid @RequestBody MemberSignupDto signupDto) {
         memberService.signup(signupDto);
         return ApiProvider.success();
     }
 
     @PostMapping("/oauth/signup")
-    public ApiResult<MemberDto> oAuthSignup(@RequestBody OAuthSignupDto oAuthSignupDto,
+    public ApiResult<MemberDto> oAuthSignup(@Valid @RequestBody OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {
         Member member = memberService.oAuthSignup(oAuthSignupDto, req, res);
         MemberDto memberDto = member.convertMemberDto();
