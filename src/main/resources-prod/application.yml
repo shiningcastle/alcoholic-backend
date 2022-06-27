@@ -1,12 +1,16 @@
-jwt:
-  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+spring:
+  profiles:
+    active: prod # 기본 환경 선택
+
+--- # 운영 환경
 
 spring:
+  profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
     username: root
-    password: alcoholic1!
+    password: 134679
 
   redis:
     port: 6379
@@ -65,3 +69,7 @@ security:
 member:
   default:
     image: defaultImagePath
+
+
+jwt:
+  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
