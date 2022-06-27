@@ -3,7 +3,7 @@ package someone.alcoholic.domain.category;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
 
 import javax.persistence.*;
 import java.util.List;

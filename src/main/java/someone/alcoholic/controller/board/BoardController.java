@@ -7,7 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
 import someone.alcoholic.service.board.BoardService;

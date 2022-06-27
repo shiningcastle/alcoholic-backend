@@ -1,4 +1,4 @@
-package someone.alcoholic.domain.Reply;
+package someone.alcoholic.domain.reply;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.ReplyDto;
 import someone.alcoholic.dto.ReplyInputDto;
@@ -36,7 +36,7 @@ public class Reply {
     private Board board;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_reply_board"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_reply_member"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 

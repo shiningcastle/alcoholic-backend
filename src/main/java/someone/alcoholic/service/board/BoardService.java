@@ -2,7 +2,7 @@ package someone.alcoholic.service.board;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
 

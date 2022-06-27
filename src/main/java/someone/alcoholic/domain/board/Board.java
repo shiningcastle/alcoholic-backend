@@ -1,11 +1,11 @@
-package someone.alcoholic.domain.Board;
+package someone.alcoholic.domain.board;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
-import someone.alcoholic.domain.Reply.Reply;
+import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.board.BoardDto;

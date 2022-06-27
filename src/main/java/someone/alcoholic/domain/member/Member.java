@@ -2,8 +2,8 @@ package someone.alcoholic.domain.member;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import someone.alcoholic.domain.Board.Board;
-import someone.alcoholic.domain.Reply.Reply;
+import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;

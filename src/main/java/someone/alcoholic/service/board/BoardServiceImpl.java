@@ -5,7 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.board.BoardDto;
