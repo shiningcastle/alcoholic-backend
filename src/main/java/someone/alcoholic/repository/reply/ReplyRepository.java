@@ -4,9 +4,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import someone.alcoholic.domain.Board.Board;
-import someone.alcoholic.domain.Reply.Reply;
-import someone.alcoholic.dto.ReplyDto;
+import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.reply.Reply;
 
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {

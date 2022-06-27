@@ -1,7 +1,10 @@
-jwt:
-  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+spring:
+  profiles:
+    active: dev
+---
 
 spring:
+  profiles: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
@@ -97,6 +100,9 @@ logging:
 security:
   basic:
     enabled: false
+
+jwt:
+  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
 
 member:
   default:
