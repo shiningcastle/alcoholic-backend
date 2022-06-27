@@ -1,6 +1,7 @@
 package someone.alcoholic.dto.member;
 
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
@@ -9,7 +10,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @NoArgsConstructor
 public class OAuthSignupDto {
-    @NotBlank(message = "nickname - 빈칸 또는 공백을 허용하지 않습니다.")
+
+    @NotBlank(message = "닉네임은 필수 입력값입니다.")
+    @Length(min = 2, max = 16)
     private String nickname;
 
     public OAuthSignupDto(String nickname) {

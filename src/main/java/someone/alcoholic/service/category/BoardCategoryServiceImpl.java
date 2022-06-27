@@ -1,6 +1,7 @@
 package someone.alcoholic.service.category;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.category.BoardCategory;
@@ -16,6 +17,6 @@ public class BoardCategoryServiceImpl implements BoardCategoryService{
 
     public BoardCategory getBoardCategory(String boardCategoryName) {
         return boardCategoryRepository.findByName(boardCategoryName)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.CATEGORY_NOT_FOUND));
     }
 }

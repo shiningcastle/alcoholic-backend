@@ -5,12 +5,12 @@ import lombok.Getter;
 @Getter
 public class ApiResult<T> {
     private boolean success;
-    private T message;
-    private ApiError error;
+    private T data;
+    private String message;
 
-    public ApiResult(boolean success, T message, ApiError error) {
+    public ApiResult(boolean success, T data, String message) {
         this.success = success;
+        this.data = data;
         this.message = message;
-        this.error = error;
     }
 }

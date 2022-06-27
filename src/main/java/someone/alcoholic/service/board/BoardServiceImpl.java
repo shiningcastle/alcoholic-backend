@@ -3,6 +3,7 @@ package someone.alcoholic.service.board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.Board.Board;
@@ -37,7 +38,7 @@ public class BoardServiceImpl implements BoardService{
     @Override
     public Board findBoardBySeq(long boardSeq) {
         return boardRepository.findById(boardSeq)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.PAGE_NOT_FOUND));
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.PAGE_NOT_FOUND));
     }
 
     @Override
@@ -71,6 +72,6 @@ public class BoardServiceImpl implements BoardService{
             boardRepository.delete(board);
             return;
         }
-        throw new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS);
+        //throw new CustomRuntimeException(ExceptionEnum.NOT_ALLOWED_ACCESS);
     }
 }

@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@ToString(exclude = {})
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -31,13 +32,13 @@ public class Member {
     @Column(length = 45, nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String image;
 
-    @Column(length = 15)
+    @Column(length = 15, nullable = false)
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
@@ -49,7 +50,8 @@ public class Member {
     @CreationTimestamp
     private Timestamp createdDate;
 
-    @Column(name = "password_updated_date")
+    @Column(name = "password_updated_date", nullable = false)
+    @CreationTimestamp
     private Timestamp passwordUpdatedDate;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -76,11 +78,9 @@ public class Member {
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .image("DefaultImage")
+                .image("default_user.jpeg")
                 .role(Role.USER)
                 .provider(Provider.LOCAL).build();
-        // 3개월 뒤로 설정
-        member.passwordUpdatedDate = Timestamp.valueOf(LocalDateTime.now().plusMonths(3));
         return member;
     }
 
@@ -88,4 +88,12 @@ public class Member {
         return new MemberDto(this.nickname, this.email, this.image, this.role);
     }
 
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+        setPasswordUpdatedDate(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private void setPasswordUpdatedDate(Timestamp passwordUpdatedDate) {
+        this.passwordUpdatedDate = passwordUpdatedDate;
+    }
 }

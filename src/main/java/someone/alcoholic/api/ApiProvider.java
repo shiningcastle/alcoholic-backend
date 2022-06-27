@@ -1,24 +1,29 @@
 package someone.alcoholic.api;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import someone.alcoholic.enums.ExceptionEnum;
-import someone.alcoholic.exception.CustomRuntimeException;
+import someone.alcoholic.enums.MessageEnum;
 
 public class ApiProvider {
-    public static<T> ApiResult<T> success() {
-        return new ApiResult<>(true, null, null);
+
+    public static ResponseEntity<ApiResult> success() {
+        return new ResponseEntity<>(new ApiResult<>(true, null, null), HttpStatus.OK);
     }
 
-    public static<T> ApiResult<T> success(T message) {
-        return new ApiResult<>(true, message, null);
+    public static<T> ResponseEntity<ApiResult<T>> success(T data) {
+        return new ResponseEntity<>(new ApiResult<>(true, data, null), HttpStatus.OK);
     }
 
-    public static<T> ApiResult<T> error(String errorCode, String errorMessage) {
-        return new ApiResult<>(false, null,
-                new ApiError(errorCode, errorMessage));
+    public static<T> ResponseEntity<ApiResult> success(MessageEnum message) {
+        return new ResponseEntity<>(new ApiResult<>(true, null, message.getMessage()), HttpStatus.OK);
     }
 
-    public static<T> ApiResult<T> error(CustomRuntimeException exception) {
-        ExceptionEnum exceptionEnum = exception.getExceptionEnum();
-        return error(exceptionEnum.getCode(), exceptionEnum.getMessage());
+    public static<T> ResponseEntity<ApiResult<T>> success(T data, MessageEnum message) {
+        return new ResponseEntity<>(new ApiResult<>(true, data, message.getMessage()), HttpStatus.OK);
+    }
+
+    public static ResponseEntity<ApiResult> fail(HttpStatus status, ExceptionEnum message) {
+        return new ResponseEntity<> (new ApiResult<>(false, null, message.getMessage()), status);
     }
 }
