@@ -92,35 +92,6 @@ public class MailServiceImpl implements MailService {
         return ApiProvider.success(MessageEnum.EMAIL_CHECK_SUCCESS);
     }
 
-    // 회원가입, 아이디 찾기, 비밀번호 찾기 별 체크
-//    private void memberCheckByType(MailType type, String email, String id) {
-//        log.info("{} 이메일 인증 MEMBER 테이블 체크 시작 - email : {}, id : {}", type, email, id);
-//        // PW 찾기 : Member 테이블 id, email 존재해야 함
-//        Optional<Member> memberOpt;
-//        if (type == MailType.PASSWORD) {
-//            memberOpt = memberRepository.findByIdAndEmail(id, email);
-//            if (!memberOpt.isPresent()) {
-//                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ID_NOT_EXIST);
-//            }
-//        } else {
-//            memberOpt = memberRepository.findByEmail(email);
-//            // 회원가입 : Member 테이블 email 없어야 함
-//            if (type == MailType.SIGNUP) {
-//                if (memberOpt.isPresent()) {
-//                    log.info("{} 이메일 인증 Member 테이블 이메일 존재로 실패 - email : {}, id : {}", type, email, id);
-//                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_EXIST);
-//                }
-//            // ID 찾기 : Member 테이블 email 있어야 함
-//            } else if (type == MailType.ID) {
-//                if (!memberOpt.isPresent()) {
-//                    log.info("{} 이메일 인증 Member 테이블 이메일 미존재로 실패 - email : {}, id : {}", type, email, id);
-//                    throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_NOT_EXIST);
-//                }
-//            }
-//        }
-//        log.info("{} 이메일 인증 MEMBER 테이블 체크 통과 - email : {}, id : {}", type, email, id);
-//    }
-
     private void makeAuthResponse(HttpServletResponse response) {
         log.info("이메일 인증성공 Response 메세지 생성 시작");
         response.setContentType("text/html");
