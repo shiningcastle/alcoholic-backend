@@ -5,6 +5,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
+import someone.alcoholic.domain.Reply.Reply;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.board.BoardDto;
@@ -12,6 +13,7 @@ import someone.alcoholic.dto.board.BoardInputDto;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +22,7 @@ import java.sql.Timestamp;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int seq;
+    private Long seq;
 
     @Column(nullable = false)
     private String title;
@@ -43,6 +45,9 @@ public class Board {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_posts_board_category"))
     private BoardCategory boardCategory;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<Reply> replies;
 
     public Board(String title, String content) {
         this.title = title;

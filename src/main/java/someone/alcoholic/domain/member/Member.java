@@ -3,6 +3,7 @@ package someone.alcoholic.domain.member;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.Reply.Reply;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
@@ -53,6 +54,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Board> boards;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Reply> replies;
 
 
     @Builder // oauth 유저 회원가입

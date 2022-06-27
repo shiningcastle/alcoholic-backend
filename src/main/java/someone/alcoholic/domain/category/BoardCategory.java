@@ -14,7 +14,7 @@ import java.util.List;
 public class BoardCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int seq;
+    private Long seq;
 
     @Column(nullable = false)
     private String name;

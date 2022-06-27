@@ -14,6 +14,7 @@ import someone.alcoholic.service.board.BoardService;
 import someone.alcoholic.service.category.BoardCategoryService;
 import someone.alcoholic.service.member.MemberService;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -31,28 +32,28 @@ public class BoardController {
     }
 
     @GetMapping("/board/{boardSeq}")
-    public ApiResult<BoardDto> getBoard(@PathVariable int boardSeq) {
-        BoardDto boardDto = boardService.getBoard(boardSeq).convertToDto();
+    public ApiResult<BoardDto> getBoard(@PathVariable long boardSeq) {
+        BoardDto boardDto = boardService.findBoardBySeq(boardSeq).convertToDto();
         return ApiProvider.success(boardDto);
     }
 
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ApiResult<Board> addBoard(@RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ApiResult<BoardDto> addBoard(@Valid @RequestBody BoardInputDto boardInputDto, Principal principal) {
         Board board =  boardService.addBoard(principal.getName(), boardInputDto);
-        return ApiProvider.success(board);
+        return ApiProvider.success(board.convertToDto());
     }
 
     @Secured("ROLE_USER")
     @PutMapping("/board/{boardSeq}")
-    public ApiResult<Board> modifyBoard(@PathVariable int boardSeq, @RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ApiResult<Board> modifyBoard(@PathVariable long boardSeq, @Valid @RequestBody BoardInputDto boardInputDto, Principal principal) {
         Board board = boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto);
         return ApiProvider.success(board);
     }
 
     @Secured("ROLE_USER")
     @DeleteMapping("/board/{boardSeq}")
-    public ApiResult<Board> deleteBoard(Principal principal, @PathVariable int boardSeq) {
+    public ApiResult<Board> deleteBoard(Principal principal, @PathVariable long boardSeq) {
         boardService.deleteBoard(boardSeq, principal.getName());
         return ApiProvider.success();
     }

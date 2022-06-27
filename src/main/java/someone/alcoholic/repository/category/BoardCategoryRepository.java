@@ -7,6 +7,6 @@ import someone.alcoholic.domain.category.BoardCategory;
 import java.util.Optional;
 
 @Repository
-public interface BoardCategoryRepository extends JpaRepository<BoardCategory, Integer> {
+public interface BoardCategoryRepository extends JpaRepository<BoardCategory, Long> {
     Optional<BoardCategory> findByName(String name);
 }
