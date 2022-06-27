@@ -1,11 +1,9 @@
 package someone.alcoholic.controller.auth;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.member.Member;
@@ -21,15 +19,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping("/api")
 @RequiredArgsConstructor
+@RequestMapping("/api/auth")
 public class AuthController {
+
     private final AuthService authService;
     private final MemberService memberService;
 
-
     @PostMapping("/login")
-    public ApiResult<MemberDto> login(@RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
+    public ResponseEntity<ApiResult<MemberDto>> login(@RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
         Member member = authService.login(response, loginDto);
         MemberDto memberDto = member.convertMemberDto();
         return ApiProvider.success(memberDto);
@@ -37,7 +35,7 @@ public class AuthController {
 
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
-    public ApiResult<MemberDto> logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
+    public ResponseEntity<ApiResult> logout(HttpServletRequest request, HttpServletResponse response, HttpSession session) {
         if(session != null) {
             session.invalidate();
         }
@@ -46,13 +44,13 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ApiResult<?> signup(@RequestBody MemberSignupDto signupDto) {
+    public ResponseEntity<ApiResult> signup(@RequestBody MemberSignupDto signupDto) {
         memberService.signup(signupDto);
         return ApiProvider.success();
     }
 
     @PostMapping("/oauth/signup")
-    public ApiResult<MemberDto> oAuthSignup(@RequestBody OAuthSignupDto oAuthSignupDto,
+    public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@RequestBody OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {
         Member member = memberService.oAuthSignup(oAuthSignupDto, req, res);
         MemberDto memberDto = member.convertMemberDto();
