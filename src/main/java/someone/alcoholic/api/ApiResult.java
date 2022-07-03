@@ -1,8 +1,10 @@
 package someone.alcoholic.api;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ApiResult<T> {
     private boolean success;
     private T data;

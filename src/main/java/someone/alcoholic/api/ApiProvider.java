@@ -26,4 +26,8 @@ public class ApiProvider {
     public static ResponseEntity<ApiResult> fail(HttpStatus status, ExceptionEnum message) {
         return new ResponseEntity<> (new ApiResult<>(false, null, message.getMessage()), status);
     }
+
+    public static ResponseEntity<ApiResult> fail(HttpStatus status, String errorMessage) {
+        return new ResponseEntity<> (new ApiResult<>(false, null, errorMessage), status);
+    }
 }
