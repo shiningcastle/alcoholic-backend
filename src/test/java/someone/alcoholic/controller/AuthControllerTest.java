@@ -1,6 +1,7 @@
 package someone.alcoholic.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,12 +11,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.controller.auth.AuthController;
+import someone.alcoholic.controller.mail.MailController;
 import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
+import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.repository.member.TmpMemberRepository;
+import someone.alcoholic.repository.redis.RedisRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.security.WithMockCustomUser;
@@ -23,6 +27,7 @@ import someone.alcoholic.service.member.MemberService;
 
 import javax.servlet.http.Cookie;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
@@ -42,13 +47,41 @@ public class AuthControllerTest {
     private AuthTokenProvider authTokenProvider;
     @Autowired
     private TmpMemberRepository tmpMemberRepository;
+    @Autowired
+    private RedisRepository redisRepository;
 
 
     @Test
+    public void emailCheck() throws Exception {
+        String email = "email@naver.com";
+        ResultActions result0 = mockMvc.perform(get("/api/mail/send/SIGNUP")
+                .param("email", email)
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+        int number = (Integer) redisRepository.get(MailType.SIGNUP.getPrefix() + email);
+        ResultActions result1 = mockMvc.perform(get("/api/mail/auth/SIGNUP")
+                .param("email", email)
+                .param("number", String.valueOf(number))
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        result0.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(MailController.class))
+                .andExpect(handler().methodName("sendAuthEmail"));
+        result1.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(handler().handlerType(MailController.class))
+                .andExpect(handler().methodName("checkAuthEmail"));
+    }
+
+    @Test
+    @DisplayName("mail 인증 안된 회원가입")
     public void signup() throws Exception {
-        MemberSignupDto signUpDto = new MemberSignupDto("tester", "pw", "nickname", "email");
+        emailCheck();
+        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "nickname", "email@naver.com");
         String s = objectMapper.writeValueAsString(signUpDto);
-        ResultActions result = mockMvc.perform(post("/api/signup")
+        ResultActions result = mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(s));
 
@@ -59,13 +92,28 @@ public class AuthControllerTest {
     }
 
     @Test
+    @DisplayName("mail 인증 안한 상태로 회원가입")
+    public void signupWithUnAuthorized() throws Exception {
+        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "nickname", "email@naver.com");
+        String s = objectMapper.writeValueAsString(signUpDto);
+        ResultActions result = mockMvc.perform(post("/api/auth/signup")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(s));
+
+        result.andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(handler().handlerType(AuthController.class))
+                .andExpect(handler().methodName("signup"));
+    }
+
+    @Test
     @WithMockCustomUser
     public void login() throws Exception {
         signup();
 
-        MemberLoginDto memberLoginDto = new MemberLoginDto("tester", "pw");
+        MemberLoginDto memberLoginDto = new MemberLoginDto("tester123", "tester123!");
         String s = objectMapper.writeValueAsString(memberLoginDto);
-        ResultActions result = mockMvc.perform(post("/api/login")
+        ResultActions result = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(s));
 
@@ -78,7 +126,7 @@ public class AuthControllerTest {
     @Test
     @WithMockCustomUser
     public void logout() throws Exception {
-        ResultActions result = mockMvc.perform(post("/api/logout")
+        ResultActions result = mockMvc.perform(post("/api/auth/logout")
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andDo(print())
@@ -99,7 +147,7 @@ public class AuthControllerTest {
         OAuthSignupDto oAuthSignupDto = new OAuthSignupDto("tester");
         String s = objectMapper.writeValueAsString(oAuthSignupDto);
 
-        ResultActions result = mockMvc.perform(post("/api/oauth/signup")
+        ResultActions result = mockMvc.perform(post("/api/auth/oauth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(s)
                 .cookie(new Cookie(AuthToken.NICKNAME_TOKEN, nicknameToken.getToken()))
