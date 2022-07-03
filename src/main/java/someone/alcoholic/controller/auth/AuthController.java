@@ -1,9 +1,15 @@
 package someone.alcoholic.controller.auth;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.member.Member;
@@ -25,6 +31,13 @@ public class AuthController {
     private final AuthService authService;
     private final MemberService memberService;
 
+    @Operation()
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok"),
+            @ApiResponse(code = 400, message = "ok1"),
+            @ApiResponse(code = 404, message = "ok2"),
+            @ApiResponse(code = 500, message = "ok3")
+    })
     @PostMapping("/login")
     public ResponseEntity<ApiResult<MemberDto>> login(@Valid @RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
         Member member = authService.login(response, loginDto);
