@@ -36,8 +36,11 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
 	implementation 'junit:junit:4.13.1'
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+//	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+//	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
