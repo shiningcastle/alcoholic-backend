@@ -8,6 +8,6 @@ import someone.alcoholic.dto.ReplyInputDto;
 public interface ReplyService {
     Page<ReplyDto> getReplies(Pageable pageable, long boardSeq);
     ReplyDto addReply(ReplyInputDto replyInputDto, long boardSeq, String memberId);
-    ReplyDto modifyReply(ReplyInputDto replyInputDto, String memberId, long relySeq);
+    ReplyDto modifyReply(ReplyInputDto replyInputDto, String memberId, long replySeq);
     void deleteReply(long replySeq);
 }

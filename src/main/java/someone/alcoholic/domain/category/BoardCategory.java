@@ -21,4 +21,8 @@ public class BoardCategory {
 
     @OneToMany(mappedBy = "boardCategory", cascade = CascadeType.ALL)
     private List<Board> boards;
+
+    public BoardCategory(String name) {
+        this.name = name;
+    }
 }
