@@ -1,9 +1,5 @@
 package someone.alcoholic.util;
 
-import org.springframework.http.ContentDisposition;
-
-import java.nio.charset.StandardCharsets;
-
 public class CommonUtils {
     private static final String CATEGORY_PREFIX = "/";
     private static final String TIME_SEPARATOR = "_";
