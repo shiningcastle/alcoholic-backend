@@ -1,6 +1,9 @@
 package someone.alcoholic.domain.member;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.reply.Reply;
@@ -10,7 +13,7 @@ import someone.alcoholic.enums.Role;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -55,10 +58,10 @@ public class Member {
     private Timestamp passwordUpdatedDate;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    private List<Board> boards = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Reply> replies;
+    private List<Reply> replies = new ArrayList<>();
 
 
     @Builder // oauth 유저 회원가입

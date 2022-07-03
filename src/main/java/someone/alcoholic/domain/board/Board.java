@@ -13,6 +13,7 @@ import someone.alcoholic.dto.board.BoardInputDto;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -47,7 +48,7 @@ public class Board {
     private BoardCategory boardCategory;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Reply> replies;
+    private List<Reply> replies = new ArrayList<>();
 
     public Board(String title, String content) {
         this.title = title;
@@ -55,7 +56,7 @@ public class Board {
     }
 
     public BoardDto convertToDto() {
-        return new BoardDto(title, content, createdDate, updatedDate, member.getNickname());
+        return new BoardDto(seq, title, content, createdDate, updatedDate, member.getNickname());
     }
 
     public static Board convertInputDtoToBoard(BoardInputDto boardInputDto, Member member, BoardCategory category) {
