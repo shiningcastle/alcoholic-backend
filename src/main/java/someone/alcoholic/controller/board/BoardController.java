@@ -11,7 +11,6 @@ import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
-import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.service.board.BoardService;
 import someone.alcoholic.service.category.BoardCategoryService;
 import someone.alcoholic.service.member.MemberService;
@@ -48,9 +47,9 @@ public class BoardController {
 
     @Secured("ROLE_USER")
     @PutMapping("/board/{boardSeq}")
-    public ResponseEntity<ApiResult<Board>> modifyBoard(@PathVariable long boardSeq, @Valid @RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ResponseEntity<ApiResult<BoardDto>> modifyBoard(@PathVariable long boardSeq, @Valid @RequestBody BoardInputDto boardInputDto, Principal principal) {
         Board board = boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto);
-        return ApiProvider.success(board);
+        return ApiProvider.success(board.convertToDto());
     }
 
     @Secured("ROLE_USER")
