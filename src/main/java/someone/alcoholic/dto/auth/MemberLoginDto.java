@@ -1,5 +1,6 @@
 package someone.alcoholic.dto.auth;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 public class MemberLoginDto {
 
+    @ApiModelProperty(name = "id", example = "helloworld1")
     @NotBlank(message = "아이디는 필수 입력 값입니다.")
     @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-z\\d]{8,16}$",
             message = "아이디는 영문자만 혹은 영문자 + 숫자 조합 형태여야 합니다. 길이는 8자에서 최대 16자까지 가능합니다.")
