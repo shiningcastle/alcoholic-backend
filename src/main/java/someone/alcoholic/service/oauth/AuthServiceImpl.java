@@ -1,6 +1,7 @@
 package someone.alcoholic.service.oauth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -36,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
+        log.info("local 로그인 시작");
         String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
 
@@ -48,6 +51,7 @@ public class AuthServiceImpl implements AuthService {
         refreshTokenService.save(refreshTokenId,
                 new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
+        log.info("local 로그인 성공, access. refresh token 생성");
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
     }
@@ -73,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        log.info("로그아웃 시작");
         Optional<Cookie> refreshTokenCookie = CookieUtil.getCookie(request, AuthToken.REFRESH_TOKEN);
         if (refreshTokenCookie.isPresent()) {
             String refreshTokenStr = refreshTokenCookie.get().getValue();
@@ -83,5 +88,6 @@ public class AuthServiceImpl implements AuthService {
 
         CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);
         CookieUtil.deleteCookie(request, response, AuthToken.REFRESH_TOKEN);
+        log.info("로그아웃 성공, accessToken, refreshToken cookie 제거");
     }
 }
