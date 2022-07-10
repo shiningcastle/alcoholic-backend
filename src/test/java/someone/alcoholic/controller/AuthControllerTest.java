@@ -79,7 +79,7 @@ public class AuthControllerTest {
     @DisplayName("mail 인증 안된 회원가입")
     public void signup() throws Exception {
         emailCheck();
-        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "nickname", "email@naver.com");
+        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "email@naver.com");
         String s = objectMapper.writeValueAsString(signUpDto);
         ResultActions result = mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -94,7 +94,7 @@ public class AuthControllerTest {
     @Test
     @DisplayName("mail 인증 안한 상태로 회원가입")
     public void signupWithUnAuthorized() throws Exception {
-        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "nickname", "email@naver.com");
+        MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "email@naver.com");
         String s = objectMapper.writeValueAsString(signUpDto);
         ResultActions result = mockMvc.perform(post("/api/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)

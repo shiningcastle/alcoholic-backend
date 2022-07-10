@@ -31,13 +31,7 @@ public class AuthController {
     private final AuthService authService;
     private final MemberService memberService;
 
-    @Operation()
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "ok"),
-            @ApiResponse(code = 400, message = "ok1"),
-            @ApiResponse(code = 404, message = "ok2"),
-            @ApiResponse(code = 500, message = "ok3")
-    })
+    @Operation(summary = "로컬 로그인", description = "id, pw를 이용하여 로그인합니다.")
     @PostMapping("/login")
     public ResponseEntity<ApiResult<MemberDto>> login(@Valid @RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
         Member member = authService.login(response, loginDto);
@@ -45,6 +39,7 @@ public class AuthController {
         return ApiProvider.success(memberDto);
     }
 
+    @Operation(summary = "로그아웃", description = "로그아웃합니다.")
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public ResponseEntity<ApiResult> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -52,12 +47,14 @@ public class AuthController {
         return ApiProvider.success();
     }
 
+    @Operation(summary = "로컬 회원가입", description = "id, pw, email을 이용하여 회원가입합니다.")
     @PostMapping("/signup")
     public ResponseEntity<ApiResult> signup(@Valid @RequestBody MemberSignupDto signupDto) {
         memberService.signup(signupDto);
         return ApiProvider.success();
     }
 
+    @Operation(summary = "oAuth2.0 회원가입", description = "oAuth2.0을 이용한 회원가입이다. (닉네임을 입력받음)")
     @PostMapping("/oauth/signup")
     public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {

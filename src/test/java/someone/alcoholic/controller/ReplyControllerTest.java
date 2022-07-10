@@ -14,7 +14,7 @@ import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.reply.Reply;
-import someone.alcoholic.dto.ReplyInputDto;
+import someone.alcoholic.dto.reply.ReplyInputDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 import someone.alcoholic.repository.board.BoardRepository;

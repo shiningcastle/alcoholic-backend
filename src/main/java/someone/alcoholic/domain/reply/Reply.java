@@ -8,8 +8,8 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.dto.ReplyDto;
-import someone.alcoholic.dto.ReplyInputDto;
+import someone.alcoholic.dto.reply.ReplyDto;
+import someone.alcoholic.dto.reply.ReplyInputDto;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -72,11 +72,12 @@ public class Reply {
 
     public static Reply convertInputDtoToReply(ReplyInputDto replyInputDto, Board board, Member member) {
         int replyParent = 0;
-        if (!replyInputDto.getIsRoot()) {
+
+        if (!replyInputDto.isRoot()) {
             replyParent = replyInputDto.getReplyParent();
         }
 
-        Reply reply =  new Reply(replyInputDto.getIsRoot(), replyParent, replyInputDto.getContent());
+        Reply reply =  new Reply(replyInputDto.isRoot(), replyParent, replyInputDto.getContent());
         reply.setBoard(board);
         reply.setMember(member);
         return reply;
