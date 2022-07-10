@@ -16,7 +16,7 @@ public enum ExceptionEnum {
     TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않습니다."),
     UNSUPPORTED_OAUTH_PROVIDER("auth-010", "지원되지 않는 OAuth Provider 입니다."),
     TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
-    USER_AND_WRITER_NOT_EQUAL("auth-011", "작성자와 유저가 다릅니다."),
+    USER_AND_WRITER_NOT_EQUAL("auth-012", "작성자와 유저가 다릅니다."),
 
     EMAIL_SEND_FAIL("email-001", "인증 이메일 전송 실패."),
     EMAIL_NOT_CERTIFIED("email-002", "해당 이메일은 인증되지 않은 이메일입니다."),

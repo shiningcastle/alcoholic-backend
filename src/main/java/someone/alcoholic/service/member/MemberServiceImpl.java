@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import someone.alcoholic.domain.Nickname;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.member.AccountDto;
@@ -16,6 +17,7 @@ import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.exception.CustomRuntimeException;
+import someone.alcoholic.repository.NicknameRepository;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.security.AuthToken;
@@ -27,7 +29,9 @@ import someone.alcoholic.util.CookieUtil;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @Slf4j
@@ -40,16 +44,33 @@ public class MemberServiceImpl implements MemberService {
     private final AuthTokenProvider authTokenProvider;
     private final RefreshTokenService refreshTokenService;
     private final MailService mailService;
+    private final NicknameRepository nicknameRepository;
 
     @Transactional
     @Override
     public Member signup(MemberSignupDto signupDto) {
         log.info("member sign up 시작");
-        checkSameIdOrNickname(signupDto);
+        checkDuplicatedId(signupDto);
         mailService.checkEmailCertified(MailType.SIGNUP, signupDto.getEmail());
+        long nicknameCnt = nicknameRepository.count();
+        boolean fail = true;
+        String nickname = null;
+
+        do {
+            int adjIdx = ThreadLocalRandom.current().nextInt(Long.valueOf(nicknameCnt).intValue());
+            int nounIdx = ThreadLocalRandom.current().nextInt(Long.valueOf(nicknameCnt).intValue());
+            Optional<Nickname> adj = nicknameRepository.findById((long) adjIdx);
+            Optional<Nickname> n = nicknameRepository.findById((long) nounIdx);
+            if(adj.isPresent() && n.isPresent()) {
+                fail = false;
+                int i = ThreadLocalRandom.current().nextInt(99999);
+                nickname = i + adj.get().getAdjective() + n.get().getNoun();
+            }
+        } while(fail);
+
         return memberRepository.save(Member.createLocalMember(
                 signupDto.getId(), passwordEncoder.encode(signupDto.getPassword()),
-                signupDto.getNickname(), signupDto.getEmail()));
+                nickname, signupDto.getEmail()));
     }
 
     @Transactional
@@ -167,14 +188,11 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
     }
 
-    private void checkSameIdOrNickname(MemberSignupDto signupDto) {
+    private void checkDuplicatedId(MemberSignupDto signupDto) {
         memberRepository.findById(signupDto.getId())
                 .ifPresent((mem) -> { throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_ALREADY_EXIST);});
         log.info("해당하는 id가 없다. id = {}", signupDto.getId());
 
-        memberRepository.findByNickname(signupDto.getNickname())
-                .ifPresent((mem) -> { throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.NICKNAME_ALREADY_EXIST);});
-        log.info("해당하는 닉네임가 없다. nickname = {}", signupDto.getNickname());
     }
 
 }
