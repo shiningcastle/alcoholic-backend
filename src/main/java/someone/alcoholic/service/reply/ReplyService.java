@@ -2,8 +2,8 @@ package someone.alcoholic.service.reply;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import someone.alcoholic.dto.ReplyDto;
-import someone.alcoholic.dto.ReplyInputDto;
+import someone.alcoholic.dto.reply.ReplyDto;
+import someone.alcoholic.dto.reply.ReplyInputDto;
 
 public interface ReplyService {
     Page<ReplyDto> getReplies(Pageable pageable, long boardSeq);
