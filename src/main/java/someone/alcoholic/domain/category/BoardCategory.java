@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import someone.alcoholic.domain.board.Board;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -20,9 +21,10 @@ public class BoardCategory {
     private String name;
 
     @OneToMany(mappedBy = "boardCategory", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    private List<Board> boards = new ArrayList<>();
 
     public BoardCategory(String name) {
         this.name = name;
     }
+
 }

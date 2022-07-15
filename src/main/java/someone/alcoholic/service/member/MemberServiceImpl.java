@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import someone.alcoholic.domain.Nickname;
+import someone.alcoholic.domain.nickname.Nickname;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.member.AccountDto;
@@ -23,7 +23,7 @@ import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.mail.MailService;
-import someone.alcoholic.service.token.RefreshTokenService;
+import someone.alcoholic.service.token.TokenService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.Cookie;
@@ -42,7 +42,7 @@ public class MemberServiceImpl implements MemberService {
     private final TmpMemberRepository tmpMemberRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthTokenProvider authTokenProvider;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
     private final MailService mailService;
     private final NicknameRepository nicknameRepository;
 
@@ -96,7 +96,7 @@ public class MemberServiceImpl implements MemberService {
         AuthToken refreshToken = authTokenProvider.createRefreshToken(refreshTokenPk, memberId);
         CookieUtil.addCookie(response, AuthToken.ACCESS_TOKEN, accessToken.getToken(), CookieExpiryTime.ACCESS_COOKIE_MAX_AGE);
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
-        refreshTokenService.save(refreshTokenPk, RefreshToken.builder().tokenValue(refreshToken.getToken()).memberId(memberId).accessToken(accessToken.getToken()).build());
+        tokenService.save(refreshTokenPk, RefreshToken.builder().tokenValue(refreshToken.getToken()).memberId(memberId).accessToken(accessToken.getToken()).build());
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
         return member;
     }

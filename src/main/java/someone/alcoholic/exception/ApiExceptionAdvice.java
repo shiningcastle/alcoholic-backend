@@ -25,7 +25,6 @@ public class ApiExceptionAdvice {
         log.error("ERROR {} : {}" , exception.getCode(), exception.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(e.getStatus(), exception);
-//        return new ResponseEntity<>(new ApiResult<>(false, null, exception.getMessage()), e.getStatus());
     }
 
     @ExceptionHandler({MessagingException.class})
@@ -33,15 +32,13 @@ public class ApiExceptionAdvice {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionEnum.EMAIL_SEND_FAIL);
-//        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.EMAIL_SEND_FAIL.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler({IllegalStateException.class})
-    public ResponseEntity<ApiResult> illegalArgumentExceptionHandler(IllegalStateException e) {
+    @ExceptionHandler({IllegalArgumentException.class})
+    public ResponseEntity<ApiResult> illegalArgumentExceptionHandler(IllegalArgumentException e) {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.ILLEGAL_ARGUMENT);
-//        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.ILLEGAL_ARGUMENT.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
@@ -49,7 +46,6 @@ public class ApiExceptionAdvice {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionEnum.SERVER_ERROR);
-//        return new ResponseEntity<>(new ApiResult<>(false, null, ExceptionEnum.SERVER_ERROR.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

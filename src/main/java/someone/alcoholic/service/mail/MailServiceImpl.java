@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.domain.mail.Mail;
-import someone.alcoholic.enums.BoolEnum;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.MessageEnum;
@@ -75,7 +74,7 @@ public class MailServiceImpl implements MailService {
     public ResponseEntity<ApiResult> checkEmailCertified(MailType type, String email) {
         log.info("{} 인증된 이메일 여부 조회 시작 - {}", type, email);
         // 해당 이메일의 가장 최근 인증 기록 조회
-        Optional<Mail> mailOpt = mailRepository.findTop1ByEmailAndTypeAndCompletionOrderByAuthDateDesc(email, type, BoolEnum.Y);
+        Optional<Mail> mailOpt = mailRepository.findTop1ByEmailAndTypeAndCompletionOrderByAuthDateDesc(email, type, true);
         if (!mailOpt.isPresent()) {
             log.info("{} 미인증 이메일, Mail 테이블 미존재 - {}", type, email);
             throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
@@ -114,7 +113,7 @@ public class MailServiceImpl implements MailService {
     // 이메일 인증 기록 저장
     private void saveMail(MailType type, String email, int number, Timestamp time) {
         log.info("{} 이메일 인증 요청 DB 저장 시작 : {} - {}", type, email, time);
-        Mail mail = Mail.builder().email(email).type(type).number(number).sendDate(time).completion(BoolEnum.N).build();
+        Mail mail = Mail.builder().email(email).type(type).number(number).sendDate(time).completion(false).build();
         mailRepository.save(mail);
         log.info("{} 이메일 인증 요청 DB 저장 완료 : {} (date : {})", type, email, time);
     }
@@ -122,10 +121,10 @@ public class MailServiceImpl implements MailService {
     // 이메일 인증 완료 시간 Update
     private void updateMail(MailType type, String email, int number, Timestamp time) {
         log.info("{} 이메일 인증 요청 DB 갱신 시작 : {} - {}", type, email, time);
-        Mail mail = mailRepository.findByEmailAndTypeAndNumberAndCompletion(email, type, number, BoolEnum.N)
+        Mail mail = mailRepository.findByEmailAndTypeAndNumberAndCompletion(email, type, number, false)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.PAGE_NOT_FOUND));
         mail.recordAuthDate(time);
-        mail.changeCompletion(BoolEnum.Y);
+        mail.changeCompletion(true);
         mailRepository.save(mail);
         log.info("{} 이메일 인증 요청 DB 갱신 완료 : {} (date : {})", type, email, time);
     }

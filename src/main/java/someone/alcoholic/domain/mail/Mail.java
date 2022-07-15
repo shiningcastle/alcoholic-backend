@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import someone.alcoholic.enums.BoolEnum;
 import someone.alcoholic.enums.MailType;
 
 import javax.persistence.*;
@@ -36,12 +35,11 @@ public class Mail {
 
     private Timestamp authDate;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private BoolEnum completion;
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private boolean completion;
 
     @Builder
-    public Mail(Long seq, String email, MailType type, int number, Timestamp sendDate, Timestamp authDate, BoolEnum completion) {
+    public Mail(Long seq, String email, MailType type, int number, Timestamp sendDate, Timestamp authDate, boolean completion) {
         this.seq = seq;
         this.email = email;
         this.type = type;
@@ -55,7 +53,7 @@ public class Mail {
         this.authDate = authDate;
     }
 
-    public void changeCompletion(BoolEnum completion) {
+    public void changeCompletion(boolean completion) {
         this.completion = completion;
     }
 }

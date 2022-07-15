@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.heart.Heart;
 import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
@@ -63,6 +64,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Reply> replies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Heart> hearts = new ArrayList<>();
 
     @Builder // oauth 유저 회원가입
     public Member(String id, String password, String nickname, String email, String image, Provider provider, Role role) {
@@ -73,6 +76,22 @@ public class Member {
         this.image = image;
         this.provider = provider;
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Member) {
+            if (((Member) obj).getId().equals(this.id)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Member createLocalMember(String id, String password, String nickname, String email) {

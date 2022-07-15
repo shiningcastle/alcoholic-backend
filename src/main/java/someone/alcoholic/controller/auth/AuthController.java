@@ -39,7 +39,7 @@ public class AuthController {
         return ApiProvider.success(memberDto);
     }
 
-    @Operation(summary = "로그아웃", description = "로그아웃합니다.")
+    @Operation(summary = "로그아웃", description = "유저 로그아웃")
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout")
     public ResponseEntity<ApiResult> logout(HttpServletRequest request, HttpServletResponse response) {
@@ -47,14 +47,14 @@ public class AuthController {
         return ApiProvider.success();
     }
 
-    @Operation(summary = "로컬 회원가입", description = "id, pw, email을 이용하여 회원가입합니다.")
+    @Operation(summary = "로컬 회원가입", description = "아이디, 비밀번호, 이메일을 입력하여 회원가입")
     @PostMapping("/signup")
     public ResponseEntity<ApiResult> signup(@Valid @RequestBody MemberSignupDto signupDto) {
         memberService.signup(signupDto);
         return ApiProvider.success();
     }
 
-    @Operation(summary = "oAuth2.0 회원가입", description = "oAuth2.0을 이용한 회원가입이다. (닉네임을 입력받음)")
+    @Operation(summary = "OAuth 회원가입", description = "OAuth를 통한 회원가입 (닉네임 입력)")
     @PostMapping("/oauth/signup")
     public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {

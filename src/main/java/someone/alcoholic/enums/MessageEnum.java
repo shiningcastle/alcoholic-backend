@@ -8,7 +8,10 @@ public enum MessageEnum {
     EMAIL_AUTH_SUCCESS("이메일 인증 성공"),
     EMAIL_CHECK_SUCCESS("인증된 이메일"),
     MEMBER_ID_SUCCESS("회원 아이디 찾기 성공"),
-    MEMBER_PASSWORD_SUCCESS("회원 비밀번호 변경 성공");
+    MEMBER_PASSWORD_SUCCESS("회원 비밀번호 변경 성공"),
+
+    HEART_DELETE_SUCCESS("좋아요 삭제 성공"),
+    HEART_SAVE_SUCCESS("좋아요 저장 성공");
 
     private final String message;
 

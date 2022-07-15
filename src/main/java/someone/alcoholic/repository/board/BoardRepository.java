@@ -9,5 +9,6 @@ import someone.alcoholic.domain.category.BoardCategory;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
+
     Page<Board> findAllByBoardCategory(BoardCategory boardCategory, Pageable pageable);
 }

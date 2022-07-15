@@ -18,7 +18,7 @@ import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
-import someone.alcoholic.service.token.RefreshTokenService;
+import someone.alcoholic.service.token.TokenService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.Cookie;
@@ -35,7 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
     public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
         log.info("local 로그인 시작");
@@ -48,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
         AuthToken accessToken = tokenProvider.createAccessToken(memberId, role);
         UUID refreshTokenId = UUID.randomUUID();
         AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
-        refreshTokenService.save(refreshTokenId,
+        tokenService.save(refreshTokenId,
                 new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
         log.info("local 로그인 성공, access. refresh token 생성");
@@ -83,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
             String refreshTokenStr = refreshTokenCookie.get().getValue();
             AuthToken refreshToken = tokenProvider.convertAuthToken(refreshTokenStr);
             UUID tokenId = UUID.fromString(refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, String.class));
-            refreshTokenService.delete(tokenId);
+            tokenService.delete(tokenId);
         }
 
         CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);

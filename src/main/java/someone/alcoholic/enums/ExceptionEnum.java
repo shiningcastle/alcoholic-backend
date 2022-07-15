@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 public enum ExceptionEnum {
-    USER_INFO_NOT_FOUND("auth-001", "이 요청은 인증이 필요합니다."),
+    LOGIN_REQUIRED("auth-001", "로그인하지 않은 유저입니다."),
     USER_NOT_EXIST("auth-002", "해당되는 아이디가 없습니다."),
     BAD_PASSWORD("auth-003", "잘못된 비밀번호입니다."),
     USER_ALREADY_EXIST("auth-004", "이미 존재하는 아이디입니다."),
@@ -28,6 +28,9 @@ public enum ExceptionEnum {
     EMAIL_EXIST("email-008", "해당 이메일로 가입된 회원이 존재합니다."),
     EMAIL_NOT_EXIST("email-009", "해당 이메일로 가입된 회원이 존재하지 않습니다."),
     EMAIL_CHECK_TIME("eamil-010", "해당 이메일로 인증된 요청을 기간이 만료되었습니다."),
+
+    HEART_ALREADY_EXISTS("board-001", "해당 게시글의 좋아요를 이미 누르셨습니다."),
+    HEART_NOT_EXISTS("board-002", "해당 게시글의 좋아요를 등록하지 않았습니다."),
 
     VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),

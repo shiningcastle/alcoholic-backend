@@ -2,6 +2,7 @@ package someone.alcoholic.controller.member;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,8 @@ import someone.alcoholic.dto.member.AccountDto;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.service.member.MemberService;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/member")
@@ -22,14 +25,14 @@ public class MemberController {
 
     @Operation(summary = "유저 id 조회", description = "이메일 인증을 통한 id 조회")
     @PostMapping("/forget/id")
-    public ResponseEntity<ApiResult<String>> findId(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<ApiResult<String>> findId(@RequestBody @Valid AccountDto accountDto) {
         return ApiProvider.success(memberService.findMemberId(accountDto), MessageEnum.MEMBER_ID_SUCCESS);
     }
 
 
     @Operation(summary = "유저 pw 초기화", description = "유저의 pw를 이메일 인증을 통해 재설정한다.")
     @PostMapping("/forget/password")
-    public ResponseEntity<ApiResult> resetPassWord(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<ApiResult> resetPassWord(@RequestBody @Valid AccountDto accountDto) {
         memberService.resetMemberPassword(accountDto);
         return ApiProvider.success(MessageEnum.MEMBER_PASSWORD_SUCCESS);
     }
@@ -37,7 +40,7 @@ public class MemberController {
     
     @Operation(summary = "유저 pw 변경", description = "유저의 pw를 변경한다.")
     @PostMapping("/change/password")
-    public ResponseEntity<ApiResult> changePassWord(@RequestBody AccountDto accountDto) {
+    public ResponseEntity<ApiResult> changePassWord(@RequestBody @Valid AccountDto accountDto) {
         memberService.changeMemberPassword(accountDto);
         return ApiProvider.success(MessageEnum.MEMBER_PASSWORD_SUCCESS);
     }
