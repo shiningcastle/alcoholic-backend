@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.auth.MemberLoginDto;
+import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.exception.CustomRuntimeException;
@@ -37,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
 
-    public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
+    public MemberDto login(HttpServletResponse response, MemberLoginDto loginDto) {
         log.info("local 로그인 시작");
         String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
@@ -51,9 +52,10 @@ public class AuthServiceImpl implements AuthService {
         tokenService.save(refreshTokenId,
                 new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
-        log.info("local 로그인 성공, access. refresh token 생성");
-        return memberRepository.findById(memberId)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
+        log.info("local 로그인 성공, access. refresh token 생성");
+        return member.convertMemberDto();
     }
 
     private Authentication getAuthentication(String memberId, String pw) {

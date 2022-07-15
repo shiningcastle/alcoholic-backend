@@ -1,5 +1,6 @@
 package someone.alcoholic.domain.board;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
@@ -9,7 +10,6 @@ import someone.alcoholic.domain.heart.Heart;
 import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
-import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
 
 import javax.persistence.*;
@@ -33,9 +33,11 @@ public class Board {
     private String content;
 
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdDate;
 
     @UpdateTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

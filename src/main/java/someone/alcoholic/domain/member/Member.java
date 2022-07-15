@@ -1,5 +1,6 @@
 package someone.alcoholic.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,10 +53,12 @@ public class Member {
 
     @Column(name = "created_date", nullable = false)
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdDate;
 
     @Column(name = "password_updated_date", nullable = false)
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp passwordUpdatedDate;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)

@@ -1,5 +1,6 @@
 package someone.alcoholic.domain.mail;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,8 +32,10 @@ public class Mail {
 
     @Column(nullable = false)
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp sendDate;
 
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp authDate;
 
     @Column(nullable = false, columnDefinition = "TINYINT(1)")

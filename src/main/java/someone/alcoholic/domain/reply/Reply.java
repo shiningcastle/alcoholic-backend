@@ -1,5 +1,6 @@
 package someone.alcoholic.domain.reply;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,7 +28,10 @@ public class Reply {
     private Boolean isRoot;
 
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdDate;
+
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY)

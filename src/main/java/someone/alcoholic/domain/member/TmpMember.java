@@ -1,5 +1,6 @@
 package someone.alcoholic.domain.member;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,7 +9,6 @@ import someone.alcoholic.enums.Role;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +29,7 @@ public class TmpMember {
 
         @Column(name = "created_date", nullable = false)
         @CreationTimestamp
+        @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
         private Timestamp createdDate;
 
         public TmpMember(String id, String email, Provider provider) {

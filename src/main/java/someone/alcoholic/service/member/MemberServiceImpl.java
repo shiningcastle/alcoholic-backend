@@ -11,6 +11,7 @@ import someone.alcoholic.domain.nickname.Nickname;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.member.AccountDto;
+import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
 import someone.alcoholic.enums.CookieExpiryTime;
@@ -75,7 +76,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Member oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response) {
+    public MemberDto oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response) {
         String nickname = signupDto.getNickname();
         Cookie cookie = CookieUtil.getCookie(request, AuthToken.NICKNAME_TOKEN)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.TOKEN_NOT_EXIST));
@@ -98,7 +99,7 @@ public class MemberServiceImpl implements MemberService {
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
         tokenService.save(refreshTokenPk, RefreshToken.builder().tokenValue(refreshToken.getToken()).memberId(memberId).accessToken(accessToken.getToken()).build());
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
-        return member;
+        return member.convertMemberDto();
     }
 
     @Override

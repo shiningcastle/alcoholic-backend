@@ -1,7 +1,6 @@
 package someone.alcoholic.controller.auth;
 
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +30,10 @@ public class AuthController {
     private final AuthService authService;
     private final MemberService memberService;
 
-    @Operation(summary = "로컬 로그인", description = "id, pw를 이용하여 로그인합니다.")
+    @Operation(summary = "로컬 로그인", description = "아이디, 비밀번호를 이용하여 로그인합니다.")
     @PostMapping("/login")
-    public ResponseEntity<ApiResult<MemberDto>> login(@Valid @RequestBody MemberLoginDto loginDto, HttpServletResponse response) {
-        Member member = authService.login(response, loginDto);
-        MemberDto memberDto = member.convertMemberDto();
-        return ApiProvider.success(memberDto);
+    public ResponseEntity<ApiResult<MemberDto>> login(@Valid @RequestBody @ApiParam(value = "로그인 정보", required = true) MemberLoginDto loginDto, HttpServletResponse response) {
+        return ApiProvider.success(authService.login(response, loginDto));
     }
 
     @Operation(summary = "로그아웃", description = "유저 로그아웃")
@@ -49,17 +46,15 @@ public class AuthController {
 
     @Operation(summary = "로컬 회원가입", description = "아이디, 비밀번호, 이메일을 입력하여 회원가입")
     @PostMapping("/signup")
-    public ResponseEntity<ApiResult> signup(@Valid @RequestBody MemberSignupDto signupDto) {
+    public ResponseEntity<ApiResult> signup(@Valid @RequestBody @ApiParam(value = "회원가입 정보", required = true) MemberSignupDto signupDto) {
         memberService.signup(signupDto);
         return ApiProvider.success();
     }
 
-    @Operation(summary = "OAuth 회원가입", description = "OAuth를 통한 회원가입 (닉네임 입력)")
+    @Operation(summary = "OAuth 회원가입", description = "SNS 연동 로그인을 통한 회원가입 (닉네임 입력)")
     @PostMapping("/oauth/signup")
-    public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody OAuthSignupDto oAuthSignupDto,
+    public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody @ApiParam(value = "추가 닉네임 정보", required = true) OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {
-        Member member = memberService.oAuthSignup(oAuthSignupDto, req, res);
-        MemberDto memberDto = member.convertMemberDto();
-        return ApiProvider.success(memberDto);
+        return ApiProvider.success(memberService.oAuthSignup(oAuthSignupDto, req, res));
     }
 }

@@ -1,5 +1,6 @@
 package someone.alcoholic.controller.board;
 
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import someone.alcoholic.service.board.BoardService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import java.security.Principal;
 import java.util.List;
@@ -26,29 +28,32 @@ public class BoardController {
 
     @Operation(summary = "게시판 조회", description = "특정 카테고리에 속하는 게시판 조회")
     @GetMapping("/boards/{boardCategory}")
-    public ResponseEntity<ApiResult<List<BoardDto>>> getBoards(HttpServletRequest request, @PathVariable String boardCategory, Pageable pageable) {
+    public ResponseEntity<ApiResult<List<BoardDto>>> getBoards(HttpServletRequest request,
+                                                               @PathVariable @NotEmpty @ApiParam(value = "카테고리 명", required = true, example = "주류 할인 정보") String boardCategory, Pageable pageable) {
         return ApiProvider.success(boardService.getBoards(request, boardCategory, pageable));
     }
 
-    @Operation(summary = "특정 게시물 조회", description = "특정 seq에 해당하는 게시물 조회")
+    @Operation(summary = "특정 게시물 조회", description = "특정 글번호에 해당하는 게시물 조회")
     @Secured("ROLE_USER")
     @GetMapping("/board/{boardSeq}")
-    public ResponseEntity<ApiResult<BoardDto>> getBoard(HttpServletRequest request, @PathVariable @Positive long boardSeq) {
+    public ResponseEntity<ApiResult<BoardDto>> getBoard(HttpServletRequest request,
+                                                        @PathVariable @Positive @ApiParam(value = "글번호", required = true, example = "13") long boardSeq) {
         return ApiProvider.success(boardService.getBoard(request, boardSeq));
     }
 
-    @Operation(summary = "게시물 생성", description = "title, content, category를 입력해  새로운 게시물 생성")
+    @Operation(summary = "게시물 생성", description = "제목, 내용, 카테고리를 받아 게시물 생성")
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ResponseEntity<ApiResult> addBoard(@RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ResponseEntity<ApiResult> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
         boardService.addBoard(principal.getName(), boardInputDto);
         return ApiProvider.success();
     }
 
-    @Operation(summary = "게시물 수정", description = "title, content, category를 입력해 게시물을 수정한다.")
+    @Operation(summary = "게시물 수정", description = "제목, 내용, 카테고리를 받아 게시물을 수정")
     @Secured("ROLE_USER")
     @PutMapping("/board/{boardSeq}")
-    public ResponseEntity<ApiResult> modifyBoard(@PathVariable @Positive long boardSeq, @Valid @RequestBody BoardInputDto boardInputDto, Principal principal) {
+    public ResponseEntity<ApiResult> modifyBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
+                                                 @Valid @RequestBody @ApiParam(value = "게시물 수정 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
         boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto);
         return ApiProvider.success();
     }
@@ -56,7 +61,8 @@ public class BoardController {
     @Operation(summary = "게시물 삭제", description = "특정 게시물을 삭제한다.")
     @Secured("ROLE_USER")
     @DeleteMapping("/board/{boardSeq}")
-    public ResponseEntity<ApiResult> deleteBoard(Principal principal, @PathVariable @Positive long boardSeq) {
+    public ResponseEntity<ApiResult> deleteBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
+                                                 Principal principal) {
         boardService.deleteBoard(boardSeq, principal.getName());
         return ApiProvider.success();
     }
