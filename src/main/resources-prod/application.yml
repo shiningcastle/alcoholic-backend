@@ -52,12 +52,47 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shiningcastle.dev@gmail.com
+    password: lelpbrlqlqhpkenw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 5000
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAXM3ICDO2CMT43JFD
+      secret-key: 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
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: alcoholics3
 
 logging:
   level:
     root: INFO
-    org.hibernate.type: trace
+    org.hibernate.type:
+      descriptor:
+        sql: trace
     com.example.ayoteralab.main: DEBUG
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: ERROR
   file:
     path: logs
 
@@ -65,10 +100,15 @@ security:
   basic:
     enabled: false
 
+jwt:
+  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+
 member:
   default:
     image: default_user.jpeg
 
-
-jwt:
-  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+mail:
+  minutes: 5
+  hours: 2
+  link: <h2><a href='http://alcoholic.tk/api/mail/auth/%s?email=%s&number=%d'>인증하기</a></h2>
+  response: <script>alert('이메일 인증 성공.\nAlcoholic 페이지로 돌아가 남은 절차를 진행해주세요.'); window.close();</script>
