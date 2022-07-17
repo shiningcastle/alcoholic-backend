@@ -8,9 +8,9 @@ spring:
   profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/alcoholic_db?serverTimezone=Asia/Seoul
     username: root
-    password: 134679
+    password: alcoholic1!
 
   redis:
     port: 6379
@@ -68,7 +68,7 @@ security:
 
 member:
   default:
-    image: defaultImagePath
+    image: default_user.jpeg
 
 
 jwt:
