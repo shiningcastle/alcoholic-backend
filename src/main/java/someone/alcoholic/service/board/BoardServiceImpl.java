@@ -73,17 +73,18 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void addBoard(String memberId, BoardInputDto boardInputDto) {
+    public BoardDto addBoard(String memberId, BoardInputDto boardInputDto) {
         log.info("{} 회원 게시글 등록 시작", memberId);
         Member member = memberService.findMemberById(memberId);
         BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardInputDto.getCategory());
         Board board = Board.convertInputDtoToBoard(boardInputDto, member, boardCategory);
-        boardRepository.save(board);
-        log.info("{} 회원 {} 게시글 등록 완료", memberId, board.getSeq());
+        Board savedBoard = boardRepository.save(board);
+        log.info("{} 회원 {} 게시글 등록 완료", memberId, savedBoard.getSeq());
+        return BoardDto.convertDTO(savedBoard, false);
     }
 
     @Override
-    public void modifyBoard(String memberId, long boardSeq, BoardInputDto boardInputDto) {
+    public BoardDto modifyBoard(String memberId, long boardSeq, BoardInputDto boardInputDto) {
         log.info("{} 회원 {} 게시글 수정 시작", memberId, boardSeq);
         Member member = memberService.findMemberById(memberId);
         Board board = findBoardBySeq(boardSeq);
@@ -96,8 +97,9 @@ public class BoardServiceImpl implements BoardService {
         board.setContent(boardInputDto.getContent());
         board.setTitle(boardInputDto.getTitle());
         board.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
-        boardRepository.save(board);
-        log.info("{} 회원 {} 게시글 수정 완료", memberId, boardSeq);
+        Board modifiedBoard = boardRepository.save(board);
+        log.info("{} 회원 {} 게시글 수정 완료", memberId, modifiedBoard.getSeq());
+        return BoardDto.convertDTO(modifiedBoard, heartRepository.existsByMemberAndBoard(member, modifiedBoard));
     }
 
     @Override
