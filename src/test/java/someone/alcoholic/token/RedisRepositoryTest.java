@@ -25,7 +25,7 @@ public class RedisRepositoryTest {
     public void test() {
         // given
         String userId1 = "shiningcastle";
-        String userId2 = "kwkw1994";
+        String userId2 = "test1234";
         String refreshToken1 = "Refresh1";
         String refreshToken2 = "Refresh2";
         String accessToken1 = "Access1";

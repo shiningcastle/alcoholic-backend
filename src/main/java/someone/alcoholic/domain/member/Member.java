@@ -1,15 +1,21 @@
 package someone.alcoholic.domain.member;
 
-import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import someone.alcoholic.domain.Board.Board;
+import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.heart.Heart;
+import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,6 +23,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 //@ToString(exclude = {})
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
@@ -24,19 +31,19 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String id;
 
-    @Column(length = 100, nullable = false)     // 인코딩 하기 때문에 더 커야됨
+    @Column(length = 100)     // 인코딩 하기 때문에 더 커야됨
     private String password;
 
     @Column(length = 45, nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String image;
 
-    @Column(length = 15)
+    @Column(length = 15, nullable = false)
     @Enumerated(EnumType.STRING)
     private Provider provider;
 
@@ -46,14 +53,22 @@ public class Member {
 
     @Column(name = "created_date", nullable = false)
     @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp createdDate;
 
-    @Column(name = "password_updated_date")
+    @Column(name = "password_updated_date", nullable = false)
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp passwordUpdatedDate;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    private List<Board> boards = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Reply> replies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Heart> hearts = new ArrayList<>();
 
     @Builder // oauth 유저 회원가입
     public Member(String id, String password, String nickname, String email, String image, Provider provider, Role role) {
@@ -66,17 +81,31 @@ public class Member {
         this.role = role;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof Member) {
+            if (((Member) obj).getId().equals(this.id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Member createLocalMember(String id, String password, String nickname, String email) {
         Member member = Member.builder()
                 .id(id)
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .image("DefaultImage")
+                .image("default_user.jpeg")
                 .role(Role.USER)
                 .provider(Provider.LOCAL).build();
-        // 3개월 뒤로 설정
-        member.passwordUpdatedDate = Timestamp.valueOf(LocalDateTime.now().plusMonths(3));
         return member;
     }
 
@@ -84,4 +113,12 @@ public class Member {
         return new MemberDto(this.nickname, this.email, this.image, this.role);
     }
 
+    public void changePassword(String newPassword) {
+        this.password = newPassword;
+        setPasswordUpdatedDate(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private void setPasswordUpdatedDate(Timestamp passwordUpdatedDate) {
+        this.passwordUpdatedDate = passwordUpdatedDate;
+    }
 }

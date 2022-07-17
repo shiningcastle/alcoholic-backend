@@ -31,12 +31,16 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: '1.7.25'
 	implementation 'junit:junit:4.13.1'
-	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
-	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+//	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+//	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+//	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -49,4 +53,26 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
+sourceSets {
+	main {
+		resources {
+			srcDirs "src/main/resources", "src/main/resources-${profile}"
+		}
+	}
+}
+
+//bootRun {
+//	String activeProfile = System.properties['spring.profiles.active']
+//	println "zone: $activeProfile"
+//	systemProperty "spring.profiles.active", activeProfile
+//}
+
+tasks {
+	processResources {
+		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
+	}
 }

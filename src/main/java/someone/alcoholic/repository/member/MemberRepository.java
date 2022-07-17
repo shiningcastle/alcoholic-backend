@@ -5,7 +5,9 @@ import someone.alcoholic.domain.member.Member;
 
 import java.util.Optional;
 
-public interface MemberRepository extends JpaRepository<Member, Integer> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findById(String id);
     Optional<Member> findByNickname(String nickname);
+    Optional<Member> findByEmail(String email);
+    Optional<Member> findByIdAndEmail(String id, String email);
 }

@@ -1,7 +1,11 @@
-jwt:
-  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+spring:
+  profiles:
+    active: prod # 기본 환경 선택
+
+--- # 운영 환경
 
 spring:
+  profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/alcoholic_db?serverTimezone=Asia/Seoul
@@ -20,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -48,22 +52,6 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-  servlet:
-    multipart:
-      max-file-size: 10MB
-      max-request-size: 10MB
-
-cloud:
-  aws:
-    credentials:
-      access-key: AKIAXM3ICDO2CMT43JFD
-      secret-key: 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
-    stack:
-      auto: false
-    region:
-      static: ap-northeast-2
-    s3:
-      bucket: alcoholics3
 
 logging:
   level:
@@ -80,3 +68,7 @@ security:
 member:
   default:
     image: default_user.jpeg
+
+
+jwt:
+  secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"

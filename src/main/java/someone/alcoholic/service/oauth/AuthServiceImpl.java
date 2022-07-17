@@ -1,6 +1,8 @@
 package someone.alcoholic.service.oauth;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -10,13 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.domain.token.RefreshToken;
 import someone.alcoholic.dto.auth.MemberLoginDto;
+import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.enums.CookieExpiryTime;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.member.MemberRepository;
 import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
-import someone.alcoholic.service.token.RefreshTokenService;
+import someone.alcoholic.service.token.TokenService;
 import someone.alcoholic.util.CookieUtil;
 
 import javax.servlet.http.Cookie;
@@ -26,15 +29,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final RefreshTokenService refreshTokenService;
+    private final TokenService tokenService;
 
-    public Member login(HttpServletResponse response, MemberLoginDto loginDto) {
+    public MemberDto login(HttpServletResponse response, MemberLoginDto loginDto) {
+        log.info("local 로그인 시작");
         String memberId = loginDto.getId();
         String pw = loginDto.getPassword();
 
@@ -44,11 +49,13 @@ public class AuthServiceImpl implements AuthService {
         AuthToken accessToken = tokenProvider.createAccessToken(memberId, role);
         UUID refreshTokenId = UUID.randomUUID();
         AuthToken refreshToken = tokenProvider.createRefreshToken(refreshTokenId, memberId);
-        refreshTokenService.save(refreshTokenId,
+        tokenService.save(refreshTokenId,
                 new RefreshToken(refreshToken.getToken(), memberId, accessToken.getToken()));
         setCookie(response, accessToken, refreshToken);
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.USER_NOT_EXIST));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
+        log.info("local 로그인 성공, access. refresh token 생성");
+        return member.convertMemberDto();
     }
 
     private Authentication getAuthentication(String memberId, String pw) {
@@ -60,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
     private String getAuthority(Authentication authentication) {
         return authentication.getAuthorities().stream().findAny()
-                .orElseThrow(() -> new CustomRuntimeException(ExceptionEnum.VALUE_NOT_FOUND))
+                .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.VALUE_NOT_FOUND))
                 .getAuthority();
     }
 
@@ -72,15 +79,17 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public void logout(HttpServletRequest request, HttpServletResponse response) {
+        log.info("로그아웃 시작");
         Optional<Cookie> refreshTokenCookie = CookieUtil.getCookie(request, AuthToken.REFRESH_TOKEN);
         if (refreshTokenCookie.isPresent()) {
             String refreshTokenStr = refreshTokenCookie.get().getValue();
             AuthToken refreshToken = tokenProvider.convertAuthToken(refreshTokenStr);
             UUID tokenId = UUID.fromString(refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, String.class));
-            refreshTokenService.delete(tokenId);
+            tokenService.delete(tokenId);
         }
 
         CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);
         CookieUtil.deleteCookie(request, response, AuthToken.REFRESH_TOKEN);
+        log.info("로그아웃 성공, accessToken, refreshToken cookie 제거");
     }
 }

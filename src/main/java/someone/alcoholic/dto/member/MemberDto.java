@@ -1,23 +1,34 @@
 package someone.alcoholic.dto.member;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.hibernate.validator.constraints.Length;
 import someone.alcoholic.enums.Role;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Getter
 @AllArgsConstructor
 public class MemberDto {
-    @NotBlank(message = "nickname 빈(공백) 문자열을 허용하지 않습니다.")
+
+    @ApiModelProperty(name = "nickname", value = "닉네임", example = "1000 병의 소주를 마신 아저씨")
+    @NotBlank(message = "닉네임은 필수 입력값입니다.")
+    @Length(min = 2, max = 16)
     private String nickname;
 
-    @NotBlank(message = "E-Mail 빈(공백) 문자열을 허용하지 않습니다.")
+    @ApiModelProperty(name = "email", value = "이메일", example = "test1234@google.com")
+    @NotBlank(message = "이메일은 필수 입력 값입니다.")
+    @Email(message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
-    @NotBlank(message = "image 빈(공백) 문자열을 허용하지 않습니다.")
+    @ApiModelProperty(name = "image", value = "이미지 파일 경로", example = "/test/default.jpg")
+    @NotBlank(message = "이미지는 필수 입력 값입니다.")
     private String image;
 
-    @NotBlank(message = "role 빈(공백) 문자열을 허용하지 않습니다.")
+    @ApiModelProperty(name = "role", value = "역할", example = "USER")
+    @NotBlank(message = "역할은 필수 입력 값입니다.")
     private Role role;
+
 }
