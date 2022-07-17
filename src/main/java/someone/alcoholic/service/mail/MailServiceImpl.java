@@ -43,7 +43,6 @@ public class MailServiceImpl implements MailService {
     private String mailLink;
     @Value("${mail.response}")
     private String mailResponse;
-    private final MemberRepository memberRepository;
     private final RedisRepository redisRepository;
     private final MailRepository mailRepository;
     private final JavaMailSender mailSender;
