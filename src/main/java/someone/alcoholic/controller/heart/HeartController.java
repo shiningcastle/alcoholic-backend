@@ -33,5 +33,4 @@ public class HeartController {
         heartService.deleteBoardHeart(request, boardSeq);
         return ApiProvider.success(MessageEnum.HEART_DELETE_SUCCESS);
     }
-
 }

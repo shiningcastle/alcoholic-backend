@@ -8,9 +8,9 @@ spring:
   profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/mydb?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/mydb?serverTimezone=Asia/Seoul
     username: root
-    password: 134679
+    password: alcoholic1!
 
   redis:
     port: 6379
@@ -22,6 +22,19 @@ spring:
         max-idle: 8
         max-active: 8
     password: alcoholic1!
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: shiningcastle.dev@gmail.com
+    password: lelpbrlqlqhpkenw
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          timeout: 5000
 
   jpa:
     hibernate:
@@ -66,10 +79,28 @@ security:
   basic:
     enabled: false
 
-member:
-  default:
-    image: defaultImagePath
-
-
 jwt:
   secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
+
+cloud:
+  aws:
+    credentials:
+      access-key: AKIAXM3ICDO2CMT43JFD
+      secret-key: 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
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    s3:
+      bucket: alcoholics3
+
+member:
+  default:
+    image: default_user.jpeg
+
+mail:
+  minutes: 5
+  hours: 2
+  link: <h2><a href='http://localhost:8080/api/mail/auth/%s?email=%s&number=%d'>인증하기</a></h2>
+  #    link: <h2><a href='http://alcoholic.tk/api/mail/check/%s?email=%s&number=%d'>인증하기</a></h2>
+  response: <script>alert('이메일 인증 성공.

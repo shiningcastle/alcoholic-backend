@@ -6,10 +6,12 @@ import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.List;
 
 public interface BoardService {
-    List<BoardDto> getBoards(HttpServletRequest request, String boardCategoryName, Pageable pageable);
+    List<BoardDto> getBoards(HttpServletRequest request, String boardCategoryName,
+                             Pageable pageable, Principal principal);
     BoardDto getBoard(HttpServletRequest request, long boardSeq);
     Board findBoardBySeq(long boardSeq);
     void addBoard(String memberId, BoardInputDto boardInputDto);
