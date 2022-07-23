@@ -30,8 +30,9 @@ public class BoardController {
     @Operation(summary = "게시판 조회", description = "특정 카테고리에 속하는 게시판 조회")
     @GetMapping("/boards/{boardCategory}")
     public ResponseEntity<ApiResult<List<BoardDto>>> getBoards(HttpServletRequest request,
-                                                               @PathVariable @NotEmpty @ApiParam(value = "카테고리 명", required = true, example = "주류 할인 정보") String boardCategory, Pageable pageable) {
-        return ApiProvider.success(boardService.getBoards(request, boardCategory, pageable));
+               @PathVariable @NotEmpty @ApiParam(value = "카테고리 명", required = true, example = "주류 할인 정보") String boardCategory,
+                                                               Pageable pageable, Principal principal) {
+        return ApiProvider.success(boardService.getBoards(request, boardCategory, pageable, principal));
     }
 
     @Operation(summary = "특정 게시물 조회", description = "특정 글번호에 해당하는 게시물 조회")

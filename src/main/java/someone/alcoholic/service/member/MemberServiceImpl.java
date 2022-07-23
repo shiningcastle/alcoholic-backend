@@ -53,21 +53,11 @@ public class MemberServiceImpl implements MemberService {
         log.info("member sign up 시작");
         checkDuplicatedId(signupDto);
         mailService.checkEmailCertified(MailType.SIGNUP, signupDto.getEmail());
-        long nicknameCnt = nicknameRepository.count();
-        boolean fail = true;
-        String nickname = null;
 
-        do {
-            int adjIdx = ThreadLocalRandom.current().nextInt(Long.valueOf(nicknameCnt).intValue());
-            int nounIdx = ThreadLocalRandom.current().nextInt(Long.valueOf(nicknameCnt).intValue());
-            Optional<Nickname> adj = nicknameRepository.findById((long) adjIdx);
-            Optional<Nickname> n = nicknameRepository.findById((long) nounIdx);
-            if(adj.isPresent() && n.isPresent()) {
-                fail = false;
-                int i = ThreadLocalRandom.current().nextInt(99999);
-                nickname = i + adj.get().getAdjective() + n.get().getNoun();
-            }
-        } while(fail);
+        String randomAdj = nicknameRepository.findRandomAdj();
+        String randomNoun = nicknameRepository.findRandomNoun();
+        int randomNum = ThreadLocalRandom.current().nextInt(99999);
+        String nickname = randomNum + "번 " + randomAdj + "한 " + randomNoun;
 
         return memberRepository.save(Member.createLocalMember(
                 signupDto.getId(), passwordEncoder.encode(signupDto.getPassword()),

@@ -18,6 +18,7 @@ import someone.alcoholic.dto.member.MemberSignupDto;
 import someone.alcoholic.dto.member.OAuthSignupDto;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.Provider;
+import someone.alcoholic.repository.NicknameRepository;
 import someone.alcoholic.repository.member.TmpMemberRepository;
 import someone.alcoholic.repository.redis.RedisRepository;
 import someone.alcoholic.security.AuthToken;
@@ -49,6 +50,8 @@ public class AuthControllerTest {
     private TmpMemberRepository tmpMemberRepository;
     @Autowired
     private RedisRepository redisRepository;
+    @Autowired
+    private NicknameRepository nicknameRepository;
 
 
     @Test
@@ -76,7 +79,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("mail 인증 안된 회원가입")
+    @DisplayName("mail 인증 된 회원가입 (성공)")
     public void signup() throws Exception {
         emailCheck();
         MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "email@naver.com");
@@ -92,7 +95,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("mail 인증 안한 상태로 회원가입")
+    @DisplayName("mail 인증 안한 상태로 회원가입 (실패)")
     public void signupWithUnAuthorized() throws Exception {
         MemberSignupDto signUpDto = new MemberSignupDto("tester123", "tester123!", "email@naver.com");
         String s = objectMapper.writeValueAsString(signUpDto);

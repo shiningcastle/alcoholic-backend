@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.board.Board;
@@ -20,6 +22,7 @@ import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.service.token.TokenService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,12 +40,15 @@ public class BoardServiceImpl implements BoardService {
     private final HeartRepository heartRepository;
 
     @Override
-    public List<BoardDto> getBoards(HttpServletRequest request, String boardCategoryName, Pageable pageable) {
+    public List<BoardDto> getBoards(HttpServletRequest request, String boardCategoryName, Pageable pageable,
+                                    Principal principal) {
         log.info("{} 카테고리 게시물 조회 시작", boardCategoryName);
         BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardCategoryName);
         List<Board> boards = boardRepository.findAllByBoardCategory(boardCategory, pageable).getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
-        String memberId = tokenService.getMemberIdByAccessToken(request);
+//        String memberId = tokenService.getMemberIdByAccessToken(request);
+        String memberId = principal.getName();
+
         Member member = memberService.findMemberById(memberId);
         for (Board board : boards) {
             boolean heartCheck = heartRepository.existsByMemberAndBoard(member, board);
@@ -56,7 +62,10 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDto getBoard(HttpServletRequest request, long boardSeq) {
         log.info("{} 게시글 조회 시작", boardSeq);
-        String memberId = tokenService.getMemberIdByAccessToken(request);
+//        String memberId = tokenService.getMemberIdByAccessToken(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String memberId = authentication.getName();
+
         Member member = memberService.findMemberById(memberId);
         Board board = findBoardBySeq(boardSeq);
         boolean heartCheck = heartRepository.existsByMemberAndBoard(member, board);
