@@ -11,6 +11,7 @@ import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.dto.board.BoardDto;
 import someone.alcoholic.dto.board.BoardInputDto;
+import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.service.board.BoardService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,18 +46,16 @@ public class BoardController {
     @Operation(summary = "게시물 생성", description = "제목, 내용, 카테고리를 받아 게시물 생성")
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ResponseEntity<ApiResult> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
-        boardService.addBoard(principal.getName(), boardInputDto);
-        return ApiProvider.success();
+    public ResponseEntity<ApiResult<BoardDto>> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
+        return ApiProvider.success(boardService.addBoard(principal.getName(), boardInputDto), MessageEnum.BOARD_INSERT_SUCCESS);
     }
 
     @Operation(summary = "게시물 수정", description = "제목, 내용, 카테고리를 받아 게시물을 수정")
     @Secured("ROLE_USER")
     @PutMapping("/board/{boardSeq}")
-    public ResponseEntity<ApiResult> modifyBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
+    public ResponseEntity<ApiResult<BoardDto>> modifyBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
                                                  @Valid @RequestBody @ApiParam(value = "게시물 수정 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
-        boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto);
-        return ApiProvider.success();
+        return ApiProvider.success(boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto), MessageEnum.BOARD_UPDATE_SUCCESS);
     }
 
     @Operation(summary = "게시물 삭제", description = "특정 게시물을 삭제한다.")
@@ -65,7 +64,7 @@ public class BoardController {
     public ResponseEntity<ApiResult> deleteBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
                                                  Principal principal) {
         boardService.deleteBoard(boardSeq, principal.getName());
-        return ApiProvider.success();
+        return ApiProvider.success(MessageEnum.BOARD_DELETE_SUCCESS);
     }
 
 }

@@ -14,7 +14,7 @@ public interface BoardService {
                              Pageable pageable, Principal principal);
     BoardDto getBoard(HttpServletRequest request, long boardSeq);
     Board findBoardBySeq(long boardSeq);
-    void addBoard(String memberId, BoardInputDto boardInputDto);
-    void modifyBoard(String memberId, long boardSeq, BoardInputDto boardInputDto);
+    BoardDto addBoard(String memberId, BoardInputDto boardInputDto);
+    BoardDto modifyBoard(String memberId, long boardSeq, BoardInputDto boardInputDto);
     void deleteBoard(long boardSeq, String memberId);
 }
