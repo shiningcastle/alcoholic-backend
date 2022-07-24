@@ -79,4 +79,5 @@ tasks {
 
 jar {
 	enabled = false
+
 }
