@@ -76,3 +76,7 @@ tasks {
 		duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.INCLUDE
 	}
 }
+
+jar {
+	enabled = false
+}
