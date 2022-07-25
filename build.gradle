@@ -55,7 +55,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'prod' : profile
 
 sourceSets {
 	main {
