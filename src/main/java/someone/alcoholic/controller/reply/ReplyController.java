@@ -30,21 +30,21 @@ public class ReplyController {
         return ApiProvider.success(replyService.getReplies(pageable, boardSeq));
     }
 
-    @Operation(summary = "댓글 생성", description = "댓글을 생성")
+    @Operation(summary = "댓글 생성 (인증 필요)", description = "댓글을 생성")
     @PostMapping("board/{boardSeq}/reply")
     public ResponseEntity<ApiResult<ReplyDto>> addReply(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
                                                         @Valid @RequestBody @ApiParam(value = "댓글 생성 정보", required = true) ReplyInputDto replyInputDto, Principal principal) {
         return ApiProvider.success(replyService.addReply(replyInputDto, boardSeq, principal.getName()), MessageEnum.REPLY_INSERT_SUCCESS);
     }
 
-    @Operation(summary = "댓글 수정", description = "특정 댓글을 수정")
+    @Operation(summary = "댓글 수정 (인증 필요)", description = "특정 댓글을 수정")
     @PutMapping("reply/{replySeq}")
     public ResponseEntity<ApiResult<ReplyDto>> modifyReply(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long replySeq,
                                                            @Valid @RequestBody @ApiParam(value = "댓글 생성 정보", required = true) ReplyInputDto replyInputDto, Principal principal) {
         return ApiProvider.success(replyService.modifyReply(replyInputDto, principal.getName(), replySeq), MessageEnum.REPLY_UPDATE_SUCCESS);
     }
 
-    @Operation(summary = "댓글 삭제", description = "특정 댓글을 삭제")
+    @Operation(summary = "댓글 삭제 (인증 필요)", description = "특정 댓글을 삭제")
     @DeleteMapping("reply/{replySeq}")
     public ResponseEntity<ApiResult> deleteReply(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long replySeq) {
         replyService.deleteReply(replySeq);

@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
@@ -43,14 +45,15 @@ public class BoardController {
         return ApiProvider.success(boardService.getBoard(request, boardSeq));
     }
 
-    @Operation(summary = "게시물 생성", description = "제목, 내용, 카테고리를 받아 게시물 생성")
+    @Operation(summary = "게시물 생성 (인증 필요)", description = "제목, 내용, 카테고리를 받아 게시물 생성")
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ResponseEntity<ApiResult<BoardDto>> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
-        return ApiProvider.success(boardService.addBoard(principal.getName(), boardInputDto), MessageEnum.BOARD_INSERT_SUCCESS);
+    public ResponseEntity<ApiResult<BoardDto>> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto) {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
+        return ApiProvider.success(boardService.addBoard(name, boardInputDto), MessageEnum.BOARD_INSERT_SUCCESS);
     }
 
-    @Operation(summary = "게시물 수정", description = "제목, 내용, 카테고리를 받아 게시물을 수정")
+    @Operation(summary = "게시물 수정 (인증 필요)", description = "제목, 내용, 카테고리를 받아 게시물을 수정")
     @Secured("ROLE_USER")
     @PutMapping("/board/{boardSeq}")
     public ResponseEntity<ApiResult<BoardDto>> modifyBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
@@ -58,7 +61,7 @@ public class BoardController {
         return ApiProvider.success(boardService.modifyBoard(principal.getName(), boardSeq, boardInputDto), MessageEnum.BOARD_UPDATE_SUCCESS);
     }
 
-    @Operation(summary = "게시물 삭제", description = "특정 게시물을 삭제한다.")
+    @Operation(summary = "게시물 삭제 (인증 필요)", description = "특정 게시물을 삭제한다.")
     @Secured("ROLE_USER")
     @DeleteMapping("/board/{boardSeq}")
     public ResponseEntity<ApiResult> deleteBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,

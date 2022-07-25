@@ -51,7 +51,7 @@ public class AuthController {
         return ApiProvider.success();
     }
 
-    @Operation(summary = "OAuth 회원가입", description = "SNS 연동 로그인을 통한 회원가입 (닉네임 입력)")
+    @Operation(summary = "OAuth 회원가입", description = "SNS 연동 로그인을 통한 회원가입 (닉네임 입력) /oauth2/authorization/google  /oauth2/authorization/kakao")
     @PostMapping("/oauth/signup")
     public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody @ApiParam(value = "추가 닉네임 정보", required = true) OAuthSignupDto oAuthSignupDto,
                                             HttpServletRequest req, HttpServletResponse res) {
