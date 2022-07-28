@@ -100,8 +100,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     // 아이디 찾기
-    public String findMemberId(AccountDto accountDto) {
-        String email = accountDto.getEmail();
+    public String findMemberId(String email) {
         log.info("{} 아이디 찾기 요청 시작", email);
         mailService.checkEmailCertified(MailType.ID, email);
         Member member = getMemberByEmail(email);
