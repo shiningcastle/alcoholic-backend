@@ -59,7 +59,6 @@ public class MailServiceImpl implements MailService {
                 log.info("{} 시간 내 {} 이메일 인증완료 : 이메일 미발송 - {}", hours, type, email);
                 throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ALREADY_CHECKED);
             }
-            throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_UNKNOWN);
         }
         int number = getRandomNumber(email);
         redisRepository.set(type.getPrefix() + email, number, Duration.ofMinutes(minutes));
