@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.dto.member.AccountDto;
@@ -26,8 +23,8 @@ public class MemberController {
 
     @Operation(summary = "유저 아이디 찾기", description = "이메일 인증을 통한 아이디 찾기")
     @PostMapping("/forget/id")
-    public ResponseEntity<ApiResult<String>> findId(@RequestBody @Valid @ApiParam(value = "아이디 찾기 정보", required = true) AccountDto accountDto) {
-        return ApiProvider.success(memberService.findMemberId(accountDto), MessageEnum.MEMBER_ID_SUCCESS);
+    public ResponseEntity<ApiResult<String>> findId(@RequestParam @Valid @ApiParam(value = "이메일", required = true) String email) {
+        return ApiProvider.success(memberService.findMemberId(email), MessageEnum.MEMBER_ID_SUCCESS);
     }
 
 
