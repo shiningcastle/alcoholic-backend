@@ -49,12 +49,18 @@ public class MailServiceImpl implements MailService {
     public ResponseEntity<ApiResult> sendEmail(MailType type, String email) throws MessagingException {
         log.info("{} 이메일 전송요청 시작 : {}", type, email);
         Optional<Mail> mailOpt = mailRepository.findTop1ByEmailAndTypeAndCompletionOrderByAuthDateDesc(email, type, true);
+        Mail mail = mailOpt.get();
+        log.info("mail :" + mail.getEmail());
+        log.info("type :" +mail.getType().getType());
+        log.info("authDate :" +String.valueOf(mail.getAuthDate()));
         if (mailOpt.isPresent()) {
             log.info("{} 인증 이메일, Mail 테이블 존재 - {}", type, email);
             // 인증메일 기록 2시간 내면 다시 이메일 요청 필요없음
-            Mail mail = mailOpt.get();
+//            Mail mail = mailOpt.get();
             Timestamp mailDatePlusHours = DateUtil.getDateAfterTime(mail.getAuthDate(), Calendar.HOUR, hours);
             Timestamp now = new Timestamp(System.currentTimeMillis());
+            log.info("now : " + String.valueOf(now));
+            log.info("mailDatePlusHours : " + String.valueOf(mailDatePlusHours));
             if (now.before(mailDatePlusHours)) {
                 log.info("{} 시간 내 {} 이메일 인증완료 : 이메일 미발송 - {}", hours, type, email);
                 throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ALREADY_CHECKED);
