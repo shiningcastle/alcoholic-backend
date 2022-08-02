@@ -16,5 +16,6 @@ if [ -z $CURRENT_PID ]; then
 else
   echo "$TIME_NOW > 실행중인 $CURRENT_PID 애플리케이션 종료 " >> $DEPLOY_LOG
   sudo docker stop $CURRENT_PID
-  sleep 10
+  docker rmi $(docker images -f "dangling=true" -q)
+  sleep 5
 fi
