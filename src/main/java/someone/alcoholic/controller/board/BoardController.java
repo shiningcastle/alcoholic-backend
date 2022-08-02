@@ -38,7 +38,6 @@ public class BoardController {
     }
 
     @Operation(summary = "특정 게시물 조회", description = "특정 글번호에 해당하는 게시물 조회")
-    @Secured("ROLE_USER")
     @GetMapping("/board/{boardSeq}")
     public ResponseEntity<ApiResult<BoardDto>> getBoard(HttpServletRequest request,
                                                         @PathVariable @Positive @ApiParam(value = "글번호", required = true, example = "13") long boardSeq) {

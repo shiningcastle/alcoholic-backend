@@ -22,7 +22,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @Operation(summary = "유저 아이디 찾기", description = "이메일 인증을 통한 아이디 찾기")
-    @PostMapping("/forget/id")
+    @GetMapping("/forget/id")
     public ResponseEntity<ApiResult<String>> findId(@RequestParam @Valid @ApiParam(value = "이메일", required = true) String email) {
         return ApiProvider.success(memberService.findMemberId(email), MessageEnum.MEMBER_ID_SUCCESS);
     }
