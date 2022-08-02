@@ -3,6 +3,10 @@ package someone.alcoholic.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,6 +43,23 @@ public class ApiExceptionAdvice {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.ILLEGAL_ARGUMENT);
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<ApiResult> AuthenticationExceptionHandler(AuthenticationException e) {
+        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        e.printStackTrace();
+        ResponseEntity<ApiResult> error;
+        if(e instanceof InsufficientAuthenticationException) {
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.NOT_ALLOWED_ACCESS);
+        }else if(e instanceof BadProviderException) {
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.BAD_PROVIDER);
+        } else if (e instanceof BadCredentialsException) {
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.BAD_PASSWORD);
+        } else {
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.USER_NOT_EXIST);
+        }
+        return error;
     }
 
     @ExceptionHandler({Exception.class})
