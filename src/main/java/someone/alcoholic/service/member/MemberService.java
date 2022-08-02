@@ -13,7 +13,7 @@ public interface MemberService {
     Member signup(MemberSignupDto signupDto);
     MemberDto oAuthSignup(OAuthSignupDto signupDto, HttpServletRequest request, HttpServletResponse response);
     Member findMemberById(String memberId);
-    String findMemberId(AccountDto accountDto);
+    String findMemberId(String email);
     void resetMemberPassword(AccountDto accountDto);
     void changeMemberPassword(AccountDto accountDto);
 }
