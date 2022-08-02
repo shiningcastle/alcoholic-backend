@@ -19,5 +19,5 @@
 #
 #CURRENT_PID=$(sudo docker container ls -q)
 #echo "$TIME_NOW > 실행된 프로세스 아이디 $CURRENT_PID 입니다." >> $DEPLOY_LOG
-sudo docker build ../ -t test
+sudo docker build /home/ubuntu/app/ -t test
 sudo docker run --rm -d -p 80:8080 --name spring-alcoholic test
