@@ -63,7 +63,8 @@ public class MailServiceImpl implements MailService {
             log.info("mailDatePlusHours : " + String.valueOf(mailDatePlusHours));
             if (now.before(mailDatePlusHours)) {
                 log.info("{} 시간 내 {} 이메일 인증완료 : 이메일 미발송 - {}", hours, type, email);
-                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ALREADY_CHECKED);
+//                throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.EMAIL_ALREADY_CHECKED);
+                return ApiProvider.success(MessageEnum.EMAIL_ALREADY_CHECKED);
             }
         }
         int number = getRandomNumber(email);

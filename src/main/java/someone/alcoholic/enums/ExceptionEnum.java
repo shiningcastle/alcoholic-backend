@@ -26,8 +26,8 @@ public enum ExceptionEnum {
     EMAIL_ID_NOT_EXIST("email-007", "해당 이메일과 아이디로 가입된 회원이 존재하지 않습니다."),
     EMAIL_EXIST("email-008", "해당 이메일로 가입된 회원이 존재합니다."),
     EMAIL_NOT_EXIST("email-009", "해당 이메일로 가입된 회원이 존재하지 않습니다."),
-    EMAIL_CHECK_TIME("eamil-010", "해당 이메일로 인증된 요청을 기간이 만료되었습니다."),
-    EMAIL_ALREADY_CHECKED("eamil-011", "현재로부터 2시간 내에 해당 이메일로 인증된 기록이 있습니다."),
+    EMAIL_CHECK_TIME("eamil-010", "해당 이메일로 전송된 인증 기간이 만료되었습니다."),
+
 
     HEART_ALREADY_EXISTS("board-001", "해당 게시글의 좋아요를 이미 누르셨습니다."),
     HEART_NOT_EXISTS("board-002", "해당 게시글의 좋아요를 등록하지 않았습니다."),
