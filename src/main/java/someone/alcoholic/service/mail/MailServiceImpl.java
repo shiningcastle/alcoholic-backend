@@ -94,6 +94,7 @@ public class MailServiceImpl implements MailService {
         Mail mail = mailOpt.get();
         Timestamp mailDatePlusHours = DateUtil.getDateAfterTime(mail.getAuthDate(), Calendar.HOUR, hours);
         Timestamp now = new Timestamp(System.currentTimeMillis());
+        log.info("{} 이메일 {} 타입 {} 시간 내 인증 기록 체크 - mailDatePlusHours : {}, now : {}", email, type, hours, mailDatePlusHours, now);
         if (!now.before(mailDatePlusHours)) {
             log.info("{} 시간 내 {} 이메일 인증요청 기록 없음 - {}", hours, type, email);
             throw new CustomRuntimeException(HttpStatus.UNAUTHORIZED, ExceptionEnum.EMAIL_CHECK_TIME);

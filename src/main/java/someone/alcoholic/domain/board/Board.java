@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
+import someone.alcoholic.domain.board_image.BoardImage;
 import someone.alcoholic.domain.heart.Heart;
 import someone.alcoholic.domain.reply.Reply;
 import someone.alcoholic.domain.category.BoardCategory;
@@ -47,13 +48,16 @@ public class Board {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_posts_board_category"))
+    @JoinColumn(foreignKey = @ForeignKey(name = "fk_board_board_category"))
     private BoardCategory boardCategory;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<BoardImage> boardImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Reply> replies = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Heart> hearts = new ArrayList<>();
 
     public Board(String title, String content) {

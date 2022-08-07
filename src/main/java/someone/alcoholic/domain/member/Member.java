@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.beans.factory.annotation.Value;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.heart.Heart;
 import someone.alcoholic.domain.reply.Reply;
@@ -21,7 +22,6 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//@ToString(exclude = {})
 public class Member {
 
     @Id
@@ -97,13 +97,13 @@ public class Member {
         return false;
     }
 
-    public static Member createLocalMember(String id, String password, String nickname, String email) {
+    public static Member createLocalMember(String id, String password, String nickname, String image, String email) {
         Member member = Member.builder()
                 .id(id)
                 .email(email)
                 .password(password)
                 .nickname(nickname)
-                .image("default_user.jpeg")
+                .image(image)
                 .role(Role.USER)
                 .provider(Provider.LOCAL).build();
         return member;
@@ -120,5 +120,13 @@ public class Member {
 
     private void setPasswordUpdatedDate(Timestamp passwordUpdatedDate) {
         this.passwordUpdatedDate = passwordUpdatedDate;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

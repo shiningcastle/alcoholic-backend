@@ -38,13 +38,13 @@ public class TmpMember {
                 this.provider = provider;
         }
 
-        public Member convertToMember(String nickname) {
+        public Member convertToMember(String nickname, String image) {
                 return Member.builder()
                         .id(this.id)
                         .nickname(nickname)
                         .email(this.email)
                         .password(null)
-                        .image("DefaultImage")
+                        .image(image)
                         .role(Role.USER)
                         .provider(Provider.LOCAL).build();
         }

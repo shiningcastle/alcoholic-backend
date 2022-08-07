@@ -1,5 +1,6 @@
 package someone.alcoholic.exception;
 
+import com.nimbusds.oauth2.sdk.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.enums.ExceptionEnum;
@@ -43,6 +45,14 @@ public class ApiExceptionAdvice {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.ILLEGAL_ARGUMENT);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    protected ResponseEntity<ApiResult> handleMaxUploadSizeExceededException(
+            MaxUploadSizeExceededException e) {
+        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        e.printStackTrace();
+        return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.FILE_OVER_SIZE);
     }
 
     @ExceptionHandler({AuthenticationException.class})

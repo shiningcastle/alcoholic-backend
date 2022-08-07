@@ -10,6 +10,8 @@ public enum MessageEnum {
     EMAIL_ALREADY_CHECKED("현재로부터 2시간 내에 해당 이메일로 인증된 기록이 있습니다."),
     MEMBER_ID_SUCCESS("회원 아이디 찾기 성공"),
     MEMBER_PASSWORD_SUCCESS("회원 비밀번호 변경 성공"),
+    MEMBER_NICKNAME_CHANGE_SUCCESS("회원 닉네임 변경 성공"),
+    MEMBER_IMAGE_CHANGE_SUCCESS("회원 프로필 이미지 변경 성공"),
     BOARD_INSERT_SUCCESS("게시물 등록 성공"),
     BOARD_UPDATE_SUCCESS("게시물 수정 성공"),
     BOARD_DELETE_SUCCESS("게시물 삭제 성공"),

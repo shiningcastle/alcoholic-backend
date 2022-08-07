@@ -23,7 +23,7 @@ public class OAuth2Attribute {
     private String attributeKey;
     private String nickname;
     private String email;
-    @Value("${member.default.image}")
+    @Value("${image.member.profile.default}")
     private String image;
     private Provider provider;
 

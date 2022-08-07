@@ -9,7 +9,7 @@ public enum ExceptionEnum {
     BAD_PASSWORD("auth-003", "잘못된 비밀번호입니다."),
     USER_ALREADY_EXIST("auth-004", "이미 존재하는 아이디입니다."),
     BAD_PROVIDER("auth-005", "잘못된 provider입니다."),
-    NICKNAME_ALREADY_EXIST("auth-006", "이미 존재하는 닉네임입니다."),
+    NICKNAME_ALREADY_EXIST("auth-006", "변경할 닉네임은 이미 존재하는 닉네임입니다."),
     NOT_ALLOWED_ACCESS("auth-007", "접근 권한이 없습니다."),
     TOKEN_NOT_EXIST("auth-008", "토큰이 존재하지 않습니다."),
     TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않습니다."),
@@ -40,13 +40,11 @@ public enum ExceptionEnum {
 
     USER_PASSWORD_INCORRECT("user-001", "잘못된 비밀번호 입니다."),
     USER_PASSWORD_SAME("user-002", "변경할 비밀번호가 기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
-
-
     REDIS_NOT_EXIST("redis-001", "해당 키의 값이 존재하지 않습니다."),
-
-
     FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다."),
-
+    FILE_NOT_EXISTS("file-002", "파일이 필요합니다."),
+    FILE_EXTENSION_NOT_SUPPORTED("file-003", "등록이 허용되지 않는 파일 확장자입니다."),
+    FILE_SAVE_FAIL("file-004", "파일서버 등록 실패"),
     SERVER_ERROR("server-001", "서버 에러가 발생하였습니다.");
 
     private final String code;

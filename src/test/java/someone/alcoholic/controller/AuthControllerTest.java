@@ -15,7 +15,7 @@ import someone.alcoholic.controller.mail.MailController;
 import someone.alcoholic.domain.member.TmpMember;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
-import someone.alcoholic.dto.member.OAuthSignupDto;
+import someone.alcoholic.dto.member.NicknameDto;
 import someone.alcoholic.enums.MailType;
 import someone.alcoholic.enums.Provider;
 import someone.alcoholic.repository.NicknameRepository;
@@ -147,8 +147,8 @@ public class AuthControllerTest {
         TmpMember tmpMember = new TmpMember(memberId, "email", Provider.GOOGLE);
         tmpMemberRepository.save(tmpMember);
 
-        OAuthSignupDto oAuthSignupDto = new OAuthSignupDto("tester");
-        String s = objectMapper.writeValueAsString(oAuthSignupDto);
+        NicknameDto nicknameDto = new NicknameDto("tester");
+        String s = objectMapper.writeValueAsString(nicknameDto);
 
         ResultActions result = mockMvc.perform(post("/api/auth/oauth/signup")
                 .contentType(MediaType.APPLICATION_JSON)

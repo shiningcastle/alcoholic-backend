@@ -2,6 +2,7 @@ package someone.alcoholic.service.board;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -33,10 +34,12 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
+
+    @Value("${image.board.directory}")
+    private String imageDirectory;
     private final BoardRepository boardRepository;
     private final BoardCategoryService boardCategoryService;
     private final MemberService memberService;
-    private final TokenService tokenService;
     private final HeartRepository heartRepository;
 
     @Override
@@ -46,7 +49,6 @@ public class BoardServiceImpl implements BoardService {
         BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardCategoryName);
         List<Board> boards = boardRepository.findAllByBoardCategory(boardCategory, pageable).getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
-//        String memberId = tokenService.getMemberIdByAccessToken(request);
         String memberId = principal.getName();
 
         Member member = memberService.findMemberById(memberId);
@@ -62,7 +64,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardDto getBoard(HttpServletRequest request, long boardSeq) {
         log.info("{} 게시글 조회 시작", boardSeq);
-//        String memberId = tokenService.getMemberIdByAccessToken(request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
 
