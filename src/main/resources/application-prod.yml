@@ -1,6 +1,7 @@
 spring:
-  profiles:
-    active: prod # 기본 환경 선택
+  config:
+    activate:
+      on-profile: prod
 
 --- # 운영 환경
 
