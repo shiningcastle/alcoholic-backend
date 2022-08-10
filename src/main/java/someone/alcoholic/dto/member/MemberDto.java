@@ -4,10 +4,12 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
+import someone.alcoholic.enums.Provider;
 import someone.alcoholic.enums.Role;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @AllArgsConstructor
@@ -30,5 +32,9 @@ public class MemberDto {
     @ApiModelProperty(name = "role", value = "역할", example = "USER")
     @NotBlank(message = "역할은 필수 입력 값입니다.")
     private Role role;
+
+    @ApiModelProperty(name = "provider", value = "가입 경로", example = "LOCAL")
+    @NotNull
+    private Provider provider;
 
 }
