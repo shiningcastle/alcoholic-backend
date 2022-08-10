@@ -5,10 +5,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
+import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.member.AccountDto;
+import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.service.member.MemberService;
 
@@ -20,6 +25,14 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @Secured("ROLE_USER")
+    @GetMapping("/info")
+    public ResponseEntity<ApiResult<MemberDto>> getMemberDto() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member member = memberService.findMemberById(authentication.getName());
+        return ApiProvider.success(member.convertMemberDto());
+    }
 
     @Operation(summary = "유저 아이디 찾기", description = "이메일 인증을 통한 아이디 찾기")
     @GetMapping("/forget/id")
