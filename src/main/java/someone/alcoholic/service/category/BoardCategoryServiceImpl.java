@@ -10,6 +10,8 @@ import someone.alcoholic.enums.ExceptionEnum;
 import someone.alcoholic.exception.CustomRuntimeException;
 import someone.alcoholic.repository.category.BoardCategoryRepository;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @Transactional
@@ -17,9 +19,16 @@ import someone.alcoholic.repository.category.BoardCategoryRepository;
 public class BoardCategoryServiceImpl implements BoardCategoryService{
     private final BoardCategoryRepository boardCategoryRepository;
 
+    @Override
     public BoardCategory getBoardCategory(String boardCategoryName) {
         log.info("boardCategory {} 조회", boardCategoryName);
         return boardCategoryRepository.findByName(boardCategoryName)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.CATEGORY_NOT_FOUND));
+    }
+
+    @Override
+    public List<BoardCategory> getBoardCategories() {
+        log.info("boardCategories {} 조회");
+        return boardCategoryRepository.findAll();
     }
 }
