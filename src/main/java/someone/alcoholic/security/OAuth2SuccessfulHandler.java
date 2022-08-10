@@ -39,7 +39,7 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
             response.sendRedirect("/");
         } else {
             saveTmpMember(response, memberId, principal);
-            response.sendRedirect("/nickname");
+            response.sendRedirect("https://alcoholic-community.netlify.app/signup/nickname");
         }
     }
 

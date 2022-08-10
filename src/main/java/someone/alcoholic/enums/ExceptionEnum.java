@@ -14,10 +14,10 @@ public enum ExceptionEnum {
     TOKEN_NOT_EXIST("auth-008", "토큰이 존재하지 않습니다."),
     TOKEN_NOT_VALID("auth-009", "토큰이 유효하지 않습니다."),
     UNSUPPORTED_OAUTH_PROVIDER("auth-010", "지원되지 않는 OAuth Provider 입니다."),
-    TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없음"),
-    USER_AND_WRITER_NOT_EQUAL("auth-012", "작성자와 유저가 다릅니다."),
+    TMP_USER_NOT_EXIST("auth-011", "임시 회원 id가 없습니다."),
+    USER_AND_WRITER_NOT_EQUAL("auth-012", "글 작성자와 유저가 다릅니다."),
 
-    EMAIL_SEND_FAIL("email-001", "인증 이메일 전송 실패."),
+    EMAIL_SEND_FAIL("email-001", "인증 이메일 전송 실패하였습니다."),
     EMAIL_NOT_CERTIFIED("email-002", "해당 이메일은 인증되지 않은 이메일입니다."),
     EMAIL_ALREADY_EXIST("email-003", "이미 인증이 완료된 이메일 입니다."),
     EMAIL_ALREADY_REQUEST("email-004", "만료기간 내 해당 이메일로 이미 인증 요청되었습니다."),
@@ -32,11 +32,11 @@ public enum ExceptionEnum {
     HEART_ALREADY_EXISTS("board-001", "해당 게시글의 좋아요를 이미 누르셨습니다."),
     HEART_NOT_EXISTS("board-002", "해당 게시글의 좋아요를 등록하지 않았습니다."),
 
-    VALUE_NOT_FOUND("common-001", "값이 비어 있다."),
+    VALUE_NOT_FOUND("common-001", "값이 비어 있습니다."),
     CATEGORY_NOT_FOUND("common-002", "없는 카테고리이다."),
-    PAGE_NOT_FOUND("common-003", "없는 페이지이다."),
-    REPLY_NOT_FOUND("common-004", "없는 댓글이다."),
-    ILLEGAL_ARGUMENT("common-005", "잘못된 형태의 요청."),
+    PAGE_NOT_FOUND("common-003", "없는 페이지입니다."),
+    REPLY_NOT_FOUND("common-004", "없는 댓글입니다."),
+    ILLEGAL_ARGUMENT("common-005", "잘못된 형태의 요청입니다."),
 
     USER_PASSWORD_INCORRECT("user-001", "잘못된 비밀번호 입니다."),
     USER_PASSWORD_SAME("user-002", "변경할 비밀번호가 기존 비밀번호와 같습니다. 새로운 비밀번호를 입력해주세요."),
@@ -47,7 +47,7 @@ public enum ExceptionEnum {
 
     FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다."),
 
-    SERVER_ERROR("server-001", "서버 에러 발생");
+    SERVER_ERROR("server-001", "서버 에러가 발생하였습니다.");
 
     private final String code;
     private final String message;

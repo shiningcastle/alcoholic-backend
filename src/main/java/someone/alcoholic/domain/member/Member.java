@@ -110,7 +110,7 @@ public class Member {
     }
 
     public MemberDto convertMemberDto() {
-        return new MemberDto(this.nickname, this.email, this.image, this.role);
+        return new MemberDto(this.nickname, this.email, this.image, this.role, this.provider);
     }
 
     public void changePassword(String newPassword) {
