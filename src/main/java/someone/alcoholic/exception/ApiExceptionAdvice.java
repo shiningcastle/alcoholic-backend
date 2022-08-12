@@ -3,6 +3,7 @@ package someone.alcoholic.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
@@ -71,14 +72,22 @@ public class ApiExceptionAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ApiResult> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
+    public ResponseEntity<ApiResult> handleValidationExceptions(MethodArgumentNotValidException e) {
+        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        BindingResult bindingResult = e.getBindingResult();
         StringBuilder sb = new StringBuilder();
         for (FieldError fieldError: bindingResult.getFieldErrors()) {
             sb.append(fieldError.getDefaultMessage());
             sb.append(System.lineSeparator());
         }
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, sb.toString());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ApiResult> handleAccessDeniedException(AccessDeniedException e) {
+        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.NOT_ALLOWED_ACCESS);
     }
 
 }

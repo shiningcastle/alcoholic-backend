@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
 import someone.alcoholic.enums.ExceptionEnum;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Component
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override

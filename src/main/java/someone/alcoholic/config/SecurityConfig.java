@@ -17,6 +17,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import someone.alcoholic.filter.TokenAuthenticationFilter;
+import someone.alcoholic.security.CustomAccessDeniedHandler;
 import someone.alcoholic.security.CustomAuthenticationEntryPoint;
 import someone.alcoholic.security.CustomUserDetailServeice;
 import someone.alcoholic.security.OAuth2SuccessfulHandler;
@@ -30,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final CustomUserDetailServeice customUserDetailServeice;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2SuccessfulHandler oAuth2SuccessfulHandler;
 
@@ -54,6 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(customAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler)
                 .and()
                 .authorizeRequests().antMatchers("/**").permitAll()
                 .and().csrf().disable()
