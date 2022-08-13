@@ -7,8 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.board_image.BoardImage;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -40,8 +43,11 @@ public class BoardDto {
     @ApiModelProperty(name = "heartCheck", value = "유저 좋아요 여부", example = "true")
     private boolean heartCheck;
 
+    @ApiModelProperty(name = "heartCheck", value = "유저 좋아요 여부")
+    private List<String> images;
+
     @Builder
-    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck) {
+    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<String> images) {
         this.seq = seq;
         this.title = title;
         this.content = content;
@@ -50,11 +56,10 @@ public class BoardDto {
         this.writer = writer;
         this.heartCount = heartCount;
         this.heartCheck = heartCheck;
+        this.images = images;
     }
 
-    public static BoardDto convertDTO(Board board, boolean heartCheck) {
-        return BoardDto.builder().seq(board.getSeq()).title(board.getTitle()).content(board.getContent()).createdDate(board.getCreatedDate())
-                .updatedDate(board.getUpdatedDate()).writer(board.getMember().getNickname()).heartCount(board.getHearts().size())
-                .heartCheck(heartCheck).build();
+    public static List<String> boardImagesToString(List<BoardImage> boardImages, String s3PrefixUrl) {
+        return boardImages.stream().map(i -> s3PrefixUrl + i.getFilePath()).collect(Collectors.toList());
     }
 }

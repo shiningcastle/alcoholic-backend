@@ -24,7 +24,7 @@ public class BoardImage {
     private Long seq;
 
     @Column(nullable = false, unique = true)
-    private String fileName;
+    private String filePath;
 
     @CreationTimestamp
     @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
@@ -42,8 +42,8 @@ public class BoardImage {
     private Board board;
 
     @Builder
-    public BoardImage(String fileName, BoardCategory boardCategory, Board board) {
-        this.fileName = fileName;
+    public BoardImage(String filePath, BoardCategory boardCategory, Board board) {
+        this.filePath = filePath;
         this.boardCategory = boardCategory;
         this.board = board;
     }

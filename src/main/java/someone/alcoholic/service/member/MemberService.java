@@ -9,6 +9,7 @@ import someone.alcoholic.dto.member.NicknameDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 
 public interface MemberService {
     Member signup(MemberSignupDto signupDto);
@@ -16,7 +17,8 @@ public interface MemberService {
     Member findMemberById(String memberId);
     String findMemberId(String email);
     void resetMemberPassword(AccountDto accountDto);
-    void changeMemberPassword(AccountDto accountDto);
-    void changeMemberNickname(String memberId, NicknameDto nicknameDto);
-    void changeMemberImage(String memberId, MultipartFile multipartFile);
+    void changeMemberPassword(Principal principal, AccountDto accountDto);
+    void changeMemberNickname(Principal principal, String memberId, NicknameDto nicknameDto);
+    void changeMemberImage(Principal principal, String memberId, MultipartFile multipartFile);
+    void deleteMemberImage(Principal principal, String memberId);
 }

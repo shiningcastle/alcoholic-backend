@@ -43,8 +43,11 @@ public enum ExceptionEnum {
     REDIS_NOT_EXIST("redis-001", "해당 키의 값이 존재하지 않습니다."),
     FILE_OVER_SIZE("file-001", "파일 업로드 용량 초과입니다."),
     FILE_NOT_EXISTS("file-002", "파일이 필요합니다."),
-    FILE_EXTENSION_NOT_SUPPORTED("file-003", "등록이 허용되지 않는 파일 확장자입니다."),
-    FILE_SAVE_FAIL("file-004", "파일서버 등록 실패"),
+    FILE_EXTENSION_NOT_SUPPORTED("file-003", "이미지 파일은 jpeg, png 확장자만 허용됩니다."),
+    FILE_SAVE_FAIL("file-004", "S3서버 파일등록 실패"),
+    FILE_REMOVE_FAIL("file-005", "S3서버 파일삭제 실패"),
+    FILE_REMOVE_NOT_ALLOWED("file-006", "기본 이미지는 삭제가 불가능합니다."),
+    HTTP_METHOD_NOT_ALLOWED("http-001", "잘못된 Http Method 요청입니다."),
     SERVER_ERROR("server-001", "서버 에러가 발생하였습니다.");
 
     private final String code;

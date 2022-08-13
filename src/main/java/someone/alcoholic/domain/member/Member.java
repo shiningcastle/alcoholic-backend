@@ -109,10 +109,6 @@ public class Member {
         return member;
     }
 
-    public MemberDto convertMemberDto() {
-        return new MemberDto(this.nickname, this.email, this.image, this.role);
-    }
-
     public void changePassword(String newPassword) {
         this.password = newPassword;
         setPasswordUpdatedDate(new Timestamp(System.currentTimeMillis()));

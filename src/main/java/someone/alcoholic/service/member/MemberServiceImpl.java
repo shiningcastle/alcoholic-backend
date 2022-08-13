@@ -24,13 +24,14 @@ import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.mail.MailService;
 import someone.alcoholic.service.token.TokenService;
-import someone.alcoholic.util.CommonUtils;
+import someone.alcoholic.util.FileUtil;
 import someone.alcoholic.util.CookieUtil;
 import someone.alcoholic.util.S3Uploader;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.security.Principal;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -53,7 +54,6 @@ public class MemberServiceImpl implements MemberService {
     private final TokenService tokenService;
     private final MailService mailService;
     private final NicknameRepository nicknameRepository;
-
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -69,7 +69,7 @@ public class MemberServiceImpl implements MemberService {
         String nickname = randomNum + "번 " + randomAdj + "한 " + randomNoun;
         return memberRepository.save(Member.createLocalMember(
                 signupDto.getId(), passwordEncoder.encode(signupDto.getPassword()),
-                nickname, imageDirectory + profileDirectory + profileDefaultImage, signupDto.getEmail()));
+                nickname, FileUtil.buildDefaultFilePath(imageDirectory, profileDirectory, profileDefaultImage), signupDto.getEmail()));
     }
 
     @Transactional
@@ -87,7 +87,7 @@ public class MemberServiceImpl implements MemberService {
         String memberId = tokenClaims.get(AuthToken.MEMBER_ID, String.class);
         Member member = tmpMemberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.TMP_USER_NOT_EXIST))
-                .convertToMember(nickname, imageDirectory + profileDirectory + profileDefaultImage);
+                .convertToMember(nickname, FileUtil.buildDefaultFilePath(imageDirectory, profileDirectory, profileDefaultImage));
         memberRepository.save(member);
 
         UUID refreshTokenPk = UUID.randomUUID();
@@ -97,7 +97,7 @@ public class MemberServiceImpl implements MemberService {
         CookieUtil.addCookie(response, AuthToken.REFRESH_TOKEN, refreshToken.getToken(), CookieExpiryTime.REFRESH_COOKIE_MAX_AGE);
         tokenService.save(refreshTokenPk, RefreshToken.builder().tokenValue(refreshToken.getToken()).memberId(memberId).accessToken(accessToken.getToken()).build());
         CookieUtil.deleteCookie(request, response, AuthToken.NICKNAME_TOKEN);
-        return member.convertMemberDto();
+        return new MemberDto(member.getNickname(), member.getEmail(), s3Uploader.s3PrefixUrl() + member.getImage(), member.getRole());
     }
 
     @Override
@@ -129,9 +129,11 @@ public class MemberServiceImpl implements MemberService {
 
     // 비밀번호 변경
     @Transactional(rollbackFor = {Exception.class})
-    public void changeMemberPassword(AccountDto accountDto) {
+    public void changeMemberPassword(Principal principal, AccountDto accountDto) {
+        String loginId = principal.getName();
+        log.info("{} 멤버 - 비밀번호 변경 요청 시작", loginId);
         String id = accountDto.getId();
-        log.info("{} 비밀번호 변경 요청 시작", id);
+        identifyLoginUser(loginId, id);
         Member member = findMemberById(id);
         String password = member.getPassword();
         String inputPassword = accountDto.getPassword();
@@ -139,6 +141,8 @@ public class MemberServiceImpl implements MemberService {
         changePassword(member, accountDto.getNewPassword());
         log.info("{} 비밀번호 변경 요청 완료", id);
     }
+
+
 
     // 비밀번호 초기화
     @Transactional(rollbackFor = {Exception.class})
@@ -153,12 +157,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public void changeMemberNickname(String memberId, NicknameDto nicknameDto) {
+    public void changeMemberNickname(Principal principal, String memberId, NicknameDto nicknameDto) {
+        String loginId = principal.getName();
+        log.info("{} 유저 닉네임 변경 요청 시작", loginId);
+        identifyLoginUser(loginId, memberId);
         String newNickname = nicknameDto.getNickname();
-        log.info("{} 유저 닉네임 변경 요청 시작 - newNickname : {}", memberId, newNickname);
         Member member = findMemberById(memberId);
         String currentNickName = member.getNickname();
-        log.info("{} 유저 currentNickName : {}", memberId, currentNickName);
+        log.info("{} 유저 닉네임 - current : {} -> new : {}", memberId, currentNickName, newNickname);
         checkDuplicateNickname(newNickname);
         member.setNickname(newNickname);
         Member savedMember = memberRepository.save(member);
@@ -166,16 +172,35 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Transactional(rollbackFor = {Exception.class})
-    public void changeMemberImage(String memberId, MultipartFile multipartFile) {
-        log.info("{} 유저 이미지 변경 요청 시작 - file : {}", memberId, multipartFile.getName());
+    public void changeMemberImage(Principal principal, String memberId, MultipartFile multipartFile) {
+        String loginId = principal.getName();
+        log.info("{} 유저 이미지 변경 요청 시작 - file : {}", loginId, multipartFile.getName());
+        identifyLoginUser(loginId, memberId);
         Member member = findMemberById(memberId);
-        String currentImage = member.getImage();
-        log.info("{} 유저 currentImage : {}", memberId, currentImage);
-        String fileName = CommonUtils.buildFileName(multipartFile, imageDirectory, profileDirectory, member.getSeq());
-        String savedUrl = s3Uploader.uploadFile(multipartFile, fileName);
-        member.setImage(savedUrl);
+        String memberImageUrl = member.getImage();
+        log.info("{} 유저 currentImage : {}", memberId, memberImageUrl);
+        String savedImagePath = s3Uploader.uploadFile(multipartFile, member.getSeq(), memberImageUrl, imageDirectory, profileDirectory);
+        member.setImage(savedImagePath);
         memberRepository.save(member);
-        log.info("{} 유저 이미지 변경 완료", memberId);
+        log.info("{} 유저 이미지 변경 완료 - path : {}", memberId, savedImagePath);
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public void deleteMemberImage(Principal principal, String memberId) {
+        String loginId = principal.getName();
+        log.info("{} 유저 이미지 삭제 요청 시작", loginId);
+        Member member = findMemberById(memberId);
+        String memberImageUrl = member.getImage();
+        log.info("{} 유저 currentImage : {}", memberId, memberImageUrl);
+        if(!s3Uploader.deleteFile(memberImageUrl)) {
+            log.info("{} 유저 기본 이미지 상태에서 삭제 요청");
+            throw new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.FILE_REMOVE_NOT_ALLOWED);
+        }
+        // 기본 이미지로 변경
+        String defaultImagePath = FileUtil.buildDefaultFilePath(imageDirectory, profileDirectory, profileDefaultImage);
+        member.setImage(defaultImagePath);
+        memberRepository.save(member);
+        log.info("{} 유저 이미지 삭제 완료 - 기본 이미지로 변경 : {}", memberId, defaultImagePath);
     }
 
     // 해당 아이디의 비밀번호를 새로운 비밀번호로 변경
@@ -188,6 +213,15 @@ public class MemberServiceImpl implements MemberService {
         member.changePassword(newEncryptedPassword);
         memberRepository.save(member);
         log.info("{} 새로운 비밀번호로 변경 완료", id);
+    }
+
+    // 로그인 계정이 정보변경 계정과 일치하는지 체크
+    private void identifyLoginUser(String loginId, String id) {
+        if (!id.equals(loginId)) {
+            log.info("로그인 계정과 정보변경 요청 계정 불일치 - login : {}, request : {}", loginId, id);
+            throw new CustomRuntimeException(HttpStatus.FORBIDDEN, ExceptionEnum.NOT_ALLOWED_ACCESS);
+        }
+        log.info("로그인 계정과 정보변경 요청 계정 일치 - login : {}, request : {}", loginId, id);
     }
 
     // 기존 비밀번호가 변경될 비밀번호와 일치하지 않는지 체크

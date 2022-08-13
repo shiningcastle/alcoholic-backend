@@ -12,6 +12,7 @@ public enum MessageEnum {
     MEMBER_PASSWORD_SUCCESS("회원 비밀번호 변경 성공"),
     MEMBER_NICKNAME_CHANGE_SUCCESS("회원 닉네임 변경 성공"),
     MEMBER_IMAGE_CHANGE_SUCCESS("회원 프로필 이미지 변경 성공"),
+    MEMBER_IMAGE_REMOVE_SUCCESS("회원 프로필 이미지 삭제 성공"),
     BOARD_INSERT_SUCCESS("게시물 등록 성공"),
     BOARD_UPDATE_SUCCESS("게시물 수정 성공"),
     BOARD_DELETE_SUCCESS("게시물 삭제 성공"),

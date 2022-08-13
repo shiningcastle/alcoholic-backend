@@ -47,9 +47,8 @@ public class BoardController {
     @Operation(summary = "게시물 생성 (인증 필요)", description = "제목, 내용, 카테고리를 받아 게시물 생성")
     @Secured("ROLE_USER")
     @PostMapping("/board")
-    public ResponseEntity<ApiResult<BoardDto>> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto) {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
-        return ApiProvider.success(boardService.addBoard(name, boardInputDto), MessageEnum.BOARD_INSERT_SUCCESS);
+    public ResponseEntity<ApiResult<BoardDto>> addBoard(@RequestBody @Valid @ApiParam(value = "게시물 생성 정보", required = true) BoardInputDto boardInputDto, Principal principal) {
+        return ApiProvider.success(boardService.addBoard(principal.getName(), boardInputDto), MessageEnum.BOARD_INSERT_SUCCESS);
     }
 
     @Operation(summary = "게시물 수정 (인증 필요)", description = "제목, 내용, 카테고리를 받아 게시물을 수정")

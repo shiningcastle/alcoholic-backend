@@ -24,7 +24,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -81,7 +81,8 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: alcoholics3
-      prefix-url: https://alcoholics3.s3.ap-northeast-2.amazonaws.com/
+      suffix-url: s3.ap-northeast-2.amazonaws.com
+      default-image-path: member/profile/0.png
 
 logging:
   level:

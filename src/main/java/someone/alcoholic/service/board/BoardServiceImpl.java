@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.board.Board;
+import someone.alcoholic.domain.board_image.BoardImage;
 import someone.alcoholic.domain.category.BoardCategory;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.board.BoardDto;
@@ -21,6 +22,7 @@ import someone.alcoholic.repository.heart.HeartRepository;
 import someone.alcoholic.service.category.BoardCategoryService;
 import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.service.token.TokenService;
+import someone.alcoholic.util.S3Uploader;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -28,6 +30,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -41,6 +44,7 @@ public class BoardServiceImpl implements BoardService {
     private final BoardCategoryService boardCategoryService;
     private final MemberService memberService;
     private final HeartRepository heartRepository;
+    private final S3Uploader s3Uploader;
 
     @Override
     public List<BoardDto> getBoards(HttpServletRequest request, String boardCategoryName, Pageable pageable,
@@ -50,15 +54,25 @@ public class BoardServiceImpl implements BoardService {
         List<Board> boards = boardRepository.findAllByBoardCategory(boardCategory, pageable).getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
         String memberId = principal.getName();
-
         Member member = memberService.findMemberById(memberId);
         for (Board board : boards) {
             boolean heartCheck = heartRepository.existsByMemberAndBoard(member, board);
-            BoardDto boardDto = BoardDto.convertDTO(board, heartCheck);
+            BoardDto boardDto = convertToBoardDto(board, heartCheck);
             boardDtoList.add(boardDto);
         }
         log.info("{} 카테고리 게시물 조회 완료", boardCategoryName);
         return boardDtoList;
+    }
+
+    private BoardDto convertToBoardDto(Board board, boolean heartCheck) {
+        return BoardDto.builder().seq(board.getSeq()).title(board.getTitle()).content(board.getContent()).createdDate(board.getCreatedDate())
+                                .updatedDate(board.getUpdatedDate()).writer(board.getMember().getNickname()).heartCount(board.getHearts().size())
+                                .heartCheck(heartCheck).images(boardImagesToString(board.getBoardImages())).build();
+    }
+
+    // s3 이미지 경로 앞에 S3 URL 주소 붙여주기
+    private List<String> boardImagesToString(List<BoardImage> boardImages) {
+        return boardImages.stream().map(i -> s3Uploader.s3PrefixUrl() + i.getFilePath()).collect(Collectors.toList());
     }
 
     @Override
@@ -66,11 +80,10 @@ public class BoardServiceImpl implements BoardService {
         log.info("{} 게시글 조회 시작", boardSeq);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String memberId = authentication.getName();
-
         Member member = memberService.findMemberById(memberId);
         Board board = findBoardBySeq(boardSeq);
         boolean heartCheck = heartRepository.existsByMemberAndBoard(member, board);
-        BoardDto boardDto = BoardDto.convertDTO(board, heartCheck);
+        BoardDto boardDto = convertToBoardDto(board, heartCheck);
         log.info("{} 게시글 조회 완료", boardSeq);
         return boardDto;
     }
@@ -90,7 +103,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = Board.convertInputDtoToBoard(boardInputDto, member, boardCategory);
         Board savedBoard = boardRepository.save(board);
         log.info("{} 회원 {} 게시글 등록 완료", memberId, savedBoard.getSeq());
-        return BoardDto.convertDTO(savedBoard, false);
+        return convertToBoardDto(savedBoard, false);
     }
 
     @Override
@@ -109,7 +122,7 @@ public class BoardServiceImpl implements BoardService {
         board.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
         Board modifiedBoard = boardRepository.save(board);
         log.info("{} 회원 {} 게시글 수정 완료", memberId, modifiedBoard.getSeq());
-        return BoardDto.convertDTO(modifiedBoard, heartRepository.existsByMemberAndBoard(member, modifiedBoard));
+        return convertToBoardDto(modifiedBoard, heartRepository.existsByMemberAndBoard(member, modifiedBoard));
     }
 
     @Override

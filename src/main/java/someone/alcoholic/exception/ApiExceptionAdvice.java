@@ -4,12 +4,14 @@ import com.nimbusds.oauth2.sdk.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,36 +30,51 @@ public class ApiExceptionAdvice {
     @ExceptionHandler({CustomRuntimeException.class})
     public ResponseEntity<ApiResult> customExceptionHandler(CustomRuntimeException e) {
         ExceptionEnum exception = e.getException();
-        log.error("ERROR {} : {}" , exception.getCode(), exception.getMessage());
+        log.error("ERROR CODE: {} - {}" , exception.getCode(), exception.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(e.getStatus(), exception);
     }
 
+    @ExceptionHandler({AccessDeniedException.class})
+    public ResponseEntity<ApiResult> accessDeniedExceptionHandler(AccessDeniedException e) {
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
+        e.printStackTrace();
+        return ApiProvider.fail(HttpStatus.FORBIDDEN, ExceptionEnum.NOT_ALLOWED_ACCESS);
+    }
+
     @ExceptionHandler({MessagingException.class})
     public ResponseEntity<ApiResult> messagingExceptionHandler(MessagingException e) {
-        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionEnum.EMAIL_SEND_FAIL);
     }
 
     @ExceptionHandler({IllegalArgumentException.class})
     public ResponseEntity<ApiResult> illegalArgumentExceptionHandler(IllegalArgumentException e) {
-        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.ILLEGAL_ARGUMENT);
     }
 
     @ExceptionHandler(MaxUploadSizeExceededException.class)
-    protected ResponseEntity<ApiResult> handleMaxUploadSizeExceededException(
+    public ResponseEntity<ApiResult> handleMaxUploadSizeExceededException(
             MaxUploadSizeExceededException e) {
-        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.FILE_OVER_SIZE);
     }
 
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResult> httpRequestMethodNotSupportedExceptionHandler(
+            HttpRequestMethodNotSupportedException e) {
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
+        e.printStackTrace();
+        return ApiProvider.fail(HttpStatus.METHOD_NOT_ALLOWED, ExceptionEnum.HTTP_METHOD_NOT_ALLOWED);
+    }
+
     @ExceptionHandler({AuthenticationException.class})
     public ResponseEntity<ApiResult> AuthenticationExceptionHandler(AuthenticationException e) {
-        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         ResponseEntity<ApiResult> error;
         if(e instanceof InsufficientAuthenticationException) {
@@ -74,7 +91,7 @@ public class ApiExceptionAdvice {
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<ApiResult> exceptionHandler(Exception e) {
-        log.error("ERROR {} : {}", e.getClass(), e.getMessage());
+        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
         e.printStackTrace();
         return ApiProvider.fail(HttpStatus.INTERNAL_SERVER_ERROR, ExceptionEnum.SERVER_ERROR);
     }
