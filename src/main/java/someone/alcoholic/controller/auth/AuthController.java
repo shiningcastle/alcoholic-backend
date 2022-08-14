@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
-import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.auth.MemberLoginDto;
 import someone.alcoholic.dto.member.MemberDto;
 import someone.alcoholic.dto.member.MemberSignupDto;
-import someone.alcoholic.dto.member.OAuthSignupDto;
+import someone.alcoholic.dto.member.NicknameDto;
 import someone.alcoholic.service.member.MemberService;
 import someone.alcoholic.service.oauth.AuthService;
 
@@ -53,8 +52,8 @@ public class AuthController {
 
     @Operation(summary = "OAuth 회원가입", description = "SNS 연동 로그인을 통한 회원가입 (닉네임 입력) /oauth2/authorization/google  /oauth2/authorization/kakao")
     @PostMapping("/oauth/signup")
-    public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody @ApiParam(value = "추가 닉네임 정보", required = true) OAuthSignupDto oAuthSignupDto,
+    public ResponseEntity<ApiResult<MemberDto>> oAuthSignup(@Valid @RequestBody @ApiParam(value = "추가 닉네임 정보", required = true) NicknameDto nicknameDto,
                                             HttpServletRequest req, HttpServletResponse res) {
-        return ApiProvider.success(memberService.oAuthSignup(oAuthSignupDto, req, res));
+        return ApiProvider.success(memberService.oAuthSignup(nicknameDto, req, res));
     }
 }

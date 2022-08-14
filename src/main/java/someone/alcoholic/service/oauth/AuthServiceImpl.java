@@ -21,6 +21,7 @@ import someone.alcoholic.security.AuthToken;
 import someone.alcoholic.security.AuthTokenProvider;
 import someone.alcoholic.service.token.TokenService;
 import someone.alcoholic.util.CookieUtil;
+import someone.alcoholic.util.S3Uploader;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private final AuthTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final TokenService tokenService;
+    private final S3Uploader s3Uploader;
 
     public MemberDto login(HttpServletResponse response, MemberLoginDto loginDto) {
         log.info("local 로그인 시작");
@@ -55,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.USER_NOT_EXIST));
         log.info("local 로그인 성공, access. refresh token 생성");
-        return member.convertMemberDto();
+        return MemberDto.convertMemberDto(member, s3Uploader.s3PrefixUrl());
     }
 
     private Authentication getAuthentication(String memberId, String pw) {
@@ -87,7 +89,6 @@ public class AuthServiceImpl implements AuthService {
             UUID tokenId = UUID.fromString(refreshToken.getTokenClaims().get(AuthToken.REFRESH_TOKEN_ID, String.class));
             tokenService.delete(tokenId);
         }
-
         CookieUtil.deleteCookie(request, response, AuthToken.ACCESS_TOKEN);
         CookieUtil.deleteCookie(request, response, AuthToken.REFRESH_TOKEN);
         log.info("로그아웃 성공, accessToken, refreshToken cookie 제거");

@@ -47,12 +47,10 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
         log.info("최초 oAuth2 로그인, nicknameToken 발행");
         AuthToken nicknameToken = authTokenProvider.createNicknameToken(memberId);
         CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), CookieExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
-
         Map<String, Object> attributes = principal.getAttributes();
         TmpMember tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toTmpMember();
         log.info("최초 oAuth2 로그인, tmpMember 저장 {}", tmpMember);
         tmpMemberRepository.save(tmpMember);
-
     }
 
     private void issueAccessAndRefreshToken(HttpServletResponse response, String memberId, Member member) {

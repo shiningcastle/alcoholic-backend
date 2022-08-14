@@ -26,19 +26,13 @@ public class MemberSignupDto {
             message = "비밀번호는 숫자, 영문자, 특수문자를 모두 포함해야 하며 길이는 8자에서 최대 16자 형식이어야 합니다.")
     private String password;
 
-//    @NotBlank(message = "닉네임은 필수 입력 값입니다.")
-//    @Length(min = 2, max = 16)
-//    private String nickname;
-
     @ApiModelProperty(value = "이메일", example = "test1234@google.com", required = true)
-    @NotBlank(message = "이메일은 필수 입력 값입니다.")
     @Email(message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
     public MemberSignupDto(String id, String password, String email) {
         this.id = id;
         this.password = password;
-//        this.nickname = nickname;
         this.email = email;
     }
 }
