@@ -6,9 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import someone.alcoholic.domain.board.Board;
-
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -40,8 +39,11 @@ public class BoardDto {
     @ApiModelProperty(name = "heartCheck", value = "유저 좋아요 여부", example = "true")
     private boolean heartCheck;
 
+    @ApiModelProperty(name = "images", value = "게시물 이미지 리스트")
+    private List<BoardImageDto> images;
+
     @Builder
-    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck) {
+    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<BoardImageDto> images) {
         this.seq = seq;
         this.title = title;
         this.content = content;
@@ -50,11 +52,7 @@ public class BoardDto {
         this.writer = writer;
         this.heartCount = heartCount;
         this.heartCheck = heartCheck;
+        this.images = images;
     }
 
-    public static BoardDto convertDTO(Board board, boolean heartCheck) {
-        return BoardDto.builder().seq(board.getSeq()).title(board.getTitle()).content(board.getContent()).createdDate(board.getCreatedDate())
-                .updatedDate(board.getUpdatedDate()).writer(board.getMember().getNickname()).heartCount(board.getHearts().size())
-                .heartCheck(heartCheck).build();
-    }
 }

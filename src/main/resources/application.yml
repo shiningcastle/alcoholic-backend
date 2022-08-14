@@ -83,6 +83,7 @@ cloud:
       static: ap-northeast-2
     s3:
       bucket: alcoholics3
+      suffix-url: s3.ap-northeast-2.amazonaws.com
 
 logging:
   level:
@@ -105,9 +106,12 @@ security:
 jwt:
   secret: "secret hello world fdslkjflsdjfjsdjfiejwofjlksdjlfjkldsfjlkjlskdjflk"
 
-member:
-  default:
-    image: default_user.jpeg
+image:
+  member:
+    directory: member
+    default: default.png
+  board:
+    directory: board
 
 mail:
   minutes: 5

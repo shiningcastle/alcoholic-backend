@@ -1,8 +1,8 @@
 package someone.alcoholic.service.heart;
 
-import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 
 public interface HeartService {
-    void saveBoardHeart(HttpServletRequest request, Long boardSeq);
-    void deleteBoardHeart(HttpServletRequest request, Long boardSeq);
+    void saveBoardHeart(Principal principal, Long boardSeq);
+    void deleteBoardHeart(Principal principal, Long boardSeq);
 }

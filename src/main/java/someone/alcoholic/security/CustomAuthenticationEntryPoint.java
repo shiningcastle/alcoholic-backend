@@ -30,7 +30,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
         if(authException instanceof InsufficientAuthenticationException) {
-            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.NOT_ALLOWED_ACCESS);
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.FORBIDDEN);
         }else if(authException instanceof BadProviderException) {
             error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.BAD_PROVIDER);
         } else if (authException instanceof BadCredentialsException) {

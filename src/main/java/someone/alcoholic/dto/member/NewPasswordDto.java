@@ -1,13 +1,17 @@
 package someone.alcoholic.dto.member;
 
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 @Getter
-public class AccountDto extends MemberSignupDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class NewPasswordDto {
 
     @ApiModelProperty(value = "신규 비밀번호", example = "newpassword123!", required = true)
     @NotBlank(message = "새 비밀번호는 필수 입력 값입니다.")
