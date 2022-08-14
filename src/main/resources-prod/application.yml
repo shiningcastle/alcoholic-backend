@@ -100,14 +100,11 @@ cloud:
     s3:
       bucket: alcoholics3
       suffix-url: s3.ap-northeast-2.amazonaws.com
-      default-image-path: member/profile/0.png
 
 image:
   member:
     directory: member
-    profile:
-      directory: profile
-      default: 0.png
+    default: default.png
   board:
     directory: board
 

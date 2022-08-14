@@ -43,11 +43,11 @@ public class BoardDto {
     @ApiModelProperty(name = "heartCheck", value = "유저 좋아요 여부", example = "true")
     private boolean heartCheck;
 
-    @ApiModelProperty(name = "heartCheck", value = "유저 좋아요 여부")
-    private List<String> images;
+    @ApiModelProperty(name = "images", value = "게시물 이미지 리스트")
+    private List<BoardImageDto> images;
 
     @Builder
-    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<String> images) {
+    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<BoardImageDto> images) {
         this.seq = seq;
         this.title = title;
         this.content = content;
@@ -59,7 +59,4 @@ public class BoardDto {
         this.images = images;
     }
 
-    public static List<String> boardImagesToString(List<BoardImage> boardImages, String s3PrefixUrl) {
-        return boardImages.stream().map(i -> s3PrefixUrl + i.getFilePath()).collect(Collectors.toList());
-    }
 }

@@ -17,9 +17,9 @@ import someone.alcoholic.repository.category.BoardCategoryRepository;
 public class BoardCategoryServiceImpl implements BoardCategoryService{
     private final BoardCategoryRepository boardCategoryRepository;
 
-    public BoardCategory getBoardCategory(String boardCategoryName) {
-        log.info("boardCategory {} 조회", boardCategoryName);
-        return boardCategoryRepository.findByName(boardCategoryName)
+    public BoardCategory getBoardCategory(long categorySeq) {
+        log.info("{}번 카테고리 조회", categorySeq);
+        return boardCategoryRepository.findById(categorySeq)
                 .orElseThrow(() -> new CustomRuntimeException(HttpStatus.BAD_REQUEST, ExceptionEnum.CATEGORY_NOT_FOUND));
     }
 }

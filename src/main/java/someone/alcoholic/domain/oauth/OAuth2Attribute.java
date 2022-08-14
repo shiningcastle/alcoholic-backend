@@ -23,17 +23,14 @@ public class OAuth2Attribute {
     private String attributeKey;
     private String nickname;
     private String email;
-    @Value("${image.member.profile.default}")
-    private String image;
     private Provider provider;
 
     @Builder
     public OAuth2Attribute(String attributeKey, String nickname, String email,
-                           String image, Provider provider) {
+                           Provider provider) {
         this.attributeKey = attributeKey;
         this.nickname = nickname;
         this.email = email;
-        this.image = image;
         this.provider = provider;
     }
 
@@ -60,7 +57,6 @@ public class OAuth2Attribute {
                 .attributeKey((String) attributes.get(oAuthProvider.getIdKey()))
                 .nickname((String) attributes.get(oAuthProvider.getNickNameKey()))
                 .email((String) attributes.get(oAuthProvider.getEmailKey()))
-                .image(image)
                 .provider(oAuthProvider)
                 .build();
     }
@@ -72,19 +68,7 @@ public class OAuth2Attribute {
                 .attributeKey(String.valueOf(attributes.get(oAuthProvider.getIdKey())))
                 .nickname((String) profile.get(oAuthProvider.getNickNameKey()))
                 .email((String) kakaoAccount.get(oAuthProvider.getEmailKey()))
-                .image(image)
                 .provider(oAuthProvider)
-                .build();
-    }
-
-    public Member toMember() {
-        return Member.builder()
-                .id(attributeKey)
-                .password(null)
-                .nickname(nickname)
-                .email(email)
-                .image(image)
-                .provider(provider)
                 .build();
     }
 

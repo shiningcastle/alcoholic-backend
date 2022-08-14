@@ -47,7 +47,7 @@ public class BoardControllerTest {
         setBoardCategory("category");
         setMember();
 
-        BoardInputDto boardInputDto = new BoardInputDto("title", "content", "category");
+        BoardInputDto boardInputDto = new BoardInputDto("title", "content", 1L);
         ResultActions result = mockMvc.perform(post("/api/board")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(boardInputDto)));
@@ -62,7 +62,7 @@ public class BoardControllerTest {
     @Test
     @WithMockCustomUser
     public void modifyBoard() throws Exception {
-        BoardInputDto boardInputDto = new BoardInputDto("new title", "new content", "category");
+        BoardInputDto boardInputDto = new BoardInputDto("new title", "new content", 1L);
         Board board = setBoard();
 
         ResultActions result = mockMvc.perform(put("/api/board/" + board.getSeq())

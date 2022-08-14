@@ -30,7 +30,7 @@ public class Board {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "MEDIUMTEXT")
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String content;
 
     @CreationTimestamp
@@ -51,7 +51,7 @@ public class Board {
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_board_board_category"))
     private BoardCategory boardCategory;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BoardImage> boardImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)

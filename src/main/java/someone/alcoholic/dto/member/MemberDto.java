@@ -23,7 +23,7 @@ public class MemberDto {
     @Email(message = "이메일 형식에 맞지 않습니다.")
     private String email;
 
-    @ApiModelProperty(name = "image", value = "이미지 파일 경로", example = "/test/default.jpg")
+    @ApiModelProperty(name = "image", value = "이미지 파일 경로", example = "https://alcoholics3.s3.ap-northeast-2.amazonaws.com/member/default.jpg")
     @NotBlank(message = "이미지는 필수 입력 값입니다.")
     private String image;
 

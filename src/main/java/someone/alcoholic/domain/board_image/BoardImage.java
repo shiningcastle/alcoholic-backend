@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import someone.alcoholic.domain.board.Board;
-import someone.alcoholic.domain.category.BoardCategory;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -26,25 +25,25 @@ public class BoardImage {
     @Column(nullable = false, unique = true)
     private String filePath;
 
-    @CreationTimestamp
-    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
-    @Column(nullable = false)
-    private Timestamp registerDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(foreignKey = @ForeignKey(name = "fk_board_image_board_category"))
-    private BoardCategory boardCategory;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_board_image_board"))
     private Board board;
 
+    @CreationTimestamp
+    @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
+    @Column(nullable = false)
+    private Timestamp registerDate;
+
     @Builder
-    public BoardImage(String filePath, BoardCategory boardCategory, Board board) {
+    public BoardImage(String filePath, Board board, Timestamp registerDate) {
         this.filePath = filePath;
-        this.boardCategory = boardCategory;
+        setBoard(board);
+        this.registerDate = registerDate;
+    }
+
+    public void setBoard(Board board) {
         this.board = board;
+        this.board.getBoardImages().add(this);
     }
 }

@@ -35,13 +35,6 @@ public class ApiExceptionAdvice {
         return ApiProvider.fail(e.getStatus(), exception);
     }
 
-    @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<ApiResult> accessDeniedExceptionHandler(AccessDeniedException e) {
-        log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
-        e.printStackTrace();
-        return ApiProvider.fail(HttpStatus.FORBIDDEN, ExceptionEnum.NOT_ALLOWED_ACCESS);
-    }
-
     @ExceptionHandler({MessagingException.class})
     public ResponseEntity<ApiResult> messagingExceptionHandler(MessagingException e) {
         log.error("ERROR - {} : {}", e.getClass(), e.getMessage());
@@ -78,7 +71,7 @@ public class ApiExceptionAdvice {
         e.printStackTrace();
         ResponseEntity<ApiResult> error;
         if(e instanceof InsufficientAuthenticationException) {
-            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.NOT_ALLOWED_ACCESS);
+            error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.FORBIDDEN);
         }else if(e instanceof BadProviderException) {
             error = ApiProvider.fail(HttpStatus.UNAUTHORIZED, ExceptionEnum.BAD_PROVIDER);
         } else if (e instanceof BadCredentialsException) {
