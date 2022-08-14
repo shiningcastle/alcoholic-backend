@@ -106,7 +106,7 @@ public class ApiExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ApiResult> handleAccessDeniedException(AccessDeniedException e) {
         log.error("ERROR {} : {}", e.getClass(), e.getMessage());
-        return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.NOT_ALLOWED_ACCESS);
+        return ApiProvider.fail(HttpStatus.BAD_REQUEST, ExceptionEnum.UNAUTHORIZED);
     }
 
 }
