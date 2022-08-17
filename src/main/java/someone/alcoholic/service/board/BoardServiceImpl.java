@@ -50,7 +50,8 @@ public class BoardServiceImpl implements BoardService {
 
     public List<BoardDto> getBoards(Principal principal, long categorySeq, Pageable pageable) {
         log.info("{}번 카테고리 게시물 조회 시작", categorySeq);
-        BoardCategory boardCategory = boardCategoryService.getBoardCategory(categorySeq);
+        BoardCategory boardCategory = BoardCategory.convertDtoToBoardCategory(
+                boardCategoryService.getBoardCategory(categorySeq));
         List<Board> boards = boardRepository.findAllByBoardCategory(boardCategory, pageable).getContent();
         List<BoardDto> boardDtoList = new ArrayList<>();
         Member member = (principal != null) ? memberService.findMemberById(principal.getName()) : null;
@@ -99,7 +100,8 @@ public class BoardServiceImpl implements BoardService {
 
     private Board insertBoard(String loginId, BoardInputDto boardInputDto) {
         Member member = memberService.findMemberById(loginId);
-        BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardInputDto.getCategory());
+        BoardCategory boardCategory = BoardCategory.convertDtoToBoardCategory(
+                boardCategoryService.getBoardCategory(boardInputDto.getCategory()));
         Long boardCategorySeq = boardCategory.getSeq();
         log.info("{} 회원 - {}번 카테고리 게시글 등록 시작", loginId, boardCategorySeq);
         Board board = Board.convertInputDtoToBoard(boardInputDto, member, boardCategory);
@@ -171,7 +173,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private Board updateBoard(BoardUpdateDto boardUpdateDto, Board board) {
-        BoardCategory boardCategory = boardCategoryService.getBoardCategory(boardUpdateDto.getCategory());
+        BoardCategory boardCategory = BoardCategory.convertDtoToBoardCategory(
+                boardCategoryService.getBoardCategory(boardUpdateDto.getCategory()));
         board.setBoardCategory(boardCategory);
         board.setContent(boardUpdateDto.getContent());
         board.setTitle(boardUpdateDto.getTitle());

@@ -1,6 +1,5 @@
 package someone.alcoholic.controller.board;
 
-import com.sun.org.apache.xpath.internal.operations.Mult;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +16,7 @@ import someone.alcoholic.dto.board.BoardUpdateDto;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.service.board.BoardService;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import java.security.Principal;
 import java.util.List;
