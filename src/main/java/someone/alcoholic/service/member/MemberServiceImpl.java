@@ -66,11 +66,11 @@ public class MemberServiceImpl implements MemberService {
                 nickname, FileUtil.buildDefaultFilePath(imageDirectory, profileDefaultImage), signupDto.getEmail()));
     }
 
-    public MemberDto findMember(String id, Principal principal) {
-        log.info("{} 유저 본인 정보 조회", id);
-        checkAuthorizedUser(principal, id);
-        Member member = findMemberById(id);
-        log.info("{} 유저 본인 정보 조회 성공", id);
+    public MemberDto findMember(Principal principal) {
+        log.info("{} 유저 본인 정보 조회", principal.getName());
+//        checkAuthorizedUser(principal, id);
+        Member member = findMemberById(principal.getName());
+        log.info("{} 유저 본인 정보 조회 성공", principal.getName());
         return MemberDto.convertMemberDto(member, s3Uploader.s3PrefixUrl());
     }
 

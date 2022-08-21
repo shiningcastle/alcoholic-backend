@@ -15,12 +15,13 @@ import someone.alcoholic.enums.Role;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
 public class MemberDto {
+    @ApiModelProperty(name = "id", value = "아이디", example = "tester")
+    @NotBlank(message = "아이디는 필수 입력값입니다.")
+    private String id;
 
     @ApiModelProperty(name = "nickname", value = "닉네임", example = "1000 병의 소주를 마신 아저씨")
     @NotBlank(message = "닉네임은 필수 입력값입니다.")
@@ -45,7 +46,8 @@ public class MemberDto {
     private Provider provider;
 
     @Builder
-    public MemberDto(String nickname, String email, String image, Role role, Provider provider) {
+    public MemberDto(String id, String nickname, String email, String image, Role role, Provider provider) {
+        this.id = id;
         this.nickname = nickname;
         this.email = email;
         this.image = image;

@@ -31,10 +31,9 @@ public class MemberController {
 
     @Operation(summary = "유저 정보 조회", description = "유저 아이디로 유저 정보 조회")
     @Secured("ROLE_USER")
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResult<MemberDto>> getMember(@PathVariable @Valid @Pattern(regexp = "^(?=.*[A-Za-z])[A-Za-z\\d]{8,16}$",
-            message = "아이디는 영문자만 혹은 영문자 + 숫자 조합 형태여야 합니다. 길이는 8자에서 최대 16자까지 가능합니다.") @ApiParam(value = "비밀번호 초기화 요청 유저 아이디", required = true) @NotEmpty(message = "비밀번호 초기화 요청 아이디가 없습니다.") String id, Principal principal) {
-        MemberDto memberDto = memberService.findMember(id, principal);
+    @GetMapping()
+    public ResponseEntity<ApiResult<MemberDto>> getMember(Principal principal) {
+        MemberDto memberDto = memberService.findMember(principal);
         return ApiProvider.success(memberDto);
     }
 
