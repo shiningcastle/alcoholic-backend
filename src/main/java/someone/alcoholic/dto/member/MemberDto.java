@@ -56,7 +56,9 @@ public class MemberDto {
     }
 
     public static MemberDto convertMemberDto(Member member, String s3PrefixUrl) {
-        return MemberDto.builder().nickname(member.getNickname()).email(member.getEmail()).image(s3PrefixUrl + member.getImage())
+        return MemberDto.builder()
+                .id(member.getId())
+                .nickname(member.getNickname()).email(member.getEmail()).image(s3PrefixUrl + member.getImage())
                 .role(member.getRole()).provider(member.getProvider()).build();
     }
 

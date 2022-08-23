@@ -1,4 +1,4 @@
-INSERT INTO member(id, password, nickname, email, image, role, provider, created_date, password_updated_date) VALUES ("tester", "pw", "심심한 심심이", "tester@test.com", "image", "USER", "LOCAL", '2022-01-01', '2022-01-01');
+INSERT INTO member(id, password, nickname, email, image, role, provider, created_date, password_updated_date) VALUES ("test1234", "$2a$10$B8jdYtd2hVsiJBXj7WO2geSDHtnFfzGCFdw.xa9aZ/XXjT9N100/a", "심심한 심심이", "tester@test.com", "image", "USER", "LOCAL", '2022-01-01', '2022-01-01');
 
 INSERT INTO board_category(seq, name) VALUES (1, "feed");
 INSERT INTO board_category(seq, name) VALUES (2, "wiki");
@@ -15,6 +15,13 @@ INSERT INTO board(seq, title, content, member_seq, board_category_seq) values (7
 INSERT INTO board(seq, title, content, member_seq, board_category_seq) values (8, "title입니다.8", "content입니다.", 1, 2);
 INSERT INTO board(seq, title, content, member_seq, board_category_seq) values (9, "title입니다.9", "content입니다.", 1, 1);
 INSERT INTO board(seq, title, content, member_seq, board_category_seq) values (10, "title입니다.10", "content입니다.", 1, 1);
+
+INSERT INTO nickname(seq, adjective, noun) values (1, "심심한", "심심이");
+INSERT INTO nickname(seq, adjective, noun) values (2, "배고픈", "철수");
+INSERT INTO nickname(seq, adjective, noun) values (3, "졸린", "영수");
+INSERT INTO nickname(seq, adjective, noun) values (4, "궁금한", "영희");
+INSERT INTO nickname(seq, adjective, noun) values (5, "재밌는", "퉁퉁이");
+INSERT INTO nickname(seq, adjective, noun) values (6, "재미없는", "돼지");
 
 
 
