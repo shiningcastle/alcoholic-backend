@@ -1,6 +1,8 @@
 package someone.alcoholic.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import someone.alcoholic.enums.CookieExpiryTime;
 
 import javax.servlet.http.Cookie;
@@ -28,15 +30,18 @@ public class CookieUtil {
 
     public static void addCookie(HttpServletResponse response, String name, String value, CookieExpiryTime expiryTime) {
         log.info("cookie 생성 시작, name={}, value={}, expiryTime={}", name, value, expiryTime);
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(true);
-        cookie.setDomain("alcoholic.ml");
-//        cookie.setSecure(true);
-//        cookie.setDomain("alcoholic-community.netlify.app");
-        cookie.setMaxAge(expiryTime.getValue());
-        cookie.setPath("/");
+//        Cookie cookie = new Cookie(name, value);
+//        cookie.setHttpOnly(true);
+//        cookie.setDomain("alcoholic.ml");
+//        cookie.setMaxAge(expiryTime.getValue());
+//        cookie.setPath("/");
 
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.from(name, value)
+                .sameSite("None")
+                .domain("alcoholic.ml").build();
+//        response.addCookie(cookie);
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         log.info("cookie 생성 성공, name={}, value={}, expiryTime={}", name, value, expiryTime);
     }
 
