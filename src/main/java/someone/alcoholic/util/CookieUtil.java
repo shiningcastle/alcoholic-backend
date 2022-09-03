@@ -30,6 +30,9 @@ public class CookieUtil {
         log.info("cookie 생성 시작, name={}, value={}, expiryTime={}", name, value, expiryTime);
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
+        cookie.setDomain("alcoholic.ml");
+//        cookie.setSecure(true);
+//        cookie.setDomain("alcoholic-community.netlify.app");
         cookie.setMaxAge(expiryTime.getValue());
         cookie.setPath("/");
 
