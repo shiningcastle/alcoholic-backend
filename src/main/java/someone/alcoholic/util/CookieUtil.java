@@ -38,6 +38,7 @@ public class CookieUtil {
 
         ResponseCookie cookie = ResponseCookie.from(name, value)
                 .sameSite("None")
+                .secure(true)
                 .domain("alcoholic.ml").build();
 //        response.addCookie(cookie);
 
