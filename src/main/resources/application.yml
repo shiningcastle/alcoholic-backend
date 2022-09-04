@@ -48,7 +48,6 @@ spring:
             client-secret: 5nfNTKsvZ4r2Dx6mUILzzY7tpUMrNpfY
             scope: profile_nickname, profile_image, account_email
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-            # redirect-uri: "http://localhost:8080/login-success"
             authorization-grant-type: authorization_code
             client-name: kakao
             client-authentication-method: POST
