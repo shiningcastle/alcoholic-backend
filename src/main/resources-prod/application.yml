@@ -55,7 +55,7 @@ spring:
             client-id: 9182d496ee2d4e3865ddb36e8d01b08e
             client-secret: 5nfNTKsvZ4r2Dx6mUILzzY7tpUMrNpfY
             scope: profile_nickname, profile_image, account_email
-            redirect-uri: "http://www.alcoholic.tk/login/oauth2/code/kakao"
+            redirect-uri: "https://api.alcoholic.ml/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
             client-name: kakao
             client-authentication-method: POST
