@@ -121,7 +121,6 @@ mail:
   response: <script>alert('이메일 인증 성공.\nAlcoholic 페이지로 돌아가 남은 절차를 진행해주세요.'); window.close();</script>
 
 server:
-  port: 443
   ssl:
     key-store: classpath:keystore.jks
     key-store-type: jks
