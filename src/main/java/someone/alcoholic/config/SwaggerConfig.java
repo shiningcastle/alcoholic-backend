@@ -41,7 +41,7 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Alcoholic API")
                 .description("Alcoholic Spring Backend API")
-                .contact(new Contact("Alcoholic Project", "https://alcoholic.tk", "shiningcastle.dev@gmail.com"))
+                .contact(new Contact("Alcoholic Project", "https://api.alcoholic.ml", "shiningcastle.dev@gmail.com"))
                 .version("1.0")
                 .build();
     }
