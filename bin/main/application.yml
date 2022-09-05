@@ -1,7 +1,12 @@
 spring:
+<<<<<<< HEAD
   config:
     activate:
       on-profile: prod
+=======
+  profiles:
+    active: prod # 기본 환경 선택
+>>>>>>> develop
 
 --- # 운영 환경
 
@@ -39,7 +44,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true
@@ -53,8 +58,13 @@ spring:
       client:
         registration:
           google:
+<<<<<<< HEAD
             client-id: 785773674777-v891sf1pls1v5uhqrim7f6djad8oel6m.apps.googleusercontent.com
             client-secret: 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
+=======
+            client-id: 785773674777-5muikj8c03ts1suhh4momcim8ond6svi.apps.googleusercontent.com
+            client-secret: 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
+>>>>>>> develop
             scope: profile, email
           kakao:
             client-id: 9182d496ee2d4e3865ddb36e8d01b08e
@@ -72,7 +82,11 @@ spring:
             user-name-attribute: id
   servlet:
     multipart:
+<<<<<<< HEAD
       max-file-size: 10MB
+=======
+      max-file-size: 2MB
+>>>>>>> develop
       max-request-size: 10MB
 
 
@@ -116,7 +130,7 @@ image:
 mail:
   minutes: 5
   hours: 2
-  link: <h2><a href='http://alcoholic.tk/api/mail/auth/%s?email=%s&number=%d'>인증하기</a></h2>
+  link: <h2><a href='https://api.alcoholic.ml/api/mail/auth/%s?email=%s&number=%d'>인증하기</a></h2>
   response: <script>alert('이메일 인증 성공.\nAlcoholic 페이지로 돌아가 남은 절차를 진행해주세요.'); window.close();</script>
 
 server:
