@@ -118,5 +118,4 @@ front:
   url: https://alcoholic.ml
 
 oauth:
-  new-suffix:
-    /signup/nickname
+  new-suffix: /signup/nickname
