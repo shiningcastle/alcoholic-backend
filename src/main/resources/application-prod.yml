@@ -125,3 +125,9 @@ server:
     key-store-type: jks
     key-store-password: alcoholic1!
     key-password: alcoholic1!
+
+front:
+  url: https://alcoholic.ml
+
+oauth:
+  new-suffix: /signup/nickname

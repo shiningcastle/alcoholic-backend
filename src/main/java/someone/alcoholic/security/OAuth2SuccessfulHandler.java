@@ -2,6 +2,7 @@ package someone.alcoholic.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,12 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
     private final AuthTokenProvider authTokenProvider;
     private final OAuth2Attribute oAuth2Attribute;
 
+    @Value("${front.url}")
+    private String frontUrl;
+
+    @Value("${oauth.new-suffix}")
+    private String newMemberSuffix;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2Member principal = (OAuth2Member) authentication.getPrincipal();
@@ -36,10 +43,10 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
 
         if (member != null) {
             issueAccessAndRefreshToken(response, memberId, member);
-            response.sendRedirect("/");
+            response.sendRedirect(frontUrl);
         } else {
             saveTmpMember(response, memberId, principal);
-            response.sendRedirect("https://alcoholic-community.netlify.app/signup/nickname");
+            response.sendRedirect(frontUrl + newMemberSuffix);
         }
     }
 
