@@ -9,6 +9,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.member.Member;
+import someone.alcoholic.dto.reply.ReReplyInputDto;
 import someone.alcoholic.dto.reply.ReplyDto;
 import someone.alcoholic.dto.reply.ReplyInputDto;
 
@@ -74,7 +75,15 @@ public class Reply {
         }
     }
 
-    public static Reply convertInputDtoToReply(ReplyInputDto replyInputDto, Board board, Member member) {
+    public static Reply convertInputReplyDtoToReply(ReplyInputDto replyInputDto, Board board, Member member) {
+        Reply reply =  new Reply(true, -1, replyInputDto.getContent());
+        reply.setReplyParent();
+        reply.setBoard(board);
+        reply.setMember(member);
+        return reply;
+    }
+
+    public static Reply convertInputReReplyDtoToReply(ReReplyInputDto replyInputDto, Board board, Member member) {
         int replyParent = 0;
 
         if (!replyInputDto.isRoot()) {

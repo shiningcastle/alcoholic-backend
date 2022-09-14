@@ -42,6 +42,8 @@ public class BoardDto {
     @ApiModelProperty(name = "images", value = "게시물 이미지 리스트")
     private List<BoardImageDto> images;
 
+    private long repliesNum=0;
+
     @Builder
     public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<BoardImageDto> images) {
         this.seq = seq;
@@ -55,4 +57,7 @@ public class BoardDto {
         this.images = images;
     }
 
+    public void setRepliesNum(long repliesNum) {
+        this.repliesNum = repliesNum;
+    }
 }

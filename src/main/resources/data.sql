@@ -25,3 +25,10 @@ INSERT INTO nickname(seq, adjective, noun) values (6, "재미없는", "돼지");
 
 
 
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (1, "댓글 솰라", True, 1, "2022-01-01", 1, 1);
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (2, "댓글 솰라", True, 2, "2022-01-02", 1, 1);
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (3, "댓글 솰라", True, 3, "2022-01-03", 1, 1);
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (4, "댓글 솰라", False, 1, "2022-01-04", 1, 1);
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (5, "댓글 솰라", False, 2, "2022-01-05", 1, 1);
+INSERT INTO reply (seq, content, is_root, reply_parent, created_date, board_seq, member_seq) values (6, "댓글 솰라", False, 2, "2022-01-06", 1, 1);
+

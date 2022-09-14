@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import someone.alcoholic.api.ApiProvider;
 import someone.alcoholic.api.ApiResult;
+import someone.alcoholic.dto.reply.ReReplyInputDto;
 import someone.alcoholic.dto.reply.ReplyDto;
 import someone.alcoholic.dto.reply.ReplyInputDto;
 import someone.alcoholic.enums.MessageEnum;
@@ -36,6 +37,14 @@ public class ReplyController {
                                                         @Valid @RequestBody @ApiParam(value = "댓글 생성 정보", required = true) ReplyInputDto replyInputDto, Principal principal) {
         return ApiProvider.success(replyService.addReply(replyInputDto, boardSeq, principal.getName()), MessageEnum.REPLY_INSERT_SUCCESS);
     }
+
+    @Operation(summary = "대댓글 생성 (인증 필요)", description = "대댓글을 생성")
+    @PostMapping("board/{boardSeq}/rereply")
+    public ResponseEntity<ApiResult<ReplyDto>> addReReply(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long boardSeq,
+                                                          @Valid @RequestBody @ApiParam(value = "댓글 생성 정보", required = true) ReReplyInputDto replyInputDto, Principal principal) {
+        return ApiProvider.success(replyService.addReReply(replyInputDto, boardSeq, principal.getName()), MessageEnum.REPLY_INSERT_SUCCESS);
+    }
+
 
     @Operation(summary = "댓글 수정 (인증 필요)", description = "특정 댓글을 수정")
     @PutMapping("reply/{replySeq}")

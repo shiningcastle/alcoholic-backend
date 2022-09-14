@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.reply.Reply;
+import someone.alcoholic.dto.reply.ReReplyInputDto;
 import someone.alcoholic.dto.reply.ReplyDto;
 import someone.alcoholic.domain.member.Member;
 import someone.alcoholic.dto.reply.ReplyInputDto;
@@ -41,7 +42,24 @@ public class ReplyServiceImpl implements ReplyService {
         Board board = boardService.findBoardBySeq(boardSeq);
         Page<Reply> replies = replyRepository.findAllByBoardOrderByReplyParent(pageable, board);
         return replies.map(Reply::convertReplyToDto);
+    }
 
+    @Override
+    public long getRepliesNum(long boardSeq) {
+        Board board = boardService.findBoardBySeq(boardSeq);
+        return replyRepository.findAllByBoard(board).size();
+    }
+
+    @Override
+    public ReplyDto addReReply(ReReplyInputDto replyInputDto, long boardSeq, String memberId) {
+        log.info("대댓글 생성 시작");
+        Board board = boardService.findBoardBySeq(boardSeq);
+        Member member = memberService.findMemberById(memberId);
+        Reply savedReply = replyRepository.save(
+                Reply.convertInputReReplyDtoToReply(replyInputDto, board, member));
+        savedReply.setReplyParent();
+        log.info("대댓글 생성 완료 : reply={}", savedReply.getSeq());
+        return savedReply.convertReplyToDto();
     }
 
     @Override
@@ -51,7 +69,7 @@ public class ReplyServiceImpl implements ReplyService {
         Board board = boardService.findBoardBySeq(boardSeq);
         Member member = memberService.findMemberById(memberId);
         Reply savedReply = replyRepository.save(
-                Reply.convertInputDtoToReply(replyInputDto, board, member));
+                Reply.convertInputReplyDtoToReply(replyInputDto, board, member));
         savedReply.setReplyParent();
         log.info("댓글 생성 완료 : reply={}", savedReply.getSeq());
         return savedReply.convertReplyToDto();

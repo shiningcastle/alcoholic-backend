@@ -7,9 +7,12 @@ import org.springframework.stereotype.Repository;
 import someone.alcoholic.domain.board.Board;
 import someone.alcoholic.domain.reply.Reply;
 
+import java.util.List;
+
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 //    @Query("select r from Reply r " +
 //            "where r.")
     Page<Reply> findAllByBoardOrderByReplyParent(Pageable pageable, Board board);
+    List<Reply> findAllByBoard(Board board);
 }

@@ -15,6 +15,7 @@ import someone.alcoholic.dto.board.BoardInputDto;
 import someone.alcoholic.dto.board.BoardUpdateDto;
 import someone.alcoholic.enums.MessageEnum;
 import someone.alcoholic.service.board.BoardService;
+import someone.alcoholic.service.reply.ReplyService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -26,6 +27,7 @@ import java.util.List;
 @RequestMapping("/api")
 public class BoardController {
     private final BoardService boardService;
+    private final ReplyService replyService;
 
     @Operation(summary = "게시판 조회", description = "특정 카테고리에 속하는 게시판 조회")
     @GetMapping("/boards")
@@ -37,7 +39,10 @@ public class BoardController {
     @Operation(summary = "특정 게시물 조회", description = "특정 글번호에 해당하는 게시물 조회")
     @GetMapping("/board/{seq}")
     public ResponseEntity<ApiResult<BoardDto>> getBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true, example = "13") long seq, Principal principal) {
-        return ApiProvider.success(boardService.getBoard(principal, seq));
+        BoardDto board = boardService.getBoard(principal, seq);
+        long repliesNum = replyService.getRepliesNum(board.getSeq());
+        board.setRepliesNum(repliesNum);
+        return ApiProvider.success(board);
     }
 
     @Operation(summary = "게시물 생성 (인증 필요)", description = "제목, 내용, 카테고리를 받아 게시물 생성")
@@ -53,7 +58,10 @@ public class BoardController {
     public ResponseEntity<ApiResult<BoardDto>> modifyBoard(@PathVariable @Positive @ApiParam(value = "글번호", required = true) long seq,
                                                            @RequestPart(value = "json") @Valid @ApiParam(value = "게시물 수정 정보", required = true) BoardUpdateDto boardUpdateDto,
                                                            @RequestPart(value = "file", required = false) List<MultipartFile> fileList, Principal principal) {
-        return ApiProvider.success(boardService.modifyBoard(principal, seq, boardUpdateDto, fileList), MessageEnum.BOARD_UPDATE_SUCCESS);
+        BoardDto boardDto = boardService.modifyBoard(principal, seq, boardUpdateDto, fileList);
+        long repliesNum = replyService.getRepliesNum(boardDto.getSeq());
+        boardDto.setRepliesNum(repliesNum);
+        return ApiProvider.success(boardDto, MessageEnum.BOARD_UPDATE_SUCCESS);
     }
 
     @Operation(summary = "게시물 삭제 (인증 필요)", description = "특정 게시물을 삭제한다.")
