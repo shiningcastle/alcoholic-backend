@@ -48,7 +48,6 @@ spring:
             client-secret: 5nfNTKsvZ4r2Dx6mUILzzY7tpUMrNpfY
             scope: profile_nickname, profile_image, account_email
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-            # redirect-uri: "http://localhost:8080/login-success"
             authorization-grant-type: authorization_code
             client-name: kakao
             client-authentication-method: POST
@@ -121,5 +120,10 @@ mail:
   minutes: 5
   hours: 2
   link: <h2><a href='http://localhost:8080/api/mail/auth/%s?email=%s&number=%d'>인증하기</a></h2>
-#    link: <h2><a href='http://alcoholic.tk/api/mail/check/%s?email=%s&number=%d'>인증하기</a></h2>
   response: <script>alert('이메일 인증 성공.\nAlcoholic 페이지로 돌아가 남은 절차를 진행해주세요.'); window.close();</script>
+
+front:
+  url: https://alcoholic.ml
+
+oauth:
+  new-suffix: /signup/nickname
