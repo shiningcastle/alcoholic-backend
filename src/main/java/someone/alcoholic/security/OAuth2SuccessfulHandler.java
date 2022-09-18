@@ -57,20 +57,15 @@ public class OAuth2SuccessfulHandler implements AuthenticationSuccessHandler {
 
     private void saveTmpMember(HttpServletRequest request, HttpServletResponse response, String memberId, OAuth2Member principal) {
         log.info("최초 oAuth2 로그인, nicknameToken 발행");
-        Optional<Cookie> cookie = CookieUtil.getCookie(request, AuthToken.NICKNAME_TOKEN);
-        if (!cookie.isPresent()) {  // nicknameToken이 없다면 발급, 있다면 그냥 지나감 (있다는 것은 닉네임 과정을 갔지만 닉네임 발급을 안 한 것)
-            AuthToken nicknameToken = authTokenProvider.createNicknameToken(memberId);
-            CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), CookieExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
-            Map<String, Object> attributes = principal.getAttributes();
-            TmpMember tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toTmpMember();
-            if (!tmpMemberRepository.findById(tmpMember.getId()).isPresent()) {
-                tmpMemberRepository.save(tmpMember);
-                log.info("최초 oAuth2 로그인, tmpMember 저장 {}", tmpMember);
-            } else {
-                log.info("최초 oAuth2 로그인, 닉네임 토큰 새로 발급함 + tmpMember는 이미 존재");
-            }
+        AuthToken nicknameToken = authTokenProvider.createNicknameToken(memberId);
+        CookieUtil.addCookie(response, AuthToken.NICKNAME_TOKEN, nicknameToken.getToken(), CookieExpiryTime.NICKNAME_COOKIE_EXPIRY_TIME);
+        Map<String, Object> attributes = principal.getAttributes();
+        TmpMember tmpMember = oAuth2Attribute.getAttribute(principal.getProvider(), attributes).toTmpMember();
+        if (!tmpMemberRepository.findById(tmpMember.getId()).isPresent()) {
+            tmpMemberRepository.save(tmpMember);
+            log.info("최초 oAuth2 로그인, tmpMember 저장 {}", tmpMember);
         } else {
-            log.info("최초 oAuth2 로그인, 닉네임 토큰 이미 있음");
+            log.info("최초 oAuth2 로그인, 닉네임 토큰 새로 발급함 + tmpMember는 이미 존재");
         }
     }
 
