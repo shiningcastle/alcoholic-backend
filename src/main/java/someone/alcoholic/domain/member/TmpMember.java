@@ -2,6 +2,7 @@ package someone.alcoholic.domain.member;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import someone.alcoholic.enums.Provider;
@@ -11,6 +12,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TmpMember {
         @Id
