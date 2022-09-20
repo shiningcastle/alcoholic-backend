@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import someone.alcoholic.domain.board.Board;
@@ -37,11 +38,13 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public Page<ReplyDto> getReplies(Pageable pageable, long boardSeq) {
+    public Page<ReplyDto> getReplies(Pageable pageable, long boardSeq, String memberId) {
         log.info("댓글들 조회 시작");
         Board board = boardService.findBoardBySeq(boardSeq);
         Page<Reply> replies = replyRepository.findAllByBoardOrderByReplyParent(pageable, board);
-        return replies.map(Reply::convertReplyToDto);
+
+        Member member = memberService.findMemberById(memberId);
+        return replies.map(r -> r.convertReplyToDto(member.getNickname()));
     }
 
     @Override
@@ -59,7 +62,7 @@ public class ReplyServiceImpl implements ReplyService {
                 Reply.convertInputReReplyDtoToReply(replyInputDto, board, member));
         savedReply.setReplyParent();
         log.info("대댓글 생성 완료 : reply={}", savedReply.getSeq());
-        return savedReply.convertReplyToDto();
+        return savedReply.convertReplyToDto(member.getNickname());
     }
 
     @Override
@@ -72,7 +75,7 @@ public class ReplyServiceImpl implements ReplyService {
                 Reply.convertInputReplyDtoToReply(replyInputDto, board, member));
         savedReply.setReplyParent();
         log.info("댓글 생성 완료 : reply={}", savedReply.getSeq());
-        return savedReply.convertReplyToDto();
+        return savedReply.convertReplyToDto(member.getNickname());
     }
 
     @Override
@@ -87,7 +90,8 @@ public class ReplyServiceImpl implements ReplyService {
         reply.setContent(replyInputDto.getContent());
         reply.setUpdatedDate(Timestamp.valueOf(LocalDateTime.now()));
         log.info("댓글 수정 성공 : member={}, reply={}", memberId, replySeq);
-        return reply.convertReplyToDto();
+        Member member = memberService.findMemberById(memberId);
+        return reply.convertReplyToDto(member.getNickname());
     }
 
     @Override

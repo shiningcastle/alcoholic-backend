@@ -18,6 +18,16 @@ public class ReplyDto {
     @ApiModelProperty(name = "content", value = "댓글내용", example = "오 너무 좋은 글이네요ㅎㅎ 잘봤습니다!")
     private String content;
 
+    @ApiModelProperty(name = "writerNickname", value = "작성자", example = "tester1234")
+    private String writerNickname;
+
+    @ApiModelProperty(name = "isMine", value = "작성자여부", example = "false")
+    private boolean isMine;
+
+    @ApiModelProperty(name = "writerProfileImage", value = "댓글 작성자 프로필 주소", example = "s3://~~")
+    private String writerProfileImage;
+
+
     @ApiModelProperty(name = "isRoot", value = "최상위 댓글 여부", example = "true")
     private Boolean isRoot;
 
@@ -27,12 +37,16 @@ public class ReplyDto {
     @JsonFormat(pattern = "yyyy.MM.dd'T'HH:mm:ss", timezone = "Asia/Seoul")
     private Timestamp updatedDate;
 
-    public ReplyDto(Long seq, Long replyParent, String content, Boolean isRoot, Timestamp createdDate, Timestamp updatedDate) {
+    public ReplyDto(Long seq, Long replyParent, String content, Boolean isRoot, Timestamp createdDate, Timestamp updatedDate,
+                    boolean isMine, String writerNickname, String writerProfileImage) {
         this.seq = seq;
         this.replyParent = replyParent;
         this.content = content;
         this.isRoot = isRoot;
         this.createdDate = createdDate;
         this.updatedDate = updatedDate;
+        this.isMine = isMine;
+        this.writerNickname = writerNickname;
+        this.writerProfileImage = writerProfileImage;
     }
 }

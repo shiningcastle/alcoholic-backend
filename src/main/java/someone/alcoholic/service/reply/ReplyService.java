@@ -7,7 +7,7 @@ import someone.alcoholic.dto.reply.ReplyDto;
 import someone.alcoholic.dto.reply.ReplyInputDto;
 
 public interface ReplyService {
-    Page<ReplyDto> getReplies(Pageable pageable, long boardSeq);
+    Page<ReplyDto> getReplies(Pageable pageable, long boardSeq, String memberId);
     long getRepliesNum(long boardSeq);
     ReplyDto addReReply(ReReplyInputDto replyInputDto, long boardSeq, String memberId);
     ReplyDto addReply(ReplyInputDto replyInputDto, long boardSeq, String memberId);

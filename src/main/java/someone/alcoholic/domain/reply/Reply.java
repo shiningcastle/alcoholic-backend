@@ -96,7 +96,13 @@ public class Reply {
         return reply;
     }
 
-    public ReplyDto convertReplyToDto() {
-        return new ReplyDto(this.seq, this.replyParent, this.content, this.isRoot, this.createdDate, this.updatedDate);
+    public ReplyDto convertReplyToDto(String userNickname) {
+        boolean isMine = false;
+        String writer = this.member.getNickname();
+        if (userNickname.equals(writer)) {
+            isMine = true;
+        }
+        return new ReplyDto(this.seq, this.replyParent, this.content, this.isRoot, this.createdDate, this.updatedDate,
+                isMine, writer, this.member.getImage());
     }
 }
