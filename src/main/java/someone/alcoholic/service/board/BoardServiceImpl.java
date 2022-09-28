@@ -57,17 +57,21 @@ public class BoardServiceImpl implements BoardService {
         Member member = (principal != null) ? memberService.findMemberById(principal.getName()) : null;
         for (Board board : boards) {
             boolean heartCheck = (member != null) ? heartRepository.existsByMemberAndBoard(member, board) : false;
-            BoardDto boardDto = convertToBoardDto(board, heartCheck);
+            boolean isMine = (member != null) ? member.getId().equals(principal.getName()) : false;
+
+            BoardDto boardDto = convertToBoardDto(board, heartCheck, isMine);
             boardDtoList.add(boardDto);
         }
         log.info("{}번 카테고리 게시물 조회 완료", categorySeq);
         return boardDtoList;
     }
 
-    private BoardDto convertToBoardDto(Board board, boolean heartCheck) {
+    private BoardDto convertToBoardDto(Board board, boolean heartCheck, boolean isMine) {
         return BoardDto.builder().seq(board.getSeq()).title(board.getTitle()).content(board.getContent()).createdDate(board.getCreatedDate())
                 .updatedDate(board.getUpdatedDate()).writer(board.getMember().getNickname()).heartCount(board.getHearts().size())
-                .heartCheck(heartCheck).images(BoardImageDto.boardImagesToDto(board.getBoardImages(), s3Uploader.s3PrefixUrl())).build();
+                .heartCheck(heartCheck).images(BoardImageDto.boardImagesToDto(board.getBoardImages(), s3Uploader.s3PrefixUrl()))
+                .isMine(isMine)
+                .build();
     }
 
     public BoardDto getBoard(Principal principal, long boardSeq) {
@@ -76,7 +80,8 @@ public class BoardServiceImpl implements BoardService {
         Member member = memberService.findMemberById(loginId);
         Board board = findBoardBySeq(boardSeq);
         boolean heartCheck = heartRepository.existsByMemberAndBoard(member, board);
-        BoardDto boardDto = convertToBoardDto(board, heartCheck);
+        boolean isMine = (member != null) ? member.getId().equals(principal.getName()) : false;
+        BoardDto boardDto = convertToBoardDto(board, heartCheck, isMine);
         log.info("{}번 게시글 조회 완료", boardSeq);
         return boardDto;
     }
@@ -95,7 +100,7 @@ public class BoardServiceImpl implements BoardService {
         Board savedBoard = insertBoard(loginId, boardInputDto);
         checkAndUploadBoardFiles(loginId, savedBoard, fileList);
         log.info("{} 회원 {}번 게시글 등록 완료", loginId, savedBoard.getSeq());
-        return convertToBoardDto(boardRepository.findById(savedBoard.getSeq()).get(), false);
+        return convertToBoardDto(boardRepository.findById(savedBoard.getSeq()).get(), false, true);
     }
 
     private Board insertBoard(String loginId, BoardInputDto boardInputDto) {
@@ -169,7 +174,7 @@ public class BoardServiceImpl implements BoardService {
         Member member = memberService.findMemberById(memberId);
         boolean heart = heartRepository.existsByMemberAndBoard(member, modifiedBoard);
         log.info("{} 회원 {}번 게시글 수정 완료", memberId, modifiedBoard.getSeq());
-        return convertToBoardDto(boardRepository.findById(modifiedBoard.getSeq()).get(), heart);
+        return convertToBoardDto(boardRepository.findById(modifiedBoard.getSeq()).get(), heart, true);
     }
 
     private Board updateBoard(BoardUpdateDto boardUpdateDto, Board board) {

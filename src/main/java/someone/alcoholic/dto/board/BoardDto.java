@@ -44,8 +44,11 @@ public class BoardDto {
 
     private long repliesNum=0;
 
+    @ApiModelProperty(name = "isMine", value = "작성자여부", example = "false")
+    private boolean isMine;
+
     @Builder
-    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<BoardImageDto> images) {
+    public BoardDto(Long seq, String title, String content, Timestamp createdDate, Timestamp updatedDate, String writer, int heartCount, boolean heartCheck, List<BoardImageDto> images, boolean isMine) {
         this.seq = seq;
         this.title = title;
         this.content = content;
@@ -55,6 +58,7 @@ public class BoardDto {
         this.heartCount = heartCount;
         this.heartCheck = heartCheck;
         this.images = images;
+        this.isMine = isMine;
     }
 
     public void setRepliesNum(long repliesNum) {
