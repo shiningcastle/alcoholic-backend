@@ -9,7 +9,7 @@ spring:
   profiles: prod
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://alcoholic-db.c9kvlhuupzii.ap-northeast-2.rds.amazonaws.com:3306/mydb?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://alcoholic-db.czcvzxcvuupzii.ap-northeast-2.rds.amazonaws.com:3306/mydb?serverTimezone=Asia/Seoul
     username: root
     password: alcoholic1!
 
@@ -53,11 +53,11 @@ spring:
       client:
         registration:
           google:
-            client-id: 785773674777-v891sf1pls1v5uhqrim7f6djad8oel6m.apps.googleusercontent.com
+            client-id: 7857231777-vzxcweqwefm7f6djad8oel6m.apps.googleusercontent.com
             client-secret: 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
             scope: profile, email
           kakao:
-            client-id: 9182d496ee2d4e3865ddb36e8d01b08e
+            client-id: 9xcvzxcv2d496ee236e8d01b08e
             client-secret: 5nfNTKsvZ4r2Dx6mUILzzY7tpUMrNpfY
             scope: profile_nickname, profile_image, account_email
             redirect-uri: "https://api.alcoholic.ml/login/oauth2/code/kakao"
@@ -96,8 +96,8 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: AKIAXM3ICDO2CMT43JFD
-      secret-key: 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
+      access-key: XqwqwM3ICDO2CMFD
+      secret-key: gSemPwewrwertpetLqPluu56ru9sDf4AI8c1O+9GWv
     stack:
       auto: false
     region:
